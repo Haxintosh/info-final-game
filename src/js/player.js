@@ -6,11 +6,11 @@ export class Player {
     this.height = height;
     this.speed = speed;
 
-    this.canvas = canvas
-    this.ctx = canvas.getContext('2d')
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
 
     // movement states
-    this.direction = 'down'; // 'up', 'down', 'left', 'right'
+    this.direction = "down"; // 'up', 'down', 'left', 'right'
     this.moving = false;
 
     // anims
@@ -25,7 +25,7 @@ export class Player {
       x: this.x + 9,
       y: this.y + 20,
       width: this.width - 9 - 10,
-      height: 3
+      height: 3,
     };
 
     // movement keys
@@ -33,7 +33,7 @@ export class Player {
       up: false,
       down: false,
       left: false,
-      right: false
+      right: false,
     };
 
     // debug
@@ -45,61 +45,63 @@ export class Player {
     this.spritesheet.src = spritesheetPath;
     return new Promise((resolve, reject) => {
       this.spritesheet.onload = () => resolve();
-      this.spritesheet.onerror = () => reject(new Error('failed to load player spritesheet'));
+      this.spritesheet.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
     });
   }
 
   handleKeyDown(e) {
-    switch(e.key) {
-      case 'ArrowUp':
-      case 'w':
+    switch (e.key) {
+      case "ArrowUp":
+      case "w":
         this.keys.up = true;
         break;
-      case 'ArrowDown':
-      case 's':
+      case "ArrowDown":
+      case "s":
         this.keys.down = true;
         break;
-      case 'ArrowLeft':
-      case 'a':
+      case "ArrowLeft":
+      case "a":
         this.keys.left = true;
         break;
-      case 'ArrowRight':
-      case 'd':
+      case "ArrowRight":
+      case "d":
         this.keys.right = true;
         break;
     }
   }
 
   handleKeyUp(e) {
-    switch(e.key) {
-      case 'ArrowUp':
-      case 'w':
+    switch (e.key) {
+      case "ArrowUp":
+      case "w":
         this.keys.up = false;
         break;
-      case 'ArrowDown':
-      case 's':
+      case "ArrowDown":
+      case "s":
         this.keys.down = false;
         break;
-      case 'ArrowLeft':
-      case 'a':
+      case "ArrowLeft":
+      case "a":
         this.keys.left = false;
         break;
-      case 'ArrowRight':
-      case 'd':
+      case "ArrowRight":
+      case "d":
         this.keys.right = false;
         break;
     }
   }
 
   update(map, blocks) {
-    this.movement(map, blocks)
-    this.animate()
-    this.render()
+    this.movement(map, blocks);
+    this.animate();
+    this.render();
   }
 
   movement(map, blocks) {
     // check if moving
-    this.moving = this.keys.up || this.keys.down || this.keys.left || this.keys.right;
+    this.moving =
+      this.keys.up || this.keys.down || this.keys.left || this.keys.right;
 
     // old position for collision resolution
     const oldX = this.x;
@@ -111,19 +113,19 @@ export class Player {
 
     if (this.keys.up) {
       dy -= this.speed;
-      this.direction = 'up';
+      this.direction = "up";
     }
     if (this.keys.down) {
       dy += this.speed;
-      this.direction = 'down';
+      this.direction = "down";
     }
     if (this.keys.left) {
       dx -= this.speed;
-      this.direction = 'left';
+      this.direction = "left";
     }
     if (this.keys.right) {
       dx += this.speed;
-      this.direction = 'right';
+      this.direction = "right";
     }
 
     // normalize diagonal movement
@@ -157,7 +159,7 @@ export class Player {
       x: this.x + 9,
       y: this.y + 20,
       width: this.width - 9 - 10,
-      height: 3
+      height: 3,
     };
 
     // check collision with the four corners of the hitbox
@@ -165,11 +167,13 @@ export class Player {
       { x: this.hitbox.x, y: this.hitbox.y },
       { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y },
       { x: this.hitbox.x, y: this.hitbox.y + this.hitbox.height },
-      { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y + this.hitbox.height }
+      {
+        x: this.hitbox.x + this.hitbox.width,
+        y: this.hitbox.y + this.hitbox.height,
+      },
     ];
-
     // adjust positions for map offset
-    positions.forEach(pos => {
+    positions.forEach((pos) => {
       pos.x -= map.x;
       pos.y -= map.y;
     });
@@ -185,7 +189,7 @@ export class Player {
     // blocks (same logic applies)
     blocks.forEach((map) => {
       // adjust positions for map offset
-      positions.forEach(pos => {
+      positions.forEach((pos) => {
         pos.x -= map.x;
         pos.y -= map.y;
       });
@@ -197,7 +201,7 @@ export class Player {
           return true;
         }
       }
-    })
+    });
 
     return false;
   }
@@ -216,16 +220,16 @@ export class Player {
 
     // set frameY based on direction
     switch (this.direction) {
-      case 'down':
+      case "down":
         this.frameY = 0;
         break;
-      case 'right':
+      case "right":
         this.frameY = 1;
         break;
-      case 'left':
+      case "left":
         this.frameY = 2;
         break;
-      case 'up':
+      case "up":
         this.frameY = 3;
         break;
     }
@@ -239,14 +243,25 @@ export class Player {
 
     this.ctx.drawImage(
       this.spritesheet,
-      this.frameX * frameWidth, this.frameY * frameHeight, frameWidth, frameHeight,
-      this.x, this.y, this.width, this.height
+      this.frameX * frameWidth,
+      this.frameY * frameHeight,
+      frameWidth,
+      frameHeight,
+      this.x,
+      this.y,
+      this.width,
+      this.height,
     );
 
     // draw collision box in debug mode
     if (this.debugMode) {
-      this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-      this.ctx.fillRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+      this.ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+      this.ctx.fillRect(
+        this.hitbox.x,
+        this.hitbox.y,
+        this.hitbox.width,
+        this.hitbox.height,
+      );
     }
   }
 
@@ -265,13 +280,13 @@ export class Player {
     const centerY = this.getCenterY();
 
     switch (this.direction) {
-      case 'up':
+      case "up":
         return y < centerY && Math.abs(x - centerX) < Math.abs(y - centerY);
-      case 'down':
+      case "down":
         return y > centerY && Math.abs(x - centerX) < Math.abs(y - centerY);
-      case 'left':
+      case "left":
         return x < centerX && Math.abs(y - centerY) < Math.abs(x - centerX);
-      case 'right':
+      case "right":
         return x > centerX && Math.abs(y - centerY) < Math.abs(x - centerX);
     }
     return false;
@@ -286,21 +301,26 @@ export class Player {
 
     // adjust tile coordinates based on direction
     switch (this.direction) {
-      case 'up':
+      case "up":
         tileY--;
         break;
-      case 'down':
+      case "down":
         tileY++;
         break;
-      case 'left':
+      case "left":
         tileX--;
         break;
-      case 'right':
+      case "right":
         tileX++;
         break;
     }
 
-    if (tileX < 0 || tileX >= map.mapWidth || tileY < 0 || tileY >= map.mapHeight) {
+    if (
+      tileX < 0 ||
+      tileX >= map.mapWidth ||
+      tileY < 0 ||
+      tileY >= map.mapHeight
+    ) {
       return null;
     }
 

@@ -2,11 +2,11 @@ import { Map } from "./map-class.js";
 
 export class MapGenerator {
   constructor(canvas) {
-    this.canvas = canvas
+    this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
 
     this.grid = Array.from({ length: 5 }, () => Array(5).fill(0));
-    this.start = {}
+    this.start = {};
     this.renderedMap = [];
     this.renderedHalls = [];
     this.renderedBlocks = [];
@@ -23,6 +23,10 @@ export class MapGenerator {
     };
 
     this.generatedLevel = this.generateLevel();
+
+    // DEBUG
+    // this.iterationCount = [];
+    // this.totalIterations = 0;
   }
   async init() {
     const loadMap = async (path, x = 0, y = 0) => {
@@ -102,7 +106,7 @@ export class MapGenerator {
       end.x = 1;
       end.y = 1;
     }
-    this.start = {x: start.x, y: start.y}
+    this.start = { x: start.x, y: start.y };
 
     this.grid[start.y][start.x] = 2;
     this.grid[end.y][end.x] = 3;
@@ -226,8 +230,18 @@ export class MapGenerator {
 
     if (map) {
       map.setPosition(
-        type === "hl" ? x * 40 * 16 : type === 'hr' ? x * 40 * 16 + 19 * 16 : x * 40 * 16 + 8 * 16,
-        type === "hl" ? y * 40 * 16 + 7 * 16 : type === "hr" ? y * 40 * 16 + 7 * 16 : type === "vt" ? y * 40 * 16 : y * 40 * 16 + 19 * 16,
+        type === "hl"
+          ? x * 40 * 16
+          : type === "hr"
+            ? x * 40 * 16 + 19 * 16
+            : x * 40 * 16 + 8 * 16,
+        type === "hl"
+          ? y * 40 * 16 + 7 * 16
+          : type === "hr"
+            ? y * 40 * 16 + 7 * 16
+            : type === "vt"
+              ? y * 40 * 16
+              : y * 40 * 16 + 19 * 16,
       );
       map.lockdownBlock = lockdownBlock;
       this.renderedBlocks.push(map);
@@ -236,6 +250,10 @@ export class MapGenerator {
   }
 
   drawLevel() {
+    this.renderedMap = [];
+    this.renderedHalls = [];
+    this.renderedBlocks = [];
+
     for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 5; x++) {
         const cell = this.grid[y][x];
@@ -308,7 +326,12 @@ export class MapGenerator {
   }
 
   findCurrentRoom(playerX, playerY) {
-    this.renderedMap.forEach((map) => {
+    let totalIterations = 0;
+
+    let roomFound = false;
+
+    for (const map of this.renderedMap) {
+      totalIterations++;
       if (
         playerX >= map.x &&
         playerX <= map.x + map.mapWidth * 16 &&
@@ -316,38 +339,75 @@ export class MapGenerator {
         playerY <= map.y + map.mapHeight * 16
       ) {
         this.currentRoom = map;
+        roomFound = true;
 
         if (this.previousCurrentRoom !== this.currentRoom) {
           this.currentBlocks = [];
           this.previousCurrentRoom = this.currentRoom;
         }
 
-        this.renderedBlocks.forEach((block) => {
-          if (
+        this.currentBlocks = this.renderedBlocks.filter((block) => {
+          totalIterations++;
+          return (
             Array.isArray(block.room) &&
             block.room[0] === this.currentRoom.x / (40 * 16) &&
             block.room[1] === this.currentRoom.y / (40 * 16)
-          ) {
-            this.currentBlocks.push(block);
-          }
+          );
         });
-      }
-    });
 
-    this.renderedHalls.forEach((map) => {
-      if (
-        playerX >= map.x &&
-        playerX <= map.x + map.mapWidth * 16 &&
-        playerY >= map.y &&
-        playerY <= map.y + map.mapHeight * 16
-      ) {
-        this.currentRoom = map;
+        break; //continue;
       }
-    });
+    }
+
+    if (!roomFound) {
+      for (const map of this.renderedHalls) {
+        totalIterations++;
+        if (
+          playerX >= map.x &&
+          playerX <= map.x + map.mapWidth * 16 &&
+          playerY >= map.y &&
+          playerY <= map.y + map.mapHeight * 16
+        ) {
+          this.currentRoom = map;
+          break;
+        }
+      }
+    }
+
+    // console.log(
+    //   `Total iterations: ${totalIterations}`,
+    //   this.renderedMap.length,
+    //   this.renderedHalls.length,
+    //   this.renderedBlocks.length,
+    // );
+    // this.iterationCount.push(totalIterations);
   }
 
   update() {
     // console.log("Updating map...");
     this.drawLevel();
+
+    // this.totalIterations++;
+    // console.log(`Total cycles: ${this.totalIterations}`);
+    // if (this.totalIterations > 75 * 30) {
+    //   console.clear();
+    //   this.totalIterations = 0;
+    //   arrayToCSV(this.iterationCount);
+    // }
   }
+}
+
+// DEBUG UTLILS
+function arrayToCSV(a) {
+  // array of intergers
+  let csv = "";
+  for (let i = 0; i < a.length; i++) {
+    let toAdd = a[i] + ",";
+    if (i === a.length - 1) {
+      toAdd = a[i] + "\n";
+    }
+    csv += toAdd;
+  }
+  console.log(csv);
+  return csv;
 }
