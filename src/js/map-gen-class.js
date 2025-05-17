@@ -182,18 +182,20 @@ export class MapGenerator {
   drawRoom(type, subtype, x, y) {
     let map;
     if (type === 1) {
-      map = this.mapInstances.rooms.battle;
+      map = this.mapInstances.rooms.battle.clone();
     } else if (type === 2) {
-      map = this.mapInstances.rooms.start;
+      map = this.mapInstances.rooms.start.clone();
     } else if (type === 3) {
-      map = this.mapInstances.rooms.end;
+      map = this.mapInstances.rooms.end.clone();
     } else if (type === 4) {
-      map = this.mapInstances.rooms[`special_${subtype}`];
+      map = this.mapInstances.rooms[`special_${subtype}`].clone();
     }
 
     if (map) {
       map.setPosition(x * 40 * 16, y * 40 * 16);
       this.renderedMap.push(map);
+      map.x = x * 40 * 16;
+      map.y = y * 40 * 16;
       map.render();
     }
   }
@@ -201,9 +203,9 @@ export class MapGenerator {
   drawHall(type, x, y) {
     let map;
     if (type === "h") {
-      map = this.mapInstances.halls.horizontal;
+      map = this.mapInstances.halls.horizontal.clone();
     } else if (type === "v") {
-      map = this.mapInstances.halls.vertical;
+      map = this.mapInstances.halls.vertical.clone();
     }
 
     if (map) {
@@ -330,7 +332,12 @@ export class MapGenerator {
 
     let roomFound = false;
 
+    // this.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    // this.ctx.fillRect(playerX, playerY, 20, 20);
+
     for (const map of this.renderedMap) {
+      // this.ctx.fillStyle = "rgba(0, 255, 0, 0.5)";
+      // this.ctx.fillRect(map.x, map.y, map.mapWidth * 16, map.mapHeight * 16);
       totalIterations++;
       if (
         playerX >= map.x &&
@@ -362,6 +369,8 @@ export class MapGenerator {
     if (!roomFound) {
       for (const map of this.renderedHalls) {
         totalIterations++;
+        this.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+        this.ctx.fillRect(playerX, playerY, 20, 20);
         if (
           playerX >= map.x &&
           playerX <= map.x + map.mapWidth * 16 &&

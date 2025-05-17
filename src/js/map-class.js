@@ -218,4 +218,21 @@ export class Map {
     this.x = x;
     this.y = y;
   }
+
+  clone() {
+    const clonedMap = new Map(
+      this.canvas,
+      this.spritesheet.src,
+      this.x,
+      this.y,
+      this.room,
+      this.lockdownBlock,
+    );
+    clonedMap.tileSize = this.tileSize;
+    clonedMap.mapWidth = this.mapWidth;
+    clonedMap.mapHeight = this.mapHeight;
+    clonedMap.layers = JSON.parse(JSON.stringify(this.layers));
+    clonedMap.collisionMap = JSON.parse(JSON.stringify(this.collisionMap));
+    return clonedMap;
+  }
 }
