@@ -8,7 +8,7 @@ export class Map {
     lockdownBlock = false,
     mapData = null,
   ) {
-    console.log(canvas);
+    // console.log(canvas);
     this.spritesheet = new Image();
     this.spritesheet.src = spritesheetImage;
     this.tileSize = 16;

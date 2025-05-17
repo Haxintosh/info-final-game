@@ -1,11 +1,12 @@
 import { Map } from "./map-class.js";
 
 export class MapGenerator {
-  constructor(canvasId) {
-    this.canvas = document.getElementById(canvasId);
-    this.ctx = this.canvas.getContext("2d");
+  constructor(canvas) {
+    this.canvas = canvas
+    this.ctx = canvas.getContext("2d");
 
     this.grid = Array.from({ length: 5 }, () => Array(5).fill(0));
+    this.start = {}
     this.renderedMap = [];
     this.renderedHalls = [];
     this.renderedBlocks = [];
@@ -101,6 +102,7 @@ export class MapGenerator {
       end.x = 1;
       end.y = 1;
     }
+    this.start = {x: start.x, y: start.y}
 
     this.grid[start.y][start.x] = 2;
     this.grid[end.y][end.x] = 3;
@@ -224,14 +226,8 @@ export class MapGenerator {
 
     if (map) {
       map.setPosition(
-        type === "hl" || type === "hr" ? x * 40 * 16 : x * 40 * 16 + 8 * 16,
-        type === "hl"
-          ? y * 40 * 16 + 7 * 16
-          : type === "hr"
-            ? y * 40 * 16 + 7 * 16
-            : type === "vt"
-              ? y * 40 * 16
-              : y * 40 * 16 + 19 * 16,
+        type === "hl" ? x * 40 * 16 : type === 'hr' ? x * 40 * 16 + 19 * 16 : x * 40 * 16 + 8 * 16,
+        type === "hl" ? y * 40 * 16 + 7 * 16 : type === "hr" ? y * 40 * 16 + 7 * 16 : type === "vt" ? y * 40 * 16 : y * 40 * 16 + 19 * 16,
       );
       map.lockdownBlock = lockdownBlock;
       this.renderedBlocks.push(map);
@@ -295,7 +291,7 @@ export class MapGenerator {
         }
       }
     }
-    console.log(this.grid);
+    // console.log(this.grid);
   }
 
   lockdownRoom(x, y) {
@@ -311,13 +307,13 @@ export class MapGenerator {
     );
   }
 
-  findCurrentRoom() {
+  findCurrentRoom(playerX, playerY) {
     this.renderedMap.forEach((map) => {
       if (
-        this.playerX >= map.x &&
-        this.playerX <= map.x + map.width * 16 &&
-        this.playerY >= map.y &&
-        this.playerY <= map.y + map.height * 16
+        playerX >= map.x &&
+        playerX <= map.x + map.mapWidth * 16 &&
+        playerY >= map.y &&
+        playerY <= map.y + map.mapHeight * 16
       ) {
         this.currentRoom = map;
 
@@ -340,10 +336,10 @@ export class MapGenerator {
 
     this.renderedHalls.forEach((map) => {
       if (
-        this.playerX >= map.x &&
-        this.playerX <= map.x + map.width * 16 &&
-        this.playerY >= map.y &&
-        this.playerY <= map.y + map.height * 16
+        playerX >= map.x &&
+        playerX <= map.x + map.mapWidth * 16 &&
+        playerY >= map.y &&
+        playerY <= map.y + map.mapHeight * 16
       ) {
         this.currentRoom = map;
       }
@@ -351,7 +347,7 @@ export class MapGenerator {
   }
 
   update() {
-    console.log("Updating map...");
+    // console.log("Updating map...");
     this.drawLevel();
   }
 }

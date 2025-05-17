@@ -1,0 +1,309 @@
+export class Player {
+  constructor(canvas, x, y, width, height, speed = 2) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.speed = speed;
+
+    this.canvas = canvas
+    this.ctx = canvas.getContext('2d')
+
+    // movement states
+    this.direction = 'down'; // 'up', 'down', 'left', 'right'
+    this.moving = false;
+
+    // anims
+    this.spritesheet = null;
+    this.frameX = 0;
+    this.frameY = 0;
+    this.animationSpeed = 10; // frames per animation change
+    this.frameCounter = 0;
+
+    // collision
+    this.hitbox = {
+      x: this.x + 9,
+      y: this.y + 20,
+      width: this.width - 9 - 10,
+      height: 3
+    };
+
+    // movement keys
+    this.keys = {
+      up: false,
+      down: false,
+      left: false,
+      right: false
+    };
+
+    // debug
+    this.debugMode = true;
+  }
+
+  async loadSpritesheet(spritesheetPath) {
+    this.spritesheet = new Image();
+    this.spritesheet.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheet.onload = () => resolve();
+      this.spritesheet.onerror = () => reject(new Error('failed to load player spritesheet'));
+    });
+  }
+
+  handleKeyDown(e) {
+    switch(e.key) {
+      case 'ArrowUp':
+      case 'w':
+        this.keys.up = true;
+        break;
+      case 'ArrowDown':
+      case 's':
+        this.keys.down = true;
+        break;
+      case 'ArrowLeft':
+      case 'a':
+        this.keys.left = true;
+        break;
+      case 'ArrowRight':
+      case 'd':
+        this.keys.right = true;
+        break;
+    }
+  }
+
+  handleKeyUp(e) {
+    switch(e.key) {
+      case 'ArrowUp':
+      case 'w':
+        this.keys.up = false;
+        break;
+      case 'ArrowDown':
+      case 's':
+        this.keys.down = false;
+        break;
+      case 'ArrowLeft':
+      case 'a':
+        this.keys.left = false;
+        break;
+      case 'ArrowRight':
+      case 'd':
+        this.keys.right = false;
+        break;
+    }
+  }
+
+  update(map, blocks) {
+    this.movement(map, blocks)
+    this.animate()
+    this.render()
+  }
+
+  movement(map, blocks) {
+    // check if moving
+    this.moving = this.keys.up || this.keys.down || this.keys.left || this.keys.right;
+
+    // old position for collision resolution
+    const oldX = this.x;
+    const oldY = this.y;
+
+    // movement
+    let dx = 0;
+    let dy = 0;
+
+    if (this.keys.up) {
+      dy -= this.speed;
+      this.direction = 'up';
+    }
+    if (this.keys.down) {
+      dy += this.speed;
+      this.direction = 'down';
+    }
+    if (this.keys.left) {
+      dx -= this.speed;
+      this.direction = 'left';
+    }
+    if (this.keys.right) {
+      dx += this.speed;
+      this.direction = 'right';
+    }
+
+    // normalize diagonal movement
+    if (dx !== 0 && dy !== 0) {
+      const normalizer = 1 / Math.sqrt(2);
+      dx *= normalizer;
+      dy *= normalizer;
+    }
+
+    if (dx !== 0) {
+      this.x += dx;
+
+      // check collision on x
+      if (this.checkCollisionWithMap(map, blocks)) {
+        this.x = oldX; // restore old x
+      }
+    }
+
+    if (dy !== 0) {
+      this.y += dy;
+
+      // check collision on y
+      if (this.checkCollisionWithMap(map, blocks)) {
+        this.y = oldY; // restore old y
+      }
+    }
+  }
+
+  checkCollisionWithMap(map, blocks) {
+    this.hitbox = {
+      x: this.x + 9,
+      y: this.y + 20,
+      width: this.width - 9 - 10,
+      height: 3
+    };
+
+    // check collision with the four corners of the hitbox
+    const positions = [
+      { x: this.hitbox.x, y: this.hitbox.y },
+      { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y },
+      { x: this.hitbox.x, y: this.hitbox.y + this.hitbox.height },
+      { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y + this.hitbox.height }
+    ];
+
+    // adjust positions for map offset
+    positions.forEach(pos => {
+      pos.x -= map.x;
+      pos.y -= map.y;
+    });
+
+    // check if any corner is colliding
+    for (const pos of positions) {
+      const tile = map.getTileAt(pos.x, pos.y);
+      if (tile && tile.collidable) {
+        return true;
+      }
+    }
+
+    // blocks (same logic applies)
+    blocks.forEach((map) => {
+      // adjust positions for map offset
+      positions.forEach(pos => {
+        pos.x -= map.x;
+        pos.y -= map.y;
+      });
+
+      // check if any corner is colliding
+      for (const pos of positions) {
+        const tile = map.getTileAt(pos.x, pos.y);
+        if (tile && tile.collidable) {
+          return true;
+        }
+      }
+    })
+
+    return false;
+  }
+
+  animate() {
+    // animation
+    if (this.moving) {
+      this.frameCounter++;
+      if (this.frameCounter >= this.animationSpeed) {
+        this.frameCounter = 0;
+        this.frameX = (this.frameX + 1) % 8; // assuming 4 frames per animation
+      }
+    } else {
+      this.frameX = 0; // reset to standing frame when not moving
+    }
+
+    // set frameY based on direction
+    switch (this.direction) {
+      case 'down':
+        this.frameY = 0;
+        break;
+      case 'right':
+        this.frameY = 1;
+        break;
+      case 'left':
+        this.frameY = 2;
+        break;
+      case 'up':
+        this.frameY = 3;
+        break;
+    }
+  }
+
+  render() {
+    if (!this.spritesheet || !this.spritesheet.complete) return;
+
+    const frameWidth = this.spritesheet.width / 8; // 4 columns of frames
+    const frameHeight = this.spritesheet.height / 4; // 4 rows of frames (up, down, left, right)
+
+    this.ctx.drawImage(
+      this.spritesheet,
+      this.frameX * frameWidth, this.frameY * frameHeight, frameWidth, frameHeight,
+      this.x, this.y, this.width, this.height
+    );
+
+    // draw collision box in debug mode
+    if (this.debugMode) {
+      this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+      this.ctx.fillRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+    }
+  }
+
+  // get center position of player (camera)
+  getCenterX() {
+    return this.x + this.width / 2;
+  }
+
+  getCenterY() {
+    return this.y + this.height / 2;
+  }
+
+  // check if player is facing a specific position
+  isFacing(x, y) {
+    const centerX = this.getCenterX();
+    const centerY = this.getCenterY();
+
+    switch (this.direction) {
+      case 'up':
+        return y < centerY && Math.abs(x - centerX) < Math.abs(y - centerY);
+      case 'down':
+        return y > centerY && Math.abs(x - centerX) < Math.abs(y - centerY);
+      case 'left':
+        return x < centerX && Math.abs(y - centerY) < Math.abs(x - centerX);
+      case 'right':
+        return x > centerX && Math.abs(y - centerY) < Math.abs(x - centerX);
+    }
+    return false;
+  }
+
+  // get tile position the player is currently facing
+  getFacingTile(map) {
+    const centerX = this.getCenterX() - map.x;
+    const centerY = this.getCenterY() - map.y;
+    let tileX = Math.floor(centerX / map.tileSize);
+    let tileY = Math.floor(centerY / map.tileSize);
+
+    // adjust tile coordinates based on direction
+    switch (this.direction) {
+      case 'up':
+        tileY--;
+        break;
+      case 'down':
+        tileY++;
+        break;
+      case 'left':
+        tileX--;
+        break;
+      case 'right':
+        tileX++;
+        break;
+    }
+
+    if (tileX < 0 || tileX >= map.mapWidth || tileY < 0 || tileY >= map.mapHeight) {
+      return null;
+    }
+
+    return { x: tileX, y: tileY };
+  }
+}
