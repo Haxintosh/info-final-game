@@ -1,0 +1,357 @@
+import { Map } from "./map-class.js";
+
+export class MapGenerator {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    this.ctx = this.canvas.getContext("2d");
+
+    this.grid = Array.from({ length: 5 }, () => Array(5).fill(0));
+    this.renderedMap = [];
+    this.renderedHalls = [];
+    this.renderedBlocks = [];
+    this.playerX = 0; // Temporary, replace later with actual player position
+    this.playerY = 0;
+    this.previousCurrentRoom = null;
+    this.currentRoom = null;
+    this.currentBlocks = [];
+
+    this.mapInstances = {
+      rooms: {},
+      halls: {},
+      blocks: {},
+    };
+
+    this.generatedLevel = this.generateLevel();
+  }
+  async init() {
+    const loadMap = async (path, x = 0, y = 0) => {
+      console.log(this.canvas);
+      const map = new Map(this.canvas, path, x, y);
+      await map.loadMapFromFile(path.replace("spritesheet.png", "map.json"));
+      return map;
+    };
+
+    this.mapInstances.rooms.battle = await loadMap(
+      "./map-assets/room_battle_1/spritesheet.png",
+    );
+    this.mapInstances.rooms.start = await loadMap(
+      "./map-assets/room_start/spritesheet.png",
+    );
+    this.mapInstances.rooms.end = await loadMap(
+      "./map-assets/room_end/spritesheet.png",
+    );
+
+    for (let i = 1; i <= 4; i++) {
+      this.mapInstances.rooms[`special_${i}`] = await loadMap(
+        `./map-assets/room_special_${i}/spritesheet.png`,
+      );
+    }
+
+    this.mapInstances.halls.horizontal = await loadMap(
+      "./map-assets/hall_h/spritesheet.png",
+    );
+    this.mapInstances.halls.vertical = await loadMap(
+      "./map-assets/hall_v/spritesheet.png",
+    );
+
+    this.mapInstances.blocks.horizontalLeft = await loadMap(
+      "./map-assets/room_block_h/spritesheet.png",
+    );
+    this.mapInstances.blocks.horizontalRight = await loadMap(
+      "./map-assets/room_block_h/spritesheet.png",
+    );
+    this.mapInstances.blocks.verticalTop = await loadMap(
+      "./map-assets/room_block_v/spritesheet.png",
+    );
+    this.mapInstances.blocks.verticalBottom = await loadMap(
+      "./map-assets/room_block_v/spritesheet.png",
+    );
+  }
+
+  generateLevel() {
+    // Reset grid
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 5; x++) {
+        this.grid[y][x] = 0;
+      }
+    }
+
+    const startRandomness = Math.floor(Math.random() * 4);
+    let start = { x: null, y: null };
+    let end = { x: null, y: null };
+
+    if (startRandomness === 0) {
+      start.x = 1;
+      start.y = 1;
+      end.x = 3;
+      end.y = 3;
+    } else if (startRandomness === 1) {
+      start.x = 3;
+      start.y = 1;
+      end.x = 1;
+      end.y = 3;
+    } else if (startRandomness === 2) {
+      start.x = 1;
+      start.y = 3;
+      end.x = 3;
+      end.y = 1;
+    } else {
+      start.x = 3;
+      start.y = 3;
+      end.x = 1;
+      end.y = 1;
+    }
+
+    this.grid[start.y][start.x] = 2;
+    this.grid[end.y][end.x] = 3;
+
+    let x = start.x;
+    let y = start.y;
+
+    const direction = Math.random();
+
+    // Start with horizontal
+    if (direction < 0.5) {
+      while (x !== end.x) {
+        x += x < end.x ? 1 : -1;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+      }
+
+      while (y !== end.y) {
+        y += y < end.y ? 1 : -1;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+      }
+    } else {
+      // Start vertical
+      while (y !== end.y) {
+        y += y < end.y ? 1 : -1;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+      }
+
+      while (x !== end.x) {
+        x += x < end.x ? 1 : -1;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+      }
+    }
+
+    const maxBranchOff = 3;
+    let branchOffs = 0;
+
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 5; x++) {
+        if (
+          this.grid[y][x] === 1 &&
+          branchOffs < maxBranchOff &&
+          Math.random() < 1
+        ) {
+          const side = Math.floor(Math.random() * 4);
+          let type = Math.ceil(Math.random() * 4) / 10;
+          if (type === 0) type = 0.1;
+
+          if (side === 0 && this.grid[y - 1]?.[x] === 0) {
+            // Top
+            this.grid[y - 1][x] = 4 + type;
+            branchOffs += 1;
+          }
+          if (side === 1 && this.grid[y + 1]?.[x] === 0) {
+            // Down
+            this.grid[y + 1][x] = 4 + type;
+            branchOffs += 1;
+          }
+          if (side === 2 && this.grid[y]?.[x - 1] === 0) {
+            // Left
+            this.grid[y][x - 1] = 4 + type;
+            branchOffs += 1;
+          }
+          if (side === 3 && this.grid[y]?.[x + 1] === 0) {
+            // Right
+            this.grid[y][x + 1] = 4 + type;
+            branchOffs += 1;
+          }
+        }
+      }
+    }
+  }
+
+  drawRoom(type, subtype, x, y) {
+    let map;
+    if (type === 1) {
+      map = this.mapInstances.rooms.battle;
+    } else if (type === 2) {
+      map = this.mapInstances.rooms.start;
+    } else if (type === 3) {
+      map = this.mapInstances.rooms.end;
+    } else if (type === 4) {
+      map = this.mapInstances.rooms[`special_${subtype}`];
+    }
+
+    if (map) {
+      map.setPosition(x * 40 * 16, y * 40 * 16);
+      this.renderedMap.push(map);
+      map.render();
+    }
+  }
+
+  drawHall(type, x, y) {
+    let map;
+    if (type === "h") {
+      map = this.mapInstances.halls.horizontal;
+    } else if (type === "v") {
+      map = this.mapInstances.halls.vertical;
+    }
+
+    if (map) {
+      map.setPosition(
+        type === "h" ? x * 40 * 16 + 20 * 16 : x * 40 * 16 + 7 * 16,
+        type === "h" ? y * 40 * 16 + 6 * 16 : y * 40 * 16 + 20 * 16,
+      );
+      this.renderedHalls.push(map);
+      map.render();
+    }
+  }
+
+  drawBlock(type, x, y, lockdownBlock = false) {
+    let map;
+    if (type === "hl") {
+      map = this.mapInstances.blocks.horizontalLeft;
+    } else if (type === "hr") {
+      map = this.mapInstances.blocks.horizontalRight;
+    } else if (type === "vt") {
+      map = this.mapInstances.blocks.verticalTop;
+    } else if (type === "vb") {
+      map = this.mapInstances.blocks.verticalBottom;
+    }
+
+    if (map) {
+      map.setPosition(
+        type === "hl" || type === "hr" ? x * 40 * 16 : x * 40 * 16 + 8 * 16,
+        type === "hl"
+          ? y * 40 * 16 + 7 * 16
+          : type === "hr"
+            ? y * 40 * 16 + 7 * 16
+            : type === "vt"
+              ? y * 40 * 16
+              : y * 40 * 16 + 19 * 16,
+      );
+      map.lockdownBlock = lockdownBlock;
+      this.renderedBlocks.push(map);
+      map.render();
+    }
+  }
+
+  drawLevel() {
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 5; x++) {
+        const cell = this.grid[y][x];
+        if (cell !== 0) {
+          this.drawRoom(
+            Math.floor(cell),
+            (cell % 1).toFixed(1).substring(2),
+            x,
+            y,
+          );
+
+          // Horizontal hallways
+          if (this.grid[y]?.[x + 1] !== undefined) {
+            if (this.grid[y][x + 1] !== 0) {
+              this.drawHall("h", x, y);
+            } else {
+              this.drawBlock("hr", x, y);
+            }
+          }
+
+          // Vertical hallways
+          if (this.grid[y + 1]?.[x] !== undefined) {
+            if (this.grid[y + 1][x] !== 0) {
+              this.drawHall("v", x, y);
+            }
+          }
+
+          // Blockades
+          if (
+            this.grid[y]?.[x - 1] === undefined ||
+            this.grid[y][x - 1] === 0
+          ) {
+            this.drawBlock("hl", x, y);
+          }
+          if (
+            this.grid[y]?.[x + 1] === undefined ||
+            this.grid[y][x + 1] === 0
+          ) {
+            this.drawBlock("hr", x, y);
+          }
+          if (
+            this.grid[y - 1]?.[x] === undefined ||
+            this.grid[y - 1][x] === 0
+          ) {
+            this.drawBlock("vt", x, y);
+          }
+          if (
+            this.grid[y + 1]?.[x] === undefined ||
+            this.grid[y + 1][x] === 0
+          ) {
+            this.drawBlock("vb", x, y);
+          }
+        }
+      }
+    }
+    console.log(this.grid);
+  }
+
+  lockdownRoom(x, y) {
+    this.drawBlock("hl", x, y, true).catch(console.error);
+    this.drawBlock("hr", x, y, true).catch(console.error);
+    this.drawBlock("vt", x, y, true).catch(console.error);
+    this.drawBlock("vb", x, y, true).catch(console.error);
+  }
+
+  unlockRooms() {
+    this.renderedBlocks = this.renderedBlocks.filter(
+      (block) => !block.lockdownBlock,
+    );
+  }
+
+  findCurrentRoom() {
+    this.renderedMap.forEach((map) => {
+      if (
+        this.playerX >= map.x &&
+        this.playerX <= map.x + map.width * 16 &&
+        this.playerY >= map.y &&
+        this.playerY <= map.y + map.height * 16
+      ) {
+        this.currentRoom = map;
+
+        if (this.previousCurrentRoom !== this.currentRoom) {
+          this.currentBlocks = [];
+          this.previousCurrentRoom = this.currentRoom;
+        }
+
+        this.renderedBlocks.forEach((block) => {
+          if (
+            Array.isArray(block.room) &&
+            block.room[0] === this.currentRoom.x / (40 * 16) &&
+            block.room[1] === this.currentRoom.y / (40 * 16)
+          ) {
+            this.currentBlocks.push(block);
+          }
+        });
+      }
+    });
+
+    this.renderedHalls.forEach((map) => {
+      if (
+        this.playerX >= map.x &&
+        this.playerX <= map.x + map.width * 16 &&
+        this.playerY >= map.y &&
+        this.playerY <= map.y + map.height * 16
+      ) {
+        this.currentRoom = map;
+      }
+    });
+  }
+
+  update() {
+    console.log("Updating map...");
+    this.drawLevel();
+  }
+}
