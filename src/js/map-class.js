@@ -152,8 +152,8 @@ export class Map {
           this.tileSize,
           this.x + x,
           this.y + y,
-          this.tileSize,
-          this.tileSize,
+          this.tileSize + 0.5,
+          this.tileSize + 0.5,
         );
         this.ctx.restore();
       }
