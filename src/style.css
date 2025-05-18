@@ -3,15 +3,15 @@ body {
     background-color: rgb(179, 179, 179);
     overflow: hidden;
     user-select: none;
-    cursor: url("../public/cursor.png"), auto;
+    cursor: url("../cursor.png"), auto;
     font-family: ending;
 }
 * {
-    cursor: url("../public/cursor.png"), auto
+    cursor: url("../cursor.png"), auto
 }
 @font-face {
     font-family: ending;
-    src: url("../public/alagard.ttf");
+    src: url("../alagard.ttf");
 }
 #canvas {
     image-rendering: crisp-edges;

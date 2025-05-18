@@ -16,9 +16,9 @@ export class LevelFunctions {
     this.announcerTxt = document.getElementById('announcer-txt')
   }
 
-  start() {
+  async start() {
     // setup
-    this.mapGen.init();
+    await this.mapGen.init();
     this.player.x = this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width/2;
     this.player.y = this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height/2;
     this.camera.position.x = this.player.x + this.player.width / 2 - this.camera.scaledCanvas.width / 2;

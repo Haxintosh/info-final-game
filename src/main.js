@@ -37,7 +37,7 @@ const camera = new Camera(canvas, ctx, player)
 
 // level functions
 const levelFunctions = new LevelFunctions(canvas, mapGen, player, camera)
-levelFunctions.start()
+await levelFunctions.start()
 
 animate();
 
