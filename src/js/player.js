@@ -17,7 +17,7 @@ export class Player {
     this.spritesheet = null;
     this.frameX = 0;
     this.frameY = 0;
-    this.animationSpeed = 10; // frames per animation change
+    this.animationSpeed = 5; // frames per animation change
     this.frameCounter = 0;
 
     // collision
@@ -162,41 +162,36 @@ export class Player {
       { x: this.hitbox.x, y: this.hitbox.y },
       { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y },
       { x: this.hitbox.x, y: this.hitbox.y + this.hitbox.height },
-      {
-        x: this.hitbox.x + this.hitbox.width,
-        y: this.hitbox.y + this.hitbox.height,
-      },
+      { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y + this.hitbox.height },
     ];
-    // adjust positions for map offset
-    positions.forEach((pos) => {
-      pos.x -= map.x;
-      pos.y -= map.y;
-    });
 
-    // check if any corner is colliding
-    for (const pos of positions) {
+    // adjust positions for map offset
+    const mapPositions = positions.map(pos => ({
+      x: pos.x - map.x,
+      y: pos.y - map.y
+    }));
+
+    for (const pos of mapPositions) {
       const tile = map.getTileAt(pos.x, pos.y);
       if (tile && tile.collidable) {
         return true;
       }
     }
 
-    // blocks (same logic applies)
-    blocks.forEach((map) => {
-      // adjust positions for map offset
-      positions.forEach((pos) => {
-        pos.x -= map.x;
-        pos.y -= map.y;
-      });
+    // blocks
+    for (const block of blocks) {
+      const blockPositions = positions.map(pos => ({
+        x: pos.x - block.x,
+        y: pos.y - block.y
+      }));
 
-      // check if any corner is colliding
-      for (const pos of positions) {
-        const tile = map.getTileAt(pos.x, pos.y);
+      for (const pos of blockPositions) {
+        const tile = block.getTileAt(pos.x, pos.y);
         if (tile && tile.collidable) {
           return true;
         }
       }
-    });
+    }
 
     return false;
   }

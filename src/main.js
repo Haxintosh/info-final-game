@@ -47,7 +47,7 @@ function animate() {
     console.error(error);
   }
 
-  mapGen.findCurrentRoom(player.x, player.y);
+  mapGen.findCurrentRoom(player);
   player.update(mapGen.currentRoom, mapGen.currentBlocks);
 
   ctx.fillStyle = 'red'
@@ -55,7 +55,7 @@ function animate() {
   camera.end()
 
   // Debug
-  // console.log(mapGen.renderedBlocks)
+  // console.log(mapGen.currentBlocks)
   // ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
   // ctx.fillRect(mapGen.currentRoom.x, mapGen.currentRoom.y, 20 * 16, 20 * 16);
 }

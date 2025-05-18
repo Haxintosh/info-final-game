@@ -221,13 +221,13 @@ export class MapGenerator {
   drawBlock(type, x, y, lockdownBlock = false) {
     let map;
     if (type === "hl") {
-      map = this.mapInstances.blocks.horizontalLeft;
+      map = this.mapInstances.blocks.horizontalLeft.clone();
     } else if (type === "hr") {
-      map = this.mapInstances.blocks.horizontalRight;
+      map = this.mapInstances.blocks.horizontalRight.clone();
     } else if (type === "vt") {
-      map = this.mapInstances.blocks.verticalTop;
+      map = this.mapInstances.blocks.verticalTop.clone();
     } else if (type === "vb") {
-      map = this.mapInstances.blocks.verticalBottom;
+      map = this.mapInstances.blocks.verticalBottom.clone();
     }
 
     if (map) {
@@ -327,7 +327,7 @@ export class MapGenerator {
     );
   }
 
-  findCurrentRoom(playerX, playerY) {
+  findCurrentRoom(player) {
     let totalIterations = 0;
 
     let roomFound = false;
@@ -340,10 +340,10 @@ export class MapGenerator {
       // this.ctx.fillRect(map.x, map.y, map.mapWidth * 16, map.mapHeight * 16);
       totalIterations++;
       if (
-        playerX >= map.x &&
-        playerX <= map.x + map.mapWidth * 16 &&
-        playerY >= map.y &&
-        playerY <= map.y + map.mapHeight * 16
+        player.x + player.width/2 >= map.x &&
+        player.x + player.width/2 <= map.x + map.mapWidth * 16 &&
+        player.y + player.height/2 >= map.y &&
+        player.y + player.height/2 <= map.y + map.mapHeight * 16
       ) {
         this.currentRoom = map;
         roomFound = true;
@@ -353,14 +353,25 @@ export class MapGenerator {
           this.previousCurrentRoom = this.currentRoom;
         }
 
-        this.currentBlocks = this.renderedBlocks.filter((block) => {
+        for (const block of this.renderedBlocks) {
           totalIterations++;
-          return (
-            Array.isArray(block.room) &&
-            block.room[0] === this.currentRoom.x / (40 * 16) &&
-            block.room[1] === this.currentRoom.y / (40 * 16)
-          );
-        });
+          if (
+            block.x >= this.currentRoom.x &&
+            block.x < this.currentRoom.x + this.currentRoom.mapWidth * 16 &&
+            block.y >= this.currentRoom.y &&
+            block.y < this.currentRoom.y + this.currentRoom.mapHeight * 16
+          ) {
+            this.currentBlocks.push(block);
+          }
+        }
+        // this.currentBlocks = this.renderedBlocks.filter((block) => {
+        //   return (
+        //     block.x >= this.currentRoom.x &&
+        //     block.x < this.currentRoom.x + this.currentRoom.mapWidth * 16 &&
+        //     block.y >= this.currentRoom.y &&
+        //     block.y < this.currentRoom.y + this.currentRoom.mapHeight * 16
+        //   );
+        // });
 
         break; //continue;
       }
@@ -370,12 +381,12 @@ export class MapGenerator {
       for (const map of this.renderedHalls) {
         totalIterations++;
         this.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-        this.ctx.fillRect(playerX, playerY, 20, 20);
+        this.ctx.fillRect(player.x, player.y, 20, 20);
         if (
-          playerX >= map.x &&
-          playerX <= map.x + map.mapWidth * 16 &&
-          playerY >= map.y &&
-          playerY <= map.y + map.mapHeight * 16
+          player.x + player.width/2 >= map.x &&
+          player.x + player.width/2 <= map.x + map.mapWidth * 16 &&
+          player.y + player.height/2 >= map.y &&
+          player.y + player.height/2 <= map.y + map.mapHeight * 16
         ) {
           this.currentRoom = map;
           break;
