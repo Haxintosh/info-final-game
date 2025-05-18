@@ -30,7 +30,7 @@ export class MapGenerator {
   }
   async init() {
     const loadMap = async (path, x = 0, y = 0) => {
-      console.log(this.canvas);
+      // console.log(this.canvas);
       const map = new Map(this.canvas, path, x, y);
       await map.loadMapFromFile(path.replace("spritesheet.png", "map.json"));
       return map;

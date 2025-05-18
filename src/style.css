@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+    background-color: rgb(179, 179, 179);
+    overflow: hidden;
+    user-select: none;
+    /*cursor: url("./assets/images/cursor.png"), auto;*/
+    /*font-family: ending;*/
+}
+* {
+    /*cursor: url("./assets/images/cursor.png"), auto*/
+}
+#canvas {
+    image-rendering: crisp-edges;
+}

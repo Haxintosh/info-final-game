@@ -142,6 +142,8 @@ export class Map {
         const spritesheetX = (tileId % tilesPerRow) * this.tileSize;
         const spritesheetY = Math.floor(tileId / tilesPerRow) * this.tileSize;
 
+        this.ctx.save();
+        this.ctx.scale(1, 1);
         this.ctx.drawImage(
           this.spritesheet,
           spritesheetX,
@@ -153,6 +155,7 @@ export class Map {
           this.tileSize,
           this.tileSize,
         );
+        this.ctx.restore();
       }
     }
 

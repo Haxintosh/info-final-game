@@ -21,12 +21,7 @@ export class Player {
     this.frameCounter = 0;
 
     // collision
-    this.hitbox = {
-      x: this.x + 9,
-      y: this.y + 20,
-      width: this.width - 9 - 10,
-      height: 3,
-    };
+    this.hitbox = {};
 
     // movement keys
     this.keys = {
@@ -157,7 +152,7 @@ export class Player {
   checkCollisionWithMap(map, blocks) {
     this.hitbox = {
       x: this.x + 9,
-      y: this.y + 20,
+      y: this.y + 18,
       width: this.width - 9 - 10,
       height: 3,
     };
