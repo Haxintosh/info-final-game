@@ -3,15 +3,18 @@ import { Map } from "./js/map-class.js";
 import { MapGenerator } from "./js/map-gen-class.js";
 import { Player } from "./js/player.js";
 import { Camera } from "./js/camera.js";
+import { LevelFunctions } from "./js/level-functions.js";
+import {ButtonPrompt} from "./js/button-prompt.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false
 canvas.imageRendering = "pixelated"
 
+// map
 const mapGen = new MapGenerator(canvas);
 
-await mapGen.init();
+// await mapGen.init();
 // mapGen.update().catch(console.error);
 
 // player
@@ -29,7 +32,12 @@ await player.loadSpritesheet("../character/run.png");
 window.addEventListener("keydown", (e) => player.handleKeyDown(e));
 window.addEventListener("keyup", (e) => player.handleKeyUp(e));
 
+// camera
 const camera = new Camera(canvas, ctx, player)
+
+// level functions
+const levelFunctions = new LevelFunctions(canvas, mapGen, player, camera)
+levelFunctions.start()
 
 animate();
 
@@ -50,8 +58,9 @@ function animate() {
   mapGen.findCurrentRoom(player);
   player.update(mapGen.currentRoom, mapGen.currentBlocks);
 
-  ctx.fillStyle = 'red'
-  ctx.fillRect(0, 0, 20, 20);
+  // console.log(player.getFacingTile(mapGen.currentRoom))
+  levelFunctions.checkInteract()
+
   camera.end()
 
   // Debug

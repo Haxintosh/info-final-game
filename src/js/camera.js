@@ -5,7 +5,7 @@ export class Camera {
 
     this.player = player;
 
-    this.zoomFactor = 3;
+    this.zoomFactor = 5;
     this.scaledCanvas = {
       width: canvas.width / this.zoomFactor,
       height: canvas.height / this.zoomFactor,
@@ -16,11 +16,9 @@ export class Camera {
     this.camFocusTargetY;
     this.yCamOffset = 70;
 
-    this.camera = {
-      position: {
+    this.position = {
         x: canvas.width / 2,
         y: canvas.height / 2,
-      },
     };
   }
 
@@ -32,9 +30,9 @@ export class Camera {
       this.player.y + this.player.height / 2 - this.scaledCanvas.height / 2;
 
     // smoothly interpolate the camera position towards the target position
-    const smoothness = 0.1; // adjust to control smoothness of the panning
-    this.camera.position.x += (targetX - this.camera.position.x) * smoothness;
-    this.camera.position.y += (targetY - this.camera.position.y) * smoothness;
+    const smoothness = 0.2; // adjust to control smoothness of the panning
+    this.position.x += (targetX - this.position.x) * smoothness;
+    this.position.y += (targetY - this.position.y) * smoothness;
   }
 
   begin() {
@@ -42,7 +40,7 @@ export class Camera {
     this.ctx.save();
 
     this.ctx.scale(this.zoomFactor, this.zoomFactor);
-    this.ctx.translate(-this.camera.position.x, -this.camera.position.y);
+    this.ctx.translate(-this.position.x, -this.position.y);
   }
 
   end() {

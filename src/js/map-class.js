@@ -16,9 +16,12 @@ export class Map {
     this.mapHeight = 0;
     this.layers = [];
     this.collisionMap = []; // use this for collision
+    this.interactMap = []; // use this for interact blocks
     this.debugMode = false;
     this.x = x;
     this.y = y;
+    this.type = null
+    this.subtype = null
 
     // blockade logic
     this.room = room;
@@ -47,11 +50,19 @@ export class Map {
       .fill()
       .map(() => Array(this.mapWidth).fill(0));
 
+    // init collision map
+    this.interactMap = Array(this.mapHeight)
+      .fill()
+      .map(() => Array(this.mapWidth).fill(0));
+
     // layers
     this.layers = data.layers;
 
     // process collision data
     this.processCollisionLayer();
+
+    // process interact data
+    this.processInteractLayer();
 
     // wait for spritesheet image to fully load
     return new Promise((resolve, reject) => {
@@ -95,6 +106,25 @@ export class Map {
           const y = parseInt(tile.y, 10);
 
           this.collisionMap[y][x] = 1;
+        }
+      }
+    }
+  }
+
+  processInteractLayer() {
+    // reset collision map
+    this.interactMap = Array(this.mapHeight)
+      .fill()
+      .map(() => Array(this.mapWidth).fill(0));
+
+    // processing each layer that has collider=true in the .json file
+    for (const layer of this.layers) {
+      if (layer.name === 'interactable') {
+        for (const tile of layer.tiles) {
+          const x = parseInt(tile.x, 10);
+          const y = parseInt(tile.y, 10);
+
+          this.interactMap[y][x] = 1;
         }
       }
     }
@@ -214,6 +244,7 @@ export class Map {
       x: tileX,
       y: tileY,
       collidable: this.collisionMap[tileY][tileX] === 1,
+      interactable: this.interactMap[tileY][tileX] === 1,
     };
   }
 
@@ -236,6 +267,7 @@ export class Map {
     clonedMap.mapHeight = this.mapHeight;
     clonedMap.layers = JSON.parse(JSON.stringify(this.layers));
     clonedMap.collisionMap = JSON.parse(JSON.stringify(this.collisionMap));
+    clonedMap.interactMap = JSON.parse(JSON.stringify(this.interactMap));
     return clonedMap;
   }
 }

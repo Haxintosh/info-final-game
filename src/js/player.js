@@ -31,8 +31,11 @@ export class Player {
       right: false,
     };
 
+    // lock player
+    this.movementLocked = false;
+
     // debug
-    this.debugMode = true;
+    this.debugMode = false;
   }
 
   async loadSpritesheet(spritesheetPath) {
@@ -88,15 +91,14 @@ export class Player {
   }
 
   update(map, blocks) {
-    this.movement(map, blocks);
+    if (!this.movementLocked) this.movement(map, blocks);
     this.animate();
     this.render();
   }
 
   movement(map, blocks) {
     // check if moving
-    this.moving =
-      this.keys.up || this.keys.down || this.keys.left || this.keys.right;
+    this.moving = this.keys.up || this.keys.down || this.keys.left || this.keys.right;
 
     // old position for collision resolution
     const oldX = this.x;
@@ -151,10 +153,10 @@ export class Player {
 
   checkCollisionWithMap(map, blocks) {
     this.hitbox = {
-      x: this.x + 9,
-      y: this.y + 18,
-      width: this.width - 9 - 10,
-      height: 3,
+      x: this.x + this.width/2 - 6,
+      y: this.y + this.height/2 + 2,
+      width: 11,
+      height: 5,
     };
 
     // check collision with the four corners of the hitbox
@@ -284,6 +286,7 @@ export class Player {
 
   // get tile position the player is currently facing
   getFacingTile(map) {
+    if (!map) return
     const centerX = this.getCenterX() - map.x;
     const centerY = this.getCenterY() - map.y;
     let tileX = Math.floor(centerX / map.tileSize);

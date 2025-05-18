@@ -7,11 +7,10 @@ export class MapGenerator {
 
     this.grid = Array.from({ length: 5 }, () => Array(5).fill(0));
     this.start = {};
+    this.end = {};
     this.renderedMap = [];
     this.renderedHalls = [];
     this.renderedBlocks = [];
-    this.playerX = 0; // Temporary, replace later with actual player position
-    this.playerY = 0;
     this.previousCurrentRoom = null;
     this.currentRoom = null;
     this.currentBlocks = [];
@@ -107,6 +106,7 @@ export class MapGenerator {
       end.y = 1;
     }
     this.start = { x: start.x, y: start.y };
+    this.end = { x: end.x, y: end.y };
 
     this.grid[start.y][start.x] = 2;
     this.grid[end.y][end.x] = 3;
@@ -196,6 +196,8 @@ export class MapGenerator {
       this.renderedMap.push(map);
       map.x = x * 40 * 16;
       map.y = y * 40 * 16;
+      map.type = type
+      map.subtype = subtype
       map.render();
     }
   }
@@ -342,8 +344,8 @@ export class MapGenerator {
       if (
         player.x + player.width/2 >= map.x &&
         player.x + player.width/2 <= map.x + map.mapWidth * 16 &&
-        player.y + player.height/2 >= map.y &&
-        player.y + player.height/2 <= map.y + map.mapHeight * 16
+        player.y + player.height/2 + 4 >= map.y && // player hitbox is slightly offset downwards by 2, i put 4 just ot be safe
+        player.y + player.height/2 + 4 <= map.y + map.mapHeight * 16
       ) {
         this.currentRoom = map;
         roomFound = true;
@@ -380,13 +382,17 @@ export class MapGenerator {
     if (!roomFound) {
       for (const map of this.renderedHalls) {
         totalIterations++;
-        this.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-        this.ctx.fillRect(player.x, player.y, 20, 20);
+
+        if (player.debugMode) {
+          this.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+          this.ctx.fillRect(player.x, player.y, 20, 20);
+        }
+
         if (
           player.x + player.width/2 >= map.x &&
           player.x + player.width/2 <= map.x + map.mapWidth * 16 &&
-          player.y + player.height/2 >= map.y &&
-          player.y + player.height/2 <= map.y + map.mapHeight * 16
+          player.y + player.height/2 + 4 >= map.y &&
+          player.y + player.height/2 + 4 <= map.y + map.mapHeight * 16
         ) {
           this.currentRoom = map;
           break;
