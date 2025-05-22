@@ -49,42 +49,42 @@ export class Player {
   }
 
   handleKeyDown(e) {
-    switch (e.key) {
+    switch (e.code) {
       case "ArrowUp":
-      case "w":
+      case "KeyW":
         this.keys.up = true;
         break;
       case "ArrowDown":
-      case "s":
+      case "KeyS":
         this.keys.down = true;
         break;
       case "ArrowLeft":
-      case "a":
+      case "KeyA":
         this.keys.left = true;
         break;
       case "ArrowRight":
-      case "d":
+      case "KeyD":
         this.keys.right = true;
         break;
     }
   }
 
   handleKeyUp(e) {
-    switch (e.key) {
+    switch (e.code) {
       case "ArrowUp":
-      case "w":
+      case "KeyW":
         this.keys.up = false;
         break;
       case "ArrowDown":
-      case "s":
+      case "KeyS":
         this.keys.down = false;
         break;
       case "ArrowLeft":
-      case "a":
+      case "KeyA":
         this.keys.left = false;
         break;
       case "ArrowRight":
-      case "d":
+      case "KeyD":
         this.keys.right = false;
         break;
     }
