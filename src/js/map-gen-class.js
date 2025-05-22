@@ -181,81 +181,7 @@ export class MapGenerator {
     }
   }
 
-  drawRoom(type, subtype, x, y) {
-    let map;
-    if (type === 1) {
-      map = this.mapInstances.rooms.battle.clone();
-    } else if (type === 2) {
-      map = this.mapInstances.rooms.start.clone();
-    } else if (type === 3) {
-      map = this.mapInstances.rooms.end.clone();
-    } else if (type === 4) {
-      map = this.mapInstances.rooms[`special_${subtype}`].clone();
-    }
-
-    if (map) {
-      map.setPosition(x * 40 * 16, y * 40 * 16);
-      this.renderedMap.push(map);
-      map.x = x * 40 * 16;
-      map.y = y * 40 * 16;
-      map.type = type
-      map.subtype = subtype
-      map.render();
-    }
-  }
-
-  drawHall(type, x, y) {
-    let map;
-    if (type === "h") {
-      map = this.mapInstances.halls.horizontal.clone();
-    } else if (type === "v") {
-      map = this.mapInstances.halls.vertical.clone();
-    }
-
-    if (map) {
-      map.setPosition(
-        type === "h" ? x * 40 * 16 + 20 * 16 : x * 40 * 16 + 7 * 16,
-        type === "h" ? y * 40 * 16 + 6 * 16 : y * 40 * 16 + 20 * 16,
-      );
-      this.renderedHalls.push(map);
-      map.render();
-    }
-  }
-
-  drawBlock(type, x, y, lockdownBlock = false) {
-    let map;
-    if (type === "hl") {
-      map = this.mapInstances.blocks.horizontalLeft.clone();
-    } else if (type === "hr") {
-      map = this.mapInstances.blocks.horizontalRight.clone();
-    } else if (type === "vt") {
-      map = this.mapInstances.blocks.verticalTop.clone();
-    } else if (type === "vb") {
-      map = this.mapInstances.blocks.verticalBottom.clone();
-    }
-
-    if (map) {
-      map.setPosition(
-        type === "hl"
-          ? x * 40 * 16
-          : type === "hr"
-            ? x * 40 * 16 + 19 * 16
-            : x * 40 * 16 + 8 * 16,
-        type === "hl"
-          ? y * 40 * 16 + 7 * 16
-          : type === "hr"
-            ? y * 40 * 16 + 7 * 16
-            : type === "vt"
-              ? y * 40 * 16
-              : y * 40 * 16 + 19 * 16,
-      );
-      map.lockdownBlock = lockdownBlock;
-      this.renderedBlocks.push(map);
-      map.render();
-    }
-  }
-
-  drawLevel() {
+  drawLayout() {
     this.renderedMap = [];
     this.renderedHalls = [];
     this.renderedBlocks = [];
@@ -315,20 +241,109 @@ export class MapGenerator {
         }
       }
     }
+  }
+
+  drawRoom(type, subtype, x, y) {
+    let map;
+    if (type === 1) {
+      map = this.mapInstances.rooms.battle.clone();
+    } else if (type === 2) {
+      map = this.mapInstances.rooms.start.clone();
+    } else if (type === 3) {
+      map = this.mapInstances.rooms.end.clone();
+    } else if (type === 4) {
+      map = this.mapInstances.rooms[`special_${subtype}`].clone();
+    }
+
+    if (map) {
+      map.setPosition(x * 40 * 16, y * 40 * 16);
+      this.renderedMap.push(map);
+      map.x = x * 40 * 16;
+      map.y = y * 40 * 16;
+      map.type = type
+      map.subtype = subtype
+      // map.render();
+    }
+  }
+
+  drawHall(type, x, y) {
+    let map;
+    if (type === "h") {
+      map = this.mapInstances.halls.horizontal.clone();
+    } else if (type === "v") {
+      map = this.mapInstances.halls.vertical.clone();
+    }
+
+    if (map) {
+      map.setPosition(
+        type === "h" ? x * 40 * 16 + 20 * 16 : x * 40 * 16 + 7 * 16,
+        type === "h" ? y * 40 * 16 + 6 * 16 : y * 40 * 16 + 20 * 16,
+      );
+      this.renderedHalls.push(map);
+      // map.render();
+    }
+  }
+
+  drawBlock(type, x, y, lockdownBlock = false) {
+    let map;
+    if (type === "hl") {
+      map = this.mapInstances.blocks.horizontalLeft.clone();
+    } else if (type === "hr") {
+      map = this.mapInstances.blocks.horizontalRight.clone();
+    } else if (type === "vt") {
+      map = this.mapInstances.blocks.verticalTop.clone();
+    } else if (type === "vb") {
+      map = this.mapInstances.blocks.verticalBottom.clone();
+    }
+
+    if (map) {
+      map.setPosition(
+        type === "hl"
+          ? x * 40 * 16
+          : type === "hr"
+            ? x * 40 * 16 + 19 * 16
+            : x * 40 * 16 + 8 * 16,
+        type === "hl"
+          ? y * 40 * 16 + 7 * 16
+          : type === "hr"
+            ? y * 40 * 16 + 7 * 16
+            : type === "vt"
+              ? y * 40 * 16
+              : y * 40 * 16 + 19 * 16,
+      );
+      map.lockdownBlock = lockdownBlock;
+      this.renderedBlocks.push(map);
+      // map.render();
+    }
+  }
+
+  drawLevel() {
+    this.renderedMap.forEach((map) => {
+      map.render()
+    })
+    this.renderedHalls.forEach((map) => {
+      map.render()
+    })
+    this.renderedBlocks.forEach((map) => {
+      map.render()
+    })
+
     // console.log(this.grid);
   }
 
   lockdownRoom(x, y) {
-    this.drawBlock("hl", x, y, true).catch(console.error);
-    this.drawBlock("hr", x, y, true).catch(console.error);
-    this.drawBlock("vt", x, y, true).catch(console.error);
-    this.drawBlock("vb", x, y, true).catch(console.error);
+    this.drawBlock("hl", x, y, true);
+    this.drawBlock("hr", x, y, true);
+    this.drawBlock("vt", x, y, true);
+    this.drawBlock("vb", x, y, true);
   }
 
-  unlockRooms() {
-    this.renderedBlocks = this.renderedBlocks.filter(
-      (block) => !block.lockdownBlock,
-    );
+  unlockRooms() { // kinda does nothing lol, this.renderedBlocks getting updated doesn't do anything
+    this.renderedBlocks.forEach((block) => {
+      if (block.lockdownBlock) {
+        this.renderedBlocks.splice(block, 1)
+      }
+    })
   }
 
   findCurrentRoom(player) {
@@ -357,17 +372,17 @@ export class MapGenerator {
           this.previousCurrentRoom = this.currentRoom;
         }
 
-        for (const block of this.renderedBlocks) {
-          totalIterations++;
-          if (
-            block.x >= this.currentRoom.x &&
-            block.x < this.currentRoom.x + this.currentRoom.mapWidth * 16 &&
-            block.y >= this.currentRoom.y &&
-            block.y < this.currentRoom.y + this.currentRoom.mapHeight * 16
-          ) {
-            this.currentBlocks.push(block);
-          }
-        }
+        // for (const block of this.renderedBlocks) {
+        //   totalIterations++;
+        //   if (
+        //     block.x >= this.currentRoom.x &&
+        //     block.x < this.currentRoom.x + this.currentRoom.mapWidth * 16 &&
+        //     block.y >= this.currentRoom.y &&
+        //     block.y < this.currentRoom.y + this.currentRoom.mapHeight * 16
+        //   ) {
+        //     this.currentBlocks.push(block);
+        //   }
+        // }
         // this.currentBlocks = this.renderedBlocks.filter((block) => {
         //   return (
         //     block.x >= this.currentRoom.x &&

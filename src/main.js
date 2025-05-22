@@ -25,6 +25,7 @@ const player = new Player(
   32,
   32,
   2,
+  mapGen,
 );
 await player.loadSpritesheet("../character/run.png");
 
@@ -39,6 +40,7 @@ const camera = new Camera(canvas, ctx, player)
 const levelFunctions = new LevelFunctions(canvas, mapGen, player, camera)
 await levelFunctions.start()
 window.addEventListener('keydown', (e) => levelFunctions.interact(e))
+player.levelFunctions = levelFunctions
 
 animate();
 
@@ -58,9 +60,11 @@ function animate() {
 
   mapGen.findCurrentRoom(player);
 
+  levelFunctions.checkBattleRoom()
+
   if (player.direction !== 'down') levelFunctions.update()
 
-  player.update(mapGen.currentRoom, mapGen.currentBlocks);
+  player.update(mapGen.currentRoom, mapGen.renderedBlocks);
 
   // console.log(player.getFacingTile(mapGen.currentRoom))
   levelFunctions.checkInteract()
@@ -87,3 +91,10 @@ window.addEventListener('resize', () => {
   camera.scaledCanvas.width = canvas.width / camera.zoomFactor
   camera.scaledCanvas.height = canvas.height / camera.zoomFactor
 })
+
+
+// testing
+// window.addEventListener('click', () => {
+//   player.decreaseHp()
+//   console.log(player.hp)
+// })

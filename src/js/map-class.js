@@ -35,6 +35,9 @@ export class Map {
     if (mapData) {
       this.loadMap(mapData);
     }
+
+    // battle room
+    this.battleRoomDone = false
   }
 
   async loadMap(mapData) {

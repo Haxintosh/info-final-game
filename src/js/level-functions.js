@@ -5,13 +5,16 @@ export class LevelFunctions {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
 
+    // objs
     this.mapGen = mapGen;
     this.player = player;
     this.camera = camera
 
+    // lvls
     this.level = 1
     this.sublevel = 1
 
+    // html elements
     this.announcerCard = document.getElementById('announcer')
     this.announcerTxt = document.getElementById('announcer-txt')
     this.announcerSubCard = document.getElementById('announcer-sub')
@@ -19,11 +22,15 @@ export class LevelFunctions {
 
     this.blackout = document.getElementById('blackout')
 
+    // interaction stuff
     this.interacted = false
     this.interactAction = null
 
     this.img = new Image()
     this.img.src = './map-assets/room_end/statue_completed.png'
+
+    // battle room
+    this.battling = false
   }
 
   async start() {
@@ -31,6 +38,12 @@ export class LevelFunctions {
 
     // setup
     await this.mapGen.init();
+
+    try {
+      this.mapGen.drawLayout();
+    } catch (error) {
+      console.error(error);
+    }
 
     this.player.x = this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width/2;
     this.player.y = this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height/2;
@@ -118,6 +131,7 @@ export class LevelFunctions {
   }
 
   update() {
+    // this.checkBattleRoom()
     if (this.interacted && this.interactAction === 'EndStage') this.showEndStatue();
   }
 
@@ -127,5 +141,41 @@ export class LevelFunctions {
       this.mapGen.currentRoom.x + 9 * 16,
       this.mapGen.currentRoom.y + 6 * 16,
     );
+  }
+
+  checkBattleRoom() {
+    if (this.mapGen.currentRoom.type === 1 && !this.mapGen.currentRoom.battleRoomDone) {
+      console.log(this.mapGen.currentRoom.battleRoomDone)
+
+      this.mapGen.lockdownRoom(this.mapGen.currentRoom.x/(40*16), this.mapGen.currentRoom.y/(40*16))
+
+      if (this.battling) return // trigger once
+      this.battling = true
+
+      // snap player position
+      let dx = (this.player.x + this.player.width/2) - (this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth*16/2);
+      let dy = (this.player.y + this.player.height/2) - (this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight*16/2);
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) {
+          // right side
+          this.player.x -= 32
+        } else {
+          // left side
+          this.player.x += 32
+        }
+      } else {
+        if (dy > 0) {
+          // bottom side
+          this.player.y -= 32
+        } else {
+          // top side
+          this.player.y += 32
+        }
+      }
+
+      // spawn enemy logic
+      setTimeout(()=> {this.mapGen.unlockRooms(); this.mapGen.currentRoom.battleRoomDone = true; console.log(this.mapGen.currentRoom.battleRoomDone)}, 1000)
+
+    }
   }
 }

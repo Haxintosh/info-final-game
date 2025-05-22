@@ -1,5 +1,5 @@
 export class Player {
-  constructor(canvas, x, y, width, height, speed = 2) {
+  constructor(canvas, x, y, width, height, speed = 2, mapGen) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -8,6 +8,8 @@ export class Player {
 
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
+
+    this.mapGen = mapGen
 
     // movement states
     this.direction = "down"; // 'up', 'down', 'left', 'right'
@@ -33,6 +35,10 @@ export class Player {
 
     // lock player
     this.movementLocked = false;
+
+    // health
+    this.maxHp = 5
+    this.hp = this.maxHp
 
     // debug
     this.debugMode = false;
@@ -182,15 +188,22 @@ export class Player {
 
     // blocks
     for (const block of blocks) {
-      const blockPositions = positions.map(pos => ({
-        x: pos.x - block.x,
-        y: pos.y - block.y
-      }));
+      if (
+        block.x >= this.mapGen.currentRoom.x &&
+        block.x < this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth * 16 &&
+        block.y >= this.mapGen.currentRoom.y &&
+        block.y < this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight * 16
+      ) {
+        const blockPositions = positions.map(pos => ({
+          x: pos.x - block.x,
+          y: pos.y - block.y
+        }));
 
-      for (const pos of blockPositions) {
-        const tile = block.getTileAt(pos.x, pos.y);
-        if (tile && tile.collidable) {
-          return true;
+        for (const pos of blockPositions) {
+          const tile = block.getTileAt(pos.x, pos.y);
+          if (tile && tile.collidable) {
+            return true;
+          }
         }
       }
     }
@@ -318,5 +331,26 @@ export class Player {
     }
 
     return { x: tileX, y: tileY };
+  }
+
+  decreaseHp() {
+    this.hp--
+
+    const hearts = document.querySelectorAll('.heart');
+
+    for (let i = hearts.length - 1; i >= 0; i--) {
+      const heart = hearts[i];
+      if (heart.src.includes('/heart.png')) {
+        heart.src = '/heart-dead.png';
+        break; // stops after breaking one heart
+      }
+    }
+
+    // dead
+    if (this.hp <= 0) {
+      this.movementLocked = true
+
+
+    }
   }
 }
