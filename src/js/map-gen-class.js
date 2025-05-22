@@ -21,13 +21,15 @@ export class MapGenerator {
       blocks: {},
     };
 
-    this.generatedLevel = this.generateLevel();
+    // this.generatedLevel = this.generateLevel();
 
     // DEBUG
     // this.iterationCount = [];
     // this.totalIterations = 0;
   }
   async init() {
+    this.generateLevel()
+
     const loadMap = async (path, x = 0, y = 0) => {
       // console.log(this.canvas);
       const map = new Map(this.canvas, path, x, y);

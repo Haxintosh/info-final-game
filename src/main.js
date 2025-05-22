@@ -38,6 +38,7 @@ const camera = new Camera(canvas, ctx, player)
 // level functions
 const levelFunctions = new LevelFunctions(canvas, mapGen, player, camera)
 await levelFunctions.start()
+window.addEventListener('keydown', (e) => levelFunctions.interact(e))
 
 animate();
 
@@ -56,10 +57,14 @@ function animate() {
   }
 
   mapGen.findCurrentRoom(player);
+
+  if (player.direction !== 'down') levelFunctions.update()
+
   player.update(mapGen.currentRoom, mapGen.currentBlocks);
 
   // console.log(player.getFacingTile(mapGen.currentRoom))
   levelFunctions.checkInteract()
+  if (player.direction === 'down') levelFunctions.update()
 
   camera.end()
 
