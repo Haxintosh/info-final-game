@@ -205,15 +205,13 @@ export class LevelFunctions {
       this.mapGen.currentRoom.type === 1 &&
       !this.mapGen.currentRoom.battleRoomDone
     ) {
-      console.log(this.mapGen.currentRoom.battleRoomDone);
+      if (this.battling) return; // trigger once
+      this.battling = true;
 
       this.mapGen.lockdownRoom(
         this.mapGen.currentRoom.x / (40 * 16),
         this.mapGen.currentRoom.y / (40 * 16),
       );
-
-      if (this.battling) return; // trigger once
-      this.battling = true;
 
       // snap player position
       let dx =
@@ -245,11 +243,10 @@ export class LevelFunctions {
       }
 
       // spawn enemy logic
-      setTimeout(() => {
-        this.mapGen.unlockRooms();
-        this.mapGen.currentRoom.battleRoomDone = true;
-        console.log(this.mapGen.currentRoom.battleRoomDone);
-      }, 1000);
+      // make sure to add these after all enemies are defeated:
+      // this.mapGen.unlockRooms();
+      // this.mapGen.currentRoom.battleRoomDone = true;
+      // this.battling = false;
     }
   }
 }

@@ -338,12 +338,12 @@ export class MapGenerator {
     this.drawBlock("vb", x, y, true);
   }
 
-  unlockRooms() { // kinda does nothing lol, this.renderedBlocks getting updated doesn't do anything
-    this.renderedBlocks.forEach((block) => {
-      if (block.lockdownBlock) {
-        this.renderedBlocks.splice(block, 1)
+  unlockRooms() {
+    for (let i = this.renderedBlocks.length - 1; i >= 0; i--) {
+      if (this.renderedBlocks[i].lockdownBlock) {
+        this.renderedBlocks.splice(i, 1);
       }
-    })
+    }
   }
 
   findCurrentRoom(player) {
