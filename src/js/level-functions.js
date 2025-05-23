@@ -48,7 +48,7 @@ export class LevelFunctions {
         console.log(tileX, tileY);
         console.log(room);
         if (room.enemyMap[tileY][tileX] === 0) {
-          const enemy = new Enemy(room, x, y, 4, 4, 0.3);
+          const enemy = new Enemy(room, x, y, 4, 4, 0.3, this.player);
           this.enemies.push(enemy);
         }
         break;

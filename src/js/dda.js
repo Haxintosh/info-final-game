@@ -1,4 +1,4 @@
-export function ddaRaycast(grid, startX, startY, endX, endY) {
+export function ddaRaycast(grid, x, y, ex, ey) {
   const dx = ex - x;
   const dy = ey - y;
   const steps = Math.max(Math.abs(dx), Math.abs(dy));
