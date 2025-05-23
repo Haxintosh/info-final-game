@@ -162,7 +162,7 @@ export class Projectile {
     ) {
       this.alive = false;
     }
-
+    this.checkCollisionWithMap(currentMap);
     // console.log(this.origin.distance(this.position));
     this.draw();
   }

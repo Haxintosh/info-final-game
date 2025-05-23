@@ -1,7 +1,7 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
 export class Enemy {
-  constructor(room, x, y, width, height, speed, player) {
+  constructor(room, x, y, width, height, speed, player, hp = 10) {
     this.x = x;
     this.y = y;
     this.width = width; // hitbox width
@@ -9,11 +9,16 @@ export class Enemy {
     this.speed = speed || 0.5;
 
     // animation
-    this.spritesheet = null;
+    this.spritesheetIdle = null;
+    this.spritesheetRun = null;
+    this.spritesheetAttack = null;
+    this.spritesheetDeath = null;
+    this.spritesheetCurrent = this.spritesheetIdle;
     this.frameX = 0;
     this.frameY = 0;
     this.animationSpeed = 5; // frames per animation change
     this.frameCounter = 0;
+    this.direction = 'down'
     this.color = "red"; // default color
 
     this.path = [];
@@ -26,6 +31,19 @@ export class Enemy {
     this.player = player;
 
     this.effects = [];
+    this.effectDuration = 0;
+
+    this.hp = hp;
+  }
+
+  async loadSpritesheet(spritesheetPath) {
+    this.spritesheet = new Image();
+    this.spritesheet.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheet.onload = () => resolve();
+      this.spritesheet.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
   }
 
   followPath(grid) {
@@ -60,6 +78,29 @@ export class Enemy {
     } else {
       this.x += (dx / distance) * this.speed;
       this.y += (dy / distance) * this.speed;
+    }
+
+    // check for direction
+    if (Math.abs(dx) >= Math.abs(dy)) {
+      // Moving more horizontally than vertically
+      if (dx > 0) {
+        this.direction = 'right';
+      } else {
+        this.direction = 'left';
+      }
+    } else {
+      // Moving more vertically than horizontally
+      if (dy > 0) {
+        this.direction = 'down';
+      } else {
+        this.direction = 'up';
+      }
+    }
+
+    if (dx === 0 && dy === 0) {
+      this.spritesheetCurrent = this.spritesheetIdle
+    } else {
+      this.spritesheetCurrent = this.spritesheetRun
     }
   }
 
@@ -170,6 +211,15 @@ export class Enemy {
     }
   }
 
+  hpCheck() {
+    if (this.hp <= 0) {
+      this.room.enemyMap[Math.floor((this.y - this.room.y) / 16)][
+        Math.floor((this.x - this.room.x) / 16)
+      ] = 0;
+      this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
+    }
+  }
+
   update(ctx) {
     if (this.wanderDelay > 0) {
       this.wanderDelay--;
@@ -179,7 +229,33 @@ export class Enemy {
       this.randomWander(this.room);
     }
     this.followPath(this.room.enemyMap);
+    this.animate()
     this.render(ctx);
+    this.hpCheck();
+  }
+
+  animate() {
+    this.frameCounter++;
+    if (this.frameCounter >= this.animationSpeed) {
+      this.frameCounter = 0;
+      this.frameX = (this.frameX + 1) % 8; // assuming 8 frames per animation
+    }
+
+    // set frameY based on direction
+    switch (this.direction) {
+      case "down":
+        this.frameY = 0;
+        break;
+      case "right":
+        this.frameY = 1;
+        break;
+      case "left":
+        this.frameY = 2;
+        break;
+      case "up":
+        this.frameY = 3;
+        break;
+    }
   }
 
   render(ctx) {
@@ -188,6 +264,26 @@ export class Enemy {
     //   this.frameCounter = 0;
     //   this.frameX = (this.frameX + 1) % 4;
     // }
+
+    console.log(this.spritesheetCurrent, this.spritesheetIdle)
+    if (this.spritesheetCurrent) {
+      const frameWidth = this.spritesheetCurrent.width / 6;
+      const frameHeight = this.spritesheetCurrent.height / 4;
+
+      ctx.drawImage(
+        this.spritesheetCurrent,
+        this.frameX * frameWidth,
+        this.frameY * frameHeight,
+        frameWidth,
+        frameHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height,
+      );
+    }
+
+    // debug
     ctx.fillStyle = this.color;
     ctx.fillRect(
       this.x - this.width / 2,
