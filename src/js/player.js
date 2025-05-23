@@ -115,6 +115,11 @@ export class Player {
   update(map, blocks) {
     if (!this.movementLocked) this.movement(map, blocks);
     this.animate();
+
+    if (this.gun) {
+      this.gun.updateProjectiles(16, 1, map);
+      // console.log(map);
+    }
     this.render();
   }
 
@@ -255,10 +260,6 @@ export class Player {
       case "up":
         this.frameY = 3;
         break;
-    }
-
-    if (this.gun) {
-      this.gun.updateProjectiles(16, 1);
     }
   }
 

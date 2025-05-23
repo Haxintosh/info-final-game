@@ -1,7 +1,7 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
 export class Enemy {
-  constructor(room, x, y, width, height, speed, player) {
+  constructor(room, x, y, width, height, speed, player, hp = 10) {
     this.x = x;
     this.y = y;
     this.width = width; // hitbox width
@@ -26,6 +26,9 @@ export class Enemy {
     this.player = player;
 
     this.effects = [];
+    this.effectDuration = 0;
+
+    this.hp = hp;
   }
 
   followPath(grid) {
@@ -170,6 +173,15 @@ export class Enemy {
     }
   }
 
+  hpCheck() {
+    if (this.hp <= 0) {
+      this.room.enemyMap[Math.floor((this.y - this.room.y) / 16)][
+        Math.floor((this.x - this.room.x) / 16)
+      ] = 0;
+      this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
+    }
+  }
+
   update(ctx) {
     if (this.wanderDelay > 0) {
       this.wanderDelay--;
@@ -180,6 +192,7 @@ export class Enemy {
     }
     this.followPath(this.room.enemyMap);
     this.render(ctx);
+    this.hpCheck();
   }
 
   render(ctx) {

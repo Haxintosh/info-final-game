@@ -51,6 +51,11 @@ const gun = starterWeapons.find((gun) => gun.name === "Shotgun");
 player.assignGun(gun);
 animate();
 
+// TO BE REMOVED
+levelFunctions.spawnEnemies(mapGen.currentRoom);
+levelFunctions.spawnEnemies(mapGen.currentRoom);
+levelFunctions.spawnEnemies(mapGen.currentRoom);
+
 function animate() {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -104,10 +109,9 @@ window.addEventListener("resize", () => {
 // })
 
 window.addEventListener("mousedown", (e) => {
-  levelFunctions.spawnEnemies(mapGen.currentRoom);
-  console.log("mouse", e.x, e.y);
+  // console.log("mouse", e.x, e.y);
   // calculate angle enter of screen - mouse
   const angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2);
   player.shootGun(angle);
-  console.log("angle", angle * (180 / Math.PI));
+  // console.log("angle", angle * (180 / Math.PI));
 });
