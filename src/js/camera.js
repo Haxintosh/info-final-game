@@ -17,8 +17,8 @@ export class Camera {
     this.yCamOffset = 70;
 
     this.position = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
+      x: canvas.width / 2,
+      y: canvas.height / 2,
     };
   }
 

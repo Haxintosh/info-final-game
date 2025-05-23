@@ -18,7 +18,7 @@ class Node {
 
 // A* //
 export function aStar(grid, start, goal, congregateDistance = 2) {
-  // 0 to go to goal 
+  // 0 to go to goal
   const openList = [];
   const closedList = [];
   let closestNode = null;

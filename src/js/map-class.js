@@ -38,7 +38,7 @@ export class Map {
     }
 
     // battle room
-    this.battleRoomDone = false
+    this.battleRoomDone = false;
   }
 
   async loadMap(mapData) {

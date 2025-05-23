@@ -53,7 +53,7 @@ export class Enemy {
         this.path = [];
         this.pathIndex = 0;
         this.wanderTarget = null;
-        this.wanderDelay = 90; // frames to wait before choosing a new target
+        // this.wanderDelay = 90; // frames to wait before choosing a new target
       }
     } else {
       this.x += (dx / distance) * this.speed;
@@ -152,9 +152,13 @@ export class Enemy {
     if (res === null) {
       this.color = "green"; // visible
       this.state = "hunting";
+      this.speed = 0.65; // speed up
+      this.wanderDelay = 0; // reset wander delay
     } else {
       this.color = "red"; // not visible
       this.state = "wander";
+      this.speed = 0.3; // slow down
+      this.wanderDelay = 90; // reset wander delay
     }
   }
 

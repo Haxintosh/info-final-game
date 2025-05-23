@@ -9,7 +9,7 @@ export class Player {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
 
-    this.mapGen = mapGen
+    this.mapGen = mapGen;
 
     // movement states
     this.direction = "down"; // 'up', 'down', 'left', 'right'
@@ -38,8 +38,8 @@ export class Player {
     this.movementLocked = false;
 
     // health
-    this.maxHp = 5
-    this.hp = this.maxHp
+    this.maxHp = 5;
+    this.hp = this.maxHp;
 
     // debug
     this.debugMode = false;
@@ -115,7 +115,8 @@ export class Player {
 
   movement(map, blocks) {
     // check if moving
-    this.moving = this.keys.up || this.keys.down || this.keys.left || this.keys.right;
+    this.moving =
+      this.keys.up || this.keys.down || this.keys.left || this.keys.right;
 
     // old position for collision resolution
     const oldX = this.x;
@@ -170,8 +171,8 @@ export class Player {
 
   checkCollisionWithMap(map, blocks) {
     this.hitbox = {
-      x: this.x + this.width/2 - 6,
-      y: this.y + this.height/2 + 2,
+      x: this.x + this.width / 2 - 6,
+      y: this.y + this.height / 2 + 2,
       width: 11,
       height: 5,
     };
@@ -181,13 +182,16 @@ export class Player {
       { x: this.hitbox.x, y: this.hitbox.y },
       { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y },
       { x: this.hitbox.x, y: this.hitbox.y + this.hitbox.height },
-      { x: this.hitbox.x + this.hitbox.width, y: this.hitbox.y + this.hitbox.height },
+      {
+        x: this.hitbox.x + this.hitbox.width,
+        y: this.hitbox.y + this.hitbox.height,
+      },
     ];
 
     // adjust positions for map offset
-    const mapPositions = positions.map(pos => ({
+    const mapPositions = positions.map((pos) => ({
       x: pos.x - map.x,
-      y: pos.y - map.y
+      y: pos.y - map.y,
     }));
 
     for (const pos of mapPositions) {
@@ -201,13 +205,15 @@ export class Player {
     for (const block of blocks) {
       if (
         block.x >= this.mapGen.currentRoom.x &&
-        block.x < this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth * 16 &&
+        block.x <
+          this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth * 16 &&
         block.y >= this.mapGen.currentRoom.y &&
-        block.y < this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight * 16
+        block.y <
+          this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight * 16
       ) {
-        const blockPositions = positions.map(pos => ({
+        const blockPositions = positions.map((pos) => ({
           x: pos.x - block.x,
-          y: pos.y - block.y
+          y: pos.y - block.y,
         }));
 
         for (const pos of blockPositions) {
@@ -319,7 +325,7 @@ export class Player {
 
   // get tile position the player is currently facing
   getFacingTile(map) {
-    if (!map) return
+    if (!map) return;
     const centerX = this.getCenterX() - map.x;
     const centerY = this.getCenterY() - map.y;
     let tileX = Math.floor(centerX / map.tileSize);
@@ -354,23 +360,21 @@ export class Player {
   }
 
   decreaseHp() {
-    this.hp--
+    this.hp--;
 
-    const hearts = document.querySelectorAll('.heart');
+    const hearts = document.querySelectorAll(".heart");
 
     for (let i = hearts.length - 1; i >= 0; i--) {
       const heart = hearts[i];
-      if (heart.src.includes('/heart.png')) {
-        heart.src = '/heart-dead.png';
+      if (heart.src.includes("/heart.png")) {
+        heart.src = "/heart-dead.png";
         break; // stops after breaking one heart
       }
     }
 
     // dead
     if (this.hp <= 0) {
-      this.movementLocked = true
-
-
+      this.movementLocked = true;
     }
   }
 }

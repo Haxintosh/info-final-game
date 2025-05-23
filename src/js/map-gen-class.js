@@ -28,7 +28,7 @@ export class MapGenerator {
     // this.totalIterations = 0;
   }
   async init() {
-    this.generateLevel()
+    this.generateLevel();
 
     const loadMap = async (path, x = 0, y = 0) => {
       // console.log(this.canvas);
@@ -260,8 +260,8 @@ export class MapGenerator {
       this.renderedMap.push(map);
       map.x = x * 40 * 16;
       map.y = y * 40 * 16;
-      map.type = type
-      map.subtype = subtype
+      map.type = type;
+      map.subtype = subtype;
       // map.render();
     }
   }
@@ -319,14 +319,14 @@ export class MapGenerator {
 
   drawLevel() {
     this.renderedMap.forEach((map) => {
-      map.render()
-    })
+      map.render();
+    });
     this.renderedHalls.forEach((map) => {
-      map.render()
-    })
+      map.render();
+    });
     this.renderedBlocks.forEach((map) => {
-      map.render()
-    })
+      map.render();
+    });
 
     // console.log(this.grid);
   }
@@ -359,10 +359,10 @@ export class MapGenerator {
       // this.ctx.fillRect(map.x, map.y, map.mapWidth * 16, map.mapHeight * 16);
       totalIterations++;
       if (
-        player.x + player.width/2 >= map.x &&
-        player.x + player.width/2 <= map.x + map.mapWidth * 16 &&
-        player.y + player.height/2 + 4 >= map.y && // player hitbox is slightly offset downwards by 2, i put 4 just ot be safe
-        player.y + player.height/2 + 4 <= map.y + map.mapHeight * 16
+        player.x + player.width / 2 >= map.x &&
+        player.x + player.width / 2 <= map.x + map.mapWidth * 16 &&
+        player.y + player.height / 2 + 4 >= map.y && // player hitbox is slightly offset downwards by 2, i put 4 just ot be safe
+        player.y + player.height / 2 + 4 <= map.y + map.mapHeight * 16
       ) {
         this.currentRoom = map;
         roomFound = true;
@@ -406,10 +406,10 @@ export class MapGenerator {
         }
 
         if (
-          player.x + player.width/2 >= map.x &&
-          player.x + player.width/2 <= map.x + map.mapWidth * 16 &&
-          player.y + player.height/2 + 4 >= map.y &&
-          player.y + player.height/2 + 4 <= map.y + map.mapHeight * 16
+          player.x + player.width / 2 >= map.x &&
+          player.x + player.width / 2 <= map.x + map.mapWidth * 16 &&
+          player.y + player.height / 2 + 4 >= map.y &&
+          player.y + player.height / 2 + 4 <= map.y + map.mapHeight * 16
         ) {
           this.currentRoom = map;
           break;
