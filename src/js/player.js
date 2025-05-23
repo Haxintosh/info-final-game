@@ -22,7 +22,7 @@ export class Player {
     this.spritesheet2 = null;
     this.frameX = 0;
     this.frameY = 0;
-    this.animationSpeed = 5; // frames per animation change
+    this.animationSpeed = 3; // frames per animation change
     this.frameCounter = 0;
 
     // collision
@@ -42,6 +42,15 @@ export class Player {
     // health
     this.maxHp = 5;
     this.hp = this.maxHp;
+
+    // weapon
+    this.angle = 0
+    this.radiusX = 20
+    this.radiusY = 20
+    this.weaponSprite = new Image();
+    this.weaponSprite.src = '../../weapon.png';
+    this.weaponTargetX = 0
+    this.weaponTargetY = 0
 
     // debug
     this.debugMode = false;
@@ -176,10 +185,10 @@ export class Player {
 
   checkCollisionWithMap(map, blocks) {
     this.hitbox = {
-      x: this.x + this.width / 2 - 6,
-      y: this.y + this.height / 2 + 2,
-      width: 11,
-      height: 5,
+      x: this.x + this.width/2 - 5,
+      y: this.y + this.height/2 + 4,
+      width: 10,
+      height: 10,
     };
 
     // check collision with the four corners of the hitbox
@@ -295,6 +304,23 @@ export class Player {
         this.width,
         this.height,
       );
+
+    // weapon
+    const a = this.radiusX;
+    const b = this.radiusY;
+
+    const x = this.getCenterX() + Math.cos(this.angle) * a;
+    const y = this.getCenterY() + Math.sin(this.angle) * b;
+
+    const dx = this.weaponTargetX - x;
+    const dy = this.weaponTargetY - y;
+    const rotation = Math.atan2(dy, dx);
+
+    this.ctx.save();
+    this.ctx.translate(x, y);
+    this.ctx.rotate(this.angle);
+    this.ctx.drawImage(this.weaponSprite, -this.weaponSprite.width / 2, -this.weaponSprite.height / 2);
+    this.ctx.restore();
 
     // draw collision box in debug mode
     if (this.debugMode) {

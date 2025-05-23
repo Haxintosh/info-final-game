@@ -163,7 +163,7 @@ export class Projectile {
       this.alive = false;
     }
 
-    console.log(this.origin.distance(this.position));
+    // console.log(this.origin.distance(this.position));
     this.draw();
   }
 

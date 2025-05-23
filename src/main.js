@@ -28,9 +28,8 @@ const player = new Player(
   2,
   mapGen,
 );
-
-await player.loadSpritesheet("../character/idle.png");
-await player.loadSpritesheet2("../character/run.png");
+await player.loadSpritesheet("../character/idle2.png");
+await player.loadSpritesheet2("../character/walk2.png");
 
 // player movement
 window.addEventListener("keydown", (e) => player.handleKeyDown(e));
@@ -95,6 +94,13 @@ window.addEventListener("resize", () => {
   canvas.height = window.innerHeight;
   camera.scaledCanvas.width = canvas.width / camera.zoomFactor;
   camera.scaledCanvas.height = canvas.height / camera.zoomFactor;
+});
+
+window.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  player.weaponTargetX = e.clientX - rect.left;
+  player.weaponTargetY = e.clientY - rect.top;
+  player.angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2)
 });
 
 // testing
