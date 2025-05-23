@@ -24,6 +24,8 @@ export class Enemy {
     this.wanderDelay = 90; // frames to wait before choosing a new target
 
     this.player = player;
+
+    this.effects = [];
   }
 
   followPath(grid) {
@@ -66,8 +68,12 @@ export class Enemy {
 
     if (this.state === "hunting") {
       const player = {
-        x: Math.floor((this.player.x - this.room.x) / 16),
-        y: Math.floor((this.player.y - this.room.y) / 16),
+        x: Math.floor(
+          (this.player.x + this.player.width / 2 - this.room.x) / 16,
+        ),
+        y: Math.floor(
+          (this.player.y + this.player.height / 2 - this.room.y) / 16,
+        ),
       };
 
       const enemy = {
@@ -130,8 +136,10 @@ export class Enemy {
     };
 
     const rayEnd = {
-      x: Math.floor((this.player.x - this.room.x) / 16),
-      y: Math.floor((this.player.y - this.room.y) / 16),
+      x: Math.floor((this.player.x + this.player.width / 2 - this.room.x) / 16),
+      y: Math.floor(
+        (this.player.y + this.player.height / 2 - this.room.y) / 16,
+      ),
     };
 
     let res;
@@ -147,7 +155,7 @@ export class Enemy {
       );
     }
 
-    console.log(rayStart, rayEnd, res);
+    // console.log(rayStart, rayEnd, res);
 
     if (res === null) {
       this.color = "green"; // visible

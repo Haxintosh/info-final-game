@@ -5,6 +5,7 @@ import { Player } from "./js/player.js";
 import { Camera } from "./js/camera.js";
 import { LevelFunctions } from "./js/level-functions.js";
 import { ButtonPrompt } from "./js/button-prompt.js";
+import { starterWeapons } from "./js/guns.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -27,6 +28,7 @@ const player = new Player(
   2,
   mapGen,
 );
+
 await player.loadSpritesheet("../character/idle.png");
 await player.loadSpritesheet2("../character/run.png");
 
@@ -43,6 +45,10 @@ await levelFunctions.start();
 window.addEventListener("keydown", (e) => levelFunctions.interact(e));
 player.levelFunctions = levelFunctions;
 
+// GUNS GUNS GUNS
+// give player a gun
+const gun = starterWeapons.find((gun) => gun.name === "Shotgun");
+player.assignGun(gun);
 animate();
 
 function animate() {
@@ -99,4 +105,9 @@ window.addEventListener("resize", () => {
 
 window.addEventListener("mousedown", (e) => {
   levelFunctions.spawnEnemies(mapGen.currentRoom);
+  console.log("mouse", e.x, e.y);
+  // calculate angle enter of screen - mouse
+  const angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2);
+  player.shootGun(angle);
+  console.log("angle", angle * (180 / Math.PI));
 });

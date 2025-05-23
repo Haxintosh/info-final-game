@@ -36,7 +36,7 @@ export class LevelFunctions {
 
   spawnEnemies(room) {
     const enemyCount = Math.floor(Math.random() * 3) + 1; // min 1 max 3
-    console.log(room);
+    // console.log(room);
 
     for (let i = 0; i < enemyCount; i++) {
       let x, y, tileX, tileY;
@@ -45,8 +45,8 @@ export class LevelFunctions {
         y = Math.floor(room.y + Math.random() * room.mapHeight * 16);
         tileX = Math.floor((x - room.x) / 16);
         tileY = Math.floor((y - room.y) / 16);
-        console.log(tileX, tileY);
-        console.log(room);
+        // console.log(tileX, tileY);
+        // console.log(room);
         if (room.enemyMap[tileY][tileX] === 0) {
           const enemy = new Enemy(room, x, y, 4, 4, 0.3, this.player);
           this.enemies.push(enemy);

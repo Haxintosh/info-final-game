@@ -1,3 +1,5 @@
+import * as UTILS from "./utils.js";
+
 export class Player {
   constructor(canvas, x, y, width, height, speed = 2, mapGen) {
     this.x = x;
@@ -43,6 +45,9 @@ export class Player {
 
     // debug
     this.debugMode = false;
+
+    // gun
+    this.gun = null;
   }
 
   async loadSpritesheet(spritesheetPath) {
@@ -251,11 +256,18 @@ export class Player {
         this.frameY = 3;
         break;
     }
+
+    if (this.gun) {
+      this.gun.updateProjectiles(16, 1);
+    }
   }
 
   render() {
     if (!this.spritesheet || !this.spritesheet.complete) return;
 
+    // this.fillStyle = "black";
+    // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    // this.ctx.fillStyle = "white";
     const frameWidth = this.spritesheet.width / 8; // 8 columns of frames
     const frameHeight = this.spritesheet.height / 4; // 4 rows of frames (up, down, left, right)
 
@@ -376,5 +388,24 @@ export class Player {
     if (this.hp <= 0) {
       this.movementLocked = true;
     }
+  }
+
+  shootGun(angle) {
+    if (!this.gun) {
+      console.error("No gun! Visit America!");
+      return;
+    }
+
+    const startV = new UTILS.Vec2(
+      this.x + this.width / 2,
+      this.y + this.height / 2,
+    );
+
+    this.gun.shoot(startV, angle);
+  }
+
+  assignGun(gun) {
+    this.gun = gun;
+    this.gun.assignCanvas(this.canvas);
   }
 }
