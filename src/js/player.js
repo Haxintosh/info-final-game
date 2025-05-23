@@ -17,6 +17,7 @@ export class Player {
 
     // anims
     this.spritesheet = null;
+    this.spritesheet2 = null;
     this.frameX = 0;
     this.frameY = 0;
     this.animationSpeed = 5; // frames per animation change
@@ -50,6 +51,16 @@ export class Player {
     return new Promise((resolve, reject) => {
       this.spritesheet.onload = () => resolve();
       this.spritesheet.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+
+  async loadSpritesheet2(spritesheetPath) {
+    this.spritesheet2 = new Image();
+    this.spritesheet2.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheet2.onload = () => resolve();
+      this.spritesheet2.onerror = () =>
         reject(new Error("failed to load player spritesheet"));
     });
   }
@@ -213,14 +224,10 @@ export class Player {
 
   animate() {
     // animation
-    if (this.moving) {
-      this.frameCounter++;
-      if (this.frameCounter >= this.animationSpeed) {
-        this.frameCounter = 0;
-        this.frameX = (this.frameX + 1) % 8; // assuming 4 frames per animation
-      }
-    } else {
-      this.frameX = 0; // reset to standing frame when not moving
+    this.frameCounter++;
+    if (this.frameCounter >= this.animationSpeed) {
+      this.frameCounter = 0;
+      this.frameX = (this.frameX + 1) % 8; // assuming 8 frames per animation
     }
 
     // set frameY based on direction
@@ -243,20 +250,33 @@ export class Player {
   render() {
     if (!this.spritesheet || !this.spritesheet.complete) return;
 
-    const frameWidth = this.spritesheet.width / 8; // 4 columns of frames
+    const frameWidth = this.spritesheet.width / 8; // 8 columns of frames
     const frameHeight = this.spritesheet.height / 4; // 4 rows of frames (up, down, left, right)
 
-    this.ctx.drawImage(
-      this.spritesheet,
-      this.frameX * frameWidth,
-      this.frameY * frameHeight,
-      frameWidth,
-      frameHeight,
-      this.x,
-      this.y,
-      this.width,
-      this.height,
-    );
+    if (!this.moving)
+      this.ctx.drawImage(
+        this.spritesheet,
+        this.frameX * frameWidth,
+        this.frameY * frameHeight,
+        frameWidth,
+        frameHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height,
+      );
+    else
+      this.ctx.drawImage(
+        this.spritesheet2,
+        this.frameX * frameWidth,
+        this.frameY * frameHeight,
+        frameWidth,
+        frameHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height,
+      );
 
     // draw collision box in debug mode
     if (this.debugMode) {

@@ -27,7 +27,8 @@ const player = new Player(
   2,
   mapGen,
 );
-await player.loadSpritesheet("../character/run.png");
+await player.loadSpritesheet("../character/idle.png");
+await player.loadSpritesheet2("../character/run.png");
 
 // player movement
 window.addEventListener("keydown", (e) => player.handleKeyDown(e));
