@@ -16,12 +16,13 @@ export class Map {
     this.mapHeight = 0;
     this.layers = [];
     this.collisionMap = []; // use this for collision
+    this.enemyMap = []; // use this for enemy spawn points
     this.interactMap = []; // use this for interact blocks
     this.debugMode = false;
     this.x = x;
     this.y = y;
-    this.type = null
-    this.subtype = null
+    this.type = null;
+    this.subtype = null;
 
     // blockade logic
     this.room = room;
@@ -53,7 +54,12 @@ export class Map {
       .fill()
       .map(() => Array(this.mapWidth).fill(0));
 
-    // init collision map
+    // init spawn map
+    this.enemyMap = Array(this.mapHeight)
+      .fill()
+      .map(() => Array(this.mapWidth).fill(0));
+
+    // init interaction map
     this.interactMap = Array(this.mapHeight)
       .fill()
       .map(() => Array(this.mapWidth).fill(0));
@@ -101,6 +107,10 @@ export class Map {
       .fill()
       .map(() => Array(this.mapWidth).fill(0));
 
+    this.enemyMap = Array(this.mapHeight)
+      .fill()
+      .map(() => Array(this.mapWidth).fill(0));
+
     // processing each layer that has collider=true in the .json file
     for (const layer of this.layers) {
       if (layer.collider === true) {
@@ -109,9 +119,20 @@ export class Map {
           const y = parseInt(tile.y, 10);
 
           this.collisionMap[y][x] = 1;
+          this.enemyMap[y][x] = 1;
         }
       }
     }
+    // process doors
+    // horizontal doors
+    this.enemyMap[0] = Array(this.mapWidth).fill(1);
+    this.enemyMap[this.enemyMap.length - 1] = Array(this.mapWidth).fill(1);
+    // vertical doors
+    for (let i = 0; i < this.enemyMap.length; i++) {
+      this.enemyMap[i][0] = 1;
+      this.enemyMap[i][this.enemyMap[i].length - 1] = 1;
+    }
+    // console.log(this.enemyMap);
   }
 
   processInteractLayer() {
@@ -122,7 +143,7 @@ export class Map {
 
     // processing each layer that has collider=true in the .json file
     for (const layer of this.layers) {
-      if (layer.name === 'interactable') {
+      if (layer.name === "interactable") {
         for (const tile of layer.tiles) {
           const x = parseInt(tile.x, 10);
           const y = parseInt(tile.y, 10);
@@ -271,6 +292,7 @@ export class Map {
     clonedMap.layers = JSON.parse(JSON.stringify(this.layers));
     clonedMap.collisionMap = JSON.parse(JSON.stringify(this.collisionMap));
     clonedMap.interactMap = JSON.parse(JSON.stringify(this.interactMap));
+    clonedMap.enemyMap = JSON.parse(JSON.stringify(this.enemyMap));
     return clonedMap;
   }
 }
