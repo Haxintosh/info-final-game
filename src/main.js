@@ -61,7 +61,7 @@ await levelFunctions.start((progress) => {
       loadBlocker.remove();
       loadBlocker.style.display = "none";
       loadBlocker.style.opacity = "0";
-    }, 250);
+    }, 400);
   }
 });
 player.levelFunctions = levelFunctions;

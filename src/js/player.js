@@ -398,7 +398,7 @@ export class Player {
     return { x: tileX, y: tileY };
   }
 
-  decreaseHp() {
+  decreaseHp(levelFunctions) {
     this.hp--;
 
     const hearts = document.querySelectorAll(".heart");
@@ -414,6 +414,13 @@ export class Player {
     // dead
     if (this.hp <= 0) {
       this.movementLocked = true;
+
+      setTimeout(() => {
+        document.getElementById('end-screen-background').style.opacity = "1";
+      }, 200);
+      setTimeout(() => {
+        levelFunctions.endScreen('Defeat');
+      }, 400);
     }
   }
 

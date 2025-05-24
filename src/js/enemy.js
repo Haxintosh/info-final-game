@@ -316,6 +316,8 @@ export class Enemy {
 
       this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
 
+      this.levelFunctions.enemiesDefeated.count += 1
+
       if (this.room.enemies.length <= 0) {
         if (this.levelFunctions.wavesLeft > 0) {
           setTimeout(() => {
@@ -429,7 +431,7 @@ export class Enemy {
         );
         this.room.explosions.push(explosion);
         console.log("player hit");
-        this.player.decreaseHp();
+        this.player.decreaseHp(this.levelFunctions);
         this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
       }
     }

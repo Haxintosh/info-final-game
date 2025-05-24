@@ -11,9 +11,10 @@ export class LevelFunctions {
     this.mapGen = mapGen;
     this.player = player;
     this.camera = camera;
+
     // lvls
-    this.level = 1;
-    this.sublevel = 1;
+    this.level = 3;
+    this.sublevel = 3;
 
     // html elements
     this.announcerCard = document.getElementById("announcer");
@@ -45,6 +46,9 @@ export class LevelFunctions {
       dmgMulti: 1,
       speedMulti: 1,
     }
+
+    // end screen stat
+    this.enemiesDefeated = {count: 0}
   }
 
   async spawnEnemies(room) {
@@ -162,9 +166,9 @@ export class LevelFunctions {
 
     // Step 2: Position player and camera
     this.player.x =
-      this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
+      this.mapGen.end.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
-      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2;
+      this.mapGen.end.y * 40 * 16 + 10 * 16 - this.player.height / 2;
     this.camera.position.x =
       this.player.x +
       this.player.width / 2 -
@@ -249,14 +253,26 @@ export class LevelFunctions {
             this.player.movementLocked = true;
             this.player.moving = false;
 
-            this.announcerSub(text.endStatue, 3000);
+            if (this.level === 3 && this.level === 3) { // put 4-1 if we have boss
+              this.announcerSub(text.endStatue2, 3000);
 
-            setTimeout(() => {
-              this.blackout.style.opacity = "1";
-            }, 4000);
-            setTimeout(() => {
-              this.intermission(upg);
-            }, 4500);
+              setTimeout(() => {
+                document.getElementById('end-screen-background').style.opacity = "1";
+              }, 4000);
+              setTimeout(() => {
+                this.endScreen('Victory');
+              }, 4700);
+            } else {
+              this.announcerSub(text.endStatue, 3000);
+
+              setTimeout(() => {
+                this.blackout.style.opacity = "1";
+              }, 4000);
+              setTimeout(() => {
+                this.intermission(upg);
+              }, 4500);
+            }
+
           }
         }
         break;
@@ -348,5 +364,40 @@ export class LevelFunctions {
     this.shardsArray.forEach((e) => {
       e.update(this.ctx)
     })
+  }
+
+  endScreen(status) {
+    document.getElementById('end-1').style.width = '100%'
+
+    setTimeout(() => {
+      document.getElementById('end-screen-txt-1').style.opacity = '1'
+      document.getElementById('end-screen-txt-1').style.margin = '20px 0'
+    }, 1500)
+    setTimeout(() => {
+      document.getElementById('end-screen-txt-2').style.opacity = '1'
+      document.getElementById('end-screen-txt-2').style.margin = '20px 0'
+    }, 5000)
+    setTimeout(() => {
+      document.getElementById('end-2').style.opacity = '1'
+      document.getElementById('end-2').style.marginTop = '0px'
+    }, 8000)
+    setTimeout(() => {
+      document.getElementById('end-3').style.opacity = '1'
+      document.getElementById('end-3').style.marginTop = '0px'
+    }, 11000)
+
+    // change text
+    document.getElementById('end-screen-title').textContent = text['endTitle' + status]
+    document.getElementById('end-screen-txt-1').innerHTML = text['endTxt' + status]
+    document.getElementById('end-screen-txt-2').innerHTML = text['endTxt' + status + '2']
+    document.getElementById('end-screen-subtitle').innerHTML = text['endSubtitle' + status]
+
+    // stats
+    if (status === 'Victory')
+      document.getElementById('end-rooms').textContent = text.rooms + text.fullClear
+    else
+      document.getElementById('end-rooms').textContent = text.rooms + this.level + '-' + this.sublevel
+    document.getElementById('end-enemies').textContent = text.enemiesDefeated + this.enemiesDefeated.count
+    document.getElementById('end-shards').textContent = text.shardsCollected + this.shards.count
   }
 }
