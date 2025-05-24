@@ -89,6 +89,7 @@ export class Weapon {
           this.damage / this.numProjectiles,
           this.projectileColor,
           this.canvas,
+          angle,
         ),
       );
     }
@@ -144,6 +145,7 @@ export class Projectile {
     damage,
     color,
     canvas,
+    angle,
     size = 1.5,
   ) {
     this.origin = origin;
@@ -157,6 +159,7 @@ export class Projectile {
     this.ctx = this.canvas.getContext("2d");
     this.alive = true;
     this.size = size;
+    this.angle = angle;
   }
 
   update(tileWidth, scale, currentMap) {
