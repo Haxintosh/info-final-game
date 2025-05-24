@@ -164,6 +164,7 @@ window.addEventListener("mousedown", (e) => {
   // console.log("mouse", e.x, e.y);
   // calculate angle enter of screen - mouse
   // const angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2);
-  player.shootGun(levelFunctions);
+  if (!player.movementLocked)
+    player.shootGun(levelFunctions);
   // console.log("angle", angle * (180 / Math.PI));
 });

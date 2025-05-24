@@ -13,8 +13,8 @@ export class LevelFunctions {
     this.camera = camera;
 
     // lvls
-    this.level = 3;
-    this.sublevel = 3;
+    this.level = 1;
+    this.sublevel = 1;
 
     // html elements
     this.announcerCard = document.getElementById("announcer");
@@ -166,9 +166,9 @@ export class LevelFunctions {
 
     // Step 2: Position player and camera
     this.player.x =
-      this.mapGen.end.x * 40 * 16 + 10 * 16 - this.player.width / 2;
+      this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
-      this.mapGen.end.y * 40 * 16 + 10 * 16 - this.player.height / 2;
+      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2;
     this.camera.position.x =
       this.player.x +
       this.player.width / 2 -
@@ -241,6 +241,28 @@ export class LevelFunctions {
         this.interactAction = "EndStage";
       }
     }
+    if (this.mapGen.currentRoom && this.mapGen.currentRoom.type === 4) {
+
+
+      // well room
+      if (this.mapGen.currentRoom.type === 4) {
+        const tile = this.mapGen.currentRoom.interactMap[coords.y][coords.x];
+        if (tile === 1) {
+          // button prompts are going to have to be manual
+          const button = new ButtonPrompt(
+            this.canvas,
+            this.mapGen,
+            "E",
+            this.mapGen.currentRoom.x +
+            (this.mapGen.currentRoom.mapWidth * 16) / 2,
+            this.mapGen.currentRoom.y +
+            (this.mapGen.currentRoom.mapHeight * 16) / 2 -
+            16,
+          );
+          this.interactAction = "Well";
+        }
+      }
+    }
   }
 
   interact(e, upg) {
@@ -249,6 +271,7 @@ export class LevelFunctions {
         if (!this.interacted) {
           this.interacted = true; // change back to false after interaction is done
 
+          // interaction
           if (this.interactAction === "EndStage") {
             this.player.movementLocked = true;
             this.player.moving = false;
@@ -272,7 +295,18 @@ export class LevelFunctions {
                 this.intermission(upg);
               }, 4500);
             }
+          }
 
+          // well room
+          if (this.interactAction === 'Well') {
+            this.player.movementLocked = true;
+            this.player.moving = false;
+
+            this.announcerSub(text.well, 2000);
+
+            setTimeout(() => {
+              upg.showCards()
+            }, 3000)
           }
         }
         break;
@@ -367,6 +401,9 @@ export class LevelFunctions {
   }
 
   endScreen(status) {
+    document.getElementById('end-screen-background').style.visibility = 'visible'
+    document.getElementById('end-screen-container').style.visibility = 'visible'
+
     document.getElementById('end-1').style.width = '100%'
 
     setTimeout(() => {

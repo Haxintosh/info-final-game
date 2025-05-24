@@ -22,7 +22,7 @@ export class UpgCard {
     for (let i = 0; i < 3; i++) {
       const rng = Math.floor(Math.random()*this.upgradesArray.length)
       const upg = this.upgradesArray[rng];
-      console.log(this.upgrades.length, rng, upg)
+      // console.log(this.upgrades.length, rng, upg)
 
       document.getElementById(`upg-title-${i + 1}`).textContent = upg.title;
       document.getElementById(`upg-subtitle-${i + 1}`).textContent = upg.subtitle;
@@ -46,8 +46,13 @@ export class UpgCard {
       this.choosing = false;
       this.upgrades.style.opacity = '0';
       this.upgrades.style.top = '60%';
+      this.levelFunctions.interacted = false
 
-      this.levelFunctions.start();
+      if (this.levelFunctions.interactAction === 'EndStage')
+        this.levelFunctions.start();
+      else {
+        this.player.movementLocked = false
+      }
     }
     else if (parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent) <= this.levelFunctions.shards.count && document.getElementById(`shard-txt-cost-${card}`).textContent !== text.bought) {
       this.levelFunctions.shards.count -= parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent)

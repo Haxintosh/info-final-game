@@ -6,6 +6,7 @@ export let text = {
   endStatue2: "You stare back at the statue.",
   roomClear: "Room Clear",
   bought: 'Bought',
+  well: 'This well seems suspicious...',
 
   // end
   endTitleVictory: 'Redemption',
