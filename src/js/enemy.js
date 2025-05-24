@@ -494,7 +494,9 @@ export class Enemy {
   }
 
   animate() {
-    this.frameCounter++;
+    if (this.state !== 'dead' || this.frameX < 10)
+      this.frameCounter++;
+
     if (this.frameCounter >= this.animationSpeed) {
       this.frameCounter = 0;
       if (this.state === "dead") {
@@ -505,6 +507,7 @@ export class Enemy {
     }
 
     // set frameY based on direction
+    if (this.state === 'dead') return
     switch (this.direction) {
       case "down":
         this.frameY = 0;
