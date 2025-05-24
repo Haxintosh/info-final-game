@@ -69,7 +69,6 @@ function animate() {
   }
 
   mapGen.findCurrentRoom(player);
-
   levelFunctions.checkBattleRoom();
 
   if (player.direction !== "down") levelFunctions.update();
@@ -80,6 +79,7 @@ function animate() {
   levelFunctions.checkInteract();
   if (player.direction === "down") levelFunctions.update();
   levelFunctions.updateEnemies(ctx);
+  levelFunctions.updateExplosions();
   camera.end();
 
   // Debug

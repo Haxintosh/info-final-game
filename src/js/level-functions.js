@@ -1,6 +1,7 @@
 import { ButtonPrompt } from "./button-prompt.js";
 import { Enemy } from "./enemy.js";
-import { text } from './text.js'
+import { text } from "./text.js";
+import { Explosion } from "./guns.js";
 export class LevelFunctions {
   constructor(canvas, mapGen, player, camera) {
     this.canvas = canvas;
@@ -73,8 +74,6 @@ export class LevelFunctions {
         break;
       }
     }
-
-    console.log(this.enemies);
   }
 
   updateEnemies(ctx) {
@@ -82,8 +81,24 @@ export class LevelFunctions {
       // Update enemy position or behavior
       // console.log();
       this.projectilesEnemyCollision();
-      enemy.update(ctx);
+      enemy.update(ctx, this.canvas);
     });
+  }
+
+  updateExplosions() {
+    this.mapGen.currentRoom.tweenGroup.update();
+    this.mapGen.currentRoom.explosions.forEach((explosion) => {
+      explosion.draw();
+    });
+
+    // remove explosions
+    for (let i = this.mapGen.currentRoom.explosions.length - 1; i >= 0; i--) {
+      const explosion = this.mapGen.currentRoom.explosions[i];
+      if (!explosion.alive) {
+        this.mapGen.currentRoom.explosions.splice(i, 1);
+      }
+    }
+    console.log(this.mapGen.currentRoom.explosions);
   }
 
   projectilesEnemyCollision() {
@@ -96,6 +111,14 @@ export class LevelFunctions {
           projectile.position.y + projectile.size > enemy.y
         ) {
           // console.log("hit");
+
+          const explosion = new Explosion(
+            projectile.position.copy(),
+            this.canvas,
+            this.mapGen.currentRoom.tweenGroup,
+            projectile.color,
+          );
+          this.mapGen.currentRoom.explosions.push(explosion);
           enemy.hp -= projectile.damage;
           this.player.gun.projectiles.splice(
             this.player.gun.projectiles.indexOf(projectile),
@@ -134,7 +157,7 @@ export class LevelFunctions {
       this.player.height / 2 -
       this.camera.scaledCanvas.height / 2;
     this.player.movementLocked = false;
-    this.player.direction = 'down'
+    this.player.direction = "down";
 
     this.interacted = false;
     this.interactAction = null;
@@ -200,10 +223,7 @@ export class LevelFunctions {
           if (this.interactAction === "EndStage") {
             this.player.movementLocked = true;
 
-            this.announcerSub(
-              text.endStatue,
-              3000,
-            );
+            this.announcerSub(text.endStatue, 3000);
 
             setTimeout(() => {
               this.blackout.style.opacity = "1";

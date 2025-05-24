@@ -1,3 +1,5 @@
+import * as TWEEN from "@tweenjs/tween.js";
+
 export class Map {
   constructor(
     canvas,
@@ -43,6 +45,10 @@ export class Map {
 
     // enemies array
     this.enemies = [];
+
+    // vfx
+    this.tweenGroup = new TWEEN.Group();
+    this.explosions = [];
   }
 
   async loadMap(mapData) {

@@ -1,7 +1,7 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
 import { text } from "./text.js";
-import { Projectile } from "./guns.js";
+import { Projectile, Explosion } from "./guns.js";
 import { Vec2 } from "./utils.js";
 export class Enemy {
   constructor(
@@ -49,7 +49,7 @@ export class Enemy {
     this.projectileSpeed = 2;
     this.projectileDamage = 1;
     this.projectileRange = 1000;
-    this.projectileColor = "rgba(255, 0, 0, 1)";
+    this.projectileColor = "rgba(132, 28, 180, 1)";
     this.projectileSize = 4;
     this.projectileSprite = new Image();
     this.projectileSprite.src = "../../bullets/bullet-enemy.png";
@@ -374,7 +374,7 @@ export class Enemy {
     // }
   }
 
-  checkBulletCollision(ctx) {
+  checkBulletCollision(canvas) {
     for (const projectile of this.projectiles) {
       if (!projectile.alive) {
         this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
@@ -415,8 +415,15 @@ export class Enemy {
         bulletHitbox.y < playerHitbox.y + playerHitbox.height &&
         bulletHitbox.y + bulletHitbox.height > playerHitbox.y
       ) {
+        const explosion = new Explosion(
+          projectile.position.copy(),
+          canvas,
+          this.room.tweenGroup,
+          projectile.color,
+        );
+        this.room.explosions.push(explosion);
         console.log("player hit");
-        this.player.hp -= 1;
+        this.player.decreaseHp();
         this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
       }
     }
@@ -427,7 +434,7 @@ export class Enemy {
     ctx.fillRect(x * 16 + room.x, y * 16 + room.y, 16, 16);
   }
 
-  update(ctx) {
+  update(ctx, canvas) {
     if (this.wanderDelay > 0) {
       this.wanderDelay--;
     } else {
@@ -443,7 +450,7 @@ export class Enemy {
       projectile.update(16, 1, this.mapGen.currentRoom);
     }
     this.hpCheck();
-    this.checkBulletCollision(ctx);
+    this.checkBulletCollision(canvas);
   }
 
   animate() {

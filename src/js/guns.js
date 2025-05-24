@@ -1,4 +1,5 @@
 import * as UTILS from "./utils";
+import * as TWEEN from "@tweenjs/tween.js";
 
 export class Weapon {
   constructor(
@@ -46,6 +47,9 @@ export class Weapon {
 
     // proj
     this.projectiles = [];
+
+    // // tweeeeen
+    // this.tweenGroup = new TWEEN.Group();
   }
 
   shoot(origin, angle) {
@@ -93,6 +97,7 @@ export class Weapon {
           this.canvas,
           this.projectileSprite,
           angles[i],
+          // this.tweenGroup,
         ),
       );
     }
@@ -105,20 +110,6 @@ export class Weapon {
 
   reload() {
     return;
-    if (this.ammo == this.magSize) {
-      console.log("Magazine is already full!");
-      this.currentAct = "ready";
-      return;
-    }
-
-    if (Date.now() - this.lastReloaded < this.reloadTime) {
-      console.log("Reloading...");
-      this.currentAct = "reloading";
-      return;
-    }
-
-    this.lastReloaded = Date.now();
-    this.ammo = this.magSize;
   }
 
   cleanProjectilesArray() {
@@ -167,6 +158,32 @@ export class Projectile {
     this.angle = angle;
   }
 
+  checkCollisionWithMap(room) {
+    const tilePos = {
+      x: Math.floor((this.position.x - room.x) / 16),
+      y: Math.floor((this.position.y - room.y) / 16),
+    };
+
+    try {
+      if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
+        this.alive = false;
+        console.log("hit WALL");
+
+        if (this.canvas) {
+          const explosion = new Explosion(
+            this.position.copy(),
+            this.canvas,
+            room.tweenGroup,
+            this.color,
+          );
+          room.explosions.push(explosion);
+        }
+      }
+    } catch (error) {
+      // nein
+    }
+  }
+
   update(tileWidth, scale, currentMap) {
     if (!this.alive) return;
     this.position = this.position.add(
@@ -199,8 +216,8 @@ export class Projectile {
       this.sprite,
       -this.sprite.width / 2,
       -this.sprite.height / 2,
-      this.sprite.width*0.75,
-      this.sprite.height*0.75,
+      this.sprite.width * 0.75,
+      this.sprite.height * 0.75,
     );
 
     this.ctx.restore();
@@ -210,50 +227,77 @@ export class Projectile {
     // this.ctx.fillStyle = this.color;
     // this.ctx.fill();
   }
+}
 
-  checkCollisionWithMap(room) {
-    const tilePos = {
-      x: Math.floor((this.position.x - room.x) / 16),
-      y: Math.floor((this.position.y - room.y) / 16),
-    };
+export class Explosion {
+  constructor(
+    position,
+    canvas,
+    tweenGroup,
+    color = "rgba(255, 0, 0, 1)",
+    maxRadius = 5,
+    duration = 250,
+  ) {
+    this.position = position;
+    this.canvas = canvas;
+    this.ctx = this.canvas.getContext("2d");
+    this.maxRadius = maxRadius;
+    this.duration = duration; // in milliseconds
+    this.tweenGroup = tweenGroup;
+    this.color = color; // "rgba(255, 0, 0, 1)"
 
-    // console.log(tilePos);
+    this.radius = 0;
+    this.opacity = 1;
+    this.alive = true;
 
-    try {
-      if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
+    this.setupTweens();
+  }
+
+  setupTweens() {
+    // exp radius tween
+    this.tween1 = new TWEEN.Tween(this)
+      .to({ radius: this.maxRadius }, this.duration)
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .onComplete(() => {
         this.alive = false;
-        console.log("hit WALL");
-        // handle collision effect here
-      }
-    } catch (error) {
-      // console.log(error);
-      //
-    }
-    // if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
-    //   this.alive = false;
-    //   console.log("hit WALL");
-    //   // handle collision effect here
+      })
+      .start();
 
-    //   return true;
-    // }
+    // opacity tween
+    this.tween2 = new TWEEN.Tween(this)
+      .to({ opacity: 0 }, this.duration)
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .start();
+
+    this.tweenGroup.add(this.tween1);
+    this.tweenGroup.add(this.tween2);
+  }
+
+  draw() {
+    if (!this.ctx || !this.alive) return;
+
+    this.ctx.save();
+    this.ctx.beginPath();
+    this.ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+
+    const colorWithOpacity = this.color.replace(
+      /rgba\((\d+), (\d+), (\d+), [^)]+\)/,
+      `rgba($1, $2, $3, ${this.opacity})`,
+    );
+    this.ctx.strokeStyle = colorWithOpacity;
+
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.restore();
+
+    // if not alive, remove from tween group
+    if (!this.alive) {
+      this.tweenGroup.remove(this.tween1);
+      this.tweenGroup.remove(this.tween2);
+    }
   }
 }
 
-// deprecated in favour of draw in tilemap
-// draw() {
-//   if (!this.ctx) return;
-//   if (!this.alive) return;
-//   this.ctx.beginPath();
-//   this.ctx.arc(
-//     this.position.x + this.offsetX,
-//     this.position.y + this.offsetY,
-//     8,
-//     0,
-//     2 * Math.PI,
-//   );
-//   this.ctx.fillStyle = this.color;
-//   this.ctx.fill();
-// }
 export const starterWeapons = [
   new Weapon(
     "Pistol",
@@ -280,7 +324,7 @@ export const starterWeapons = [
     300, // cost
     "1_32", // image
     "Powerful at close range, spreads projectiles for maximum damage.", // desc
-    "#FF4500", // projectileColor
+    "rgba(255, 0, 0, 1)", // projectileColor
     "../../bullets/bullet-blood.png",
     1, // spread
     0.2, // spreadAngle
