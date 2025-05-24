@@ -134,7 +134,7 @@ export class MapGenerator {
     this.start = { x: start.x, y: start.y };
     this.end = { x: end.x, y: end.y };
 
-    this.grid[start.y][start.x] = 2;
+    this.grid[start.y][start.x] = 4.1;
     this.grid[end.y][end.x] = 3;
 
     let x = start.x;

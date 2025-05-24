@@ -396,6 +396,7 @@ export class Enemy {
         this.shootDelay = 60; // reset cooldown
         setTimeout(() => {
           this.attackLock = false;
+          if (this.state === 'dead') return
           this.frameX = 0; // reset attack animation
           this.frameY = 0; // reset attack animation
         }, 400);
