@@ -49,6 +49,9 @@ export class Map {
     // vfx
     this.tweenGroup = new TWEEN.Group();
     this.explosions = [];
+
+    // well
+    this.wellUpg = []
   }
 
   async loadMap(mapData) {

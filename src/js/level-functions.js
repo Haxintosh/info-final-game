@@ -305,7 +305,7 @@ export class LevelFunctions {
             this.announcerSub(text.well, 2000);
 
             setTimeout(() => {
-              upg.showCards()
+              upg.showCards(this.mapGen, true)
             }, 3000)
           }
         }
@@ -314,7 +314,7 @@ export class LevelFunctions {
   }
 
   intermission(upg) {
-    upg.showCards();
+    upg.showCards(this.mapGen, false);
 
     this.sublevel++;
     if (this.sublevel > 3) {

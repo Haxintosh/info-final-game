@@ -13,30 +13,46 @@ export class UpgCard {
     this.upgrades = document.getElementById('upgrade-container')
   }
 
-  showCards() {
+  showCards(mapGen, well) {
     this.choosing = true
 
     this.upgrades.style.opacity = '1'
     this.upgrades.style.top = '50%'
+
+    console.log(mapGen.currentRoom.wellUpg)
 
     for (let i = 0; i < 3; i++) {
       const rng = Math.floor(Math.random()*this.upgradesArray.length)
       const upg = this.upgradesArray[rng];
       // console.log(this.upgrades.length, rng, upg)
 
-      document.getElementById(`upg-title-${i + 1}`).textContent = upg.title;
-      document.getElementById(`upg-subtitle-${i + 1}`).textContent = upg.subtitle;
-      document.getElementById(`upg-desc-${i + 1}`).textContent = upg.description;
-      document.getElementById(`shard-txt-cost-${i + 1}`).textContent = upg.cost;
-      document.getElementById(`upg-img-${i + 1}`).src = upg.src;
-      document.getElementById(`upg-img-${i + 1}`).alt = upg.title;
+      if (!well || mapGen.currentRoom.wellUpg.length <= 3) {
+        document.getElementById(`upg-title-${i + 1}`).textContent = upg.title;
+        document.getElementById(`upg-subtitle-${i + 1}`).textContent = upg.subtitle;
+        document.getElementById(`upg-desc-${i + 1}`).textContent = upg.description;
+        document.getElementById(`shard-txt-cost-${i + 1}`).textContent = upg.cost;
+        document.getElementById(`upg-img-${i + 1}`).src = upg.src;
+        document.getElementById(`upg-img-${i + 1}`).alt = upg.title;
+
+        if (well && mapGen.currentRoom.wellUpg <= 3) mapGen.currentRoom.wellUpg.push(upg)
+      }
 
       if (upg.cost > this.levelFunctions.shards.count) {
         document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
       } else {
         document.getElementById(`shard-txt-cost-${i + 1}`).style.color = '#ffffff';
       }
+      if (well && mapGen.currentRoom.wellUpg.length > 3) {
+        if (mapGen.currentRoom.wellUpg[i].cost > this.levelFunctions.shards.count) {
+          document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
+        } else {
+          document.getElementById(`shard-txt-cost-${i + 1}`).style.color = '#ffffff';
+        }
+      }
+
     }
+
+
   }
 
   buy(card) {
