@@ -49,10 +49,7 @@ export class UpgCard {
           document.getElementById(`shard-txt-cost-${i + 1}`).style.color = '#ffffff';
         }
       }
-
     }
-
-
   }
 
   buy(card) {
@@ -78,9 +75,7 @@ export class UpgCard {
 
       document.getElementById(`shard-txt-cost-${card}`).textContent = text.bought;
       document.getElementById(`shard-txt-cost-${card}`).style.color = 'rgb(255,186,186)';
-    }
 
-    if (card !== 4) {
       const title = document.getElementById(`upg-title-${card}`).textContent
       if (title === text.basic.dmg.title) {
         this.dmgUpg(text.basic.dmg.value) // to change multiplier value go to text.js
@@ -90,6 +85,12 @@ export class UpgCard {
       }
       if (title === text.basic.heal.title) {
         this.healUpg(text.basic.heal.value)
+      }
+
+      for (let i = 0; i < 3; i++) {
+        if (parseInt(document.getElementById(`shard-txt-cost-${i + 1}`).textContent) > this.levelFunctions.shards.count) {
+          document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
+        }
       }
     }
   }

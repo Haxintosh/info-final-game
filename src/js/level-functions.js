@@ -2,6 +2,7 @@ import { ButtonPrompt } from "./button-prompt.js";
 import { Enemy } from "./enemy.js";
 import { text } from "./text.js";
 import { Explosion } from "./guns.js";
+import {Shard} from "./shard.js";
 export class LevelFunctions {
   constructor(canvas, mapGen, player, camera) {
     this.canvas = canvas;
@@ -30,6 +31,8 @@ export class LevelFunctions {
 
     this.img = new Image();
     this.img.src = "./map-assets/room_end/statue_completed.png";
+    this.img2 = new Image();
+    this.img2.src = "./map-assets/room_special_1/chest_opened.png";
 
     // battle room
     this.battling = false;
@@ -38,7 +41,7 @@ export class LevelFunctions {
     this.wavesLeft = this.level;
 
     // shards
-    this.shards = {count: 0}
+    this.shards = {count: 20}
     this.shardsArray = []
 
     // upgrade stuff
@@ -168,7 +171,7 @@ export class LevelFunctions {
     this.player.x =
       this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
-      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2 + 16;
+      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2;
     this.camera.position.x =
       this.player.x +
       this.player.width / 2 -
@@ -222,11 +225,35 @@ export class LevelFunctions {
 
     const coords = this.player.getFacingTile(this.mapGen.currentRoom);
 
-    if (!coords) return; // if null return
+    this.interactAction = "none"
+
+    if (!coords || !this.mapGen.currentRoom.interactMap[coords.x-1] || !this.mapGen.currentRoom.interactMap[coords.x+1] || !this.mapGen.currentRoom.interactMap[coords.y-1] || !this.mapGen.currentRoom.interactMap[coords.y+1]) return; // if null return
+
+    const tile1 = this.mapGen.currentRoom.interactMap[coords.y][coords.x]; // close center
+    let tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x]; // close left
+    let tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x]; // close right
+
+    if (this.player.direction === 'top') {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x-1]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x+1]; // close right
+    }
+    if (this.player.direction === 'down') {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x-1]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x+1]; // close right
+    }
+    if (this.player.direction === 'left') {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y+1][coords.x]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y-1][coords.x]; // close right
+    }
+    if (this.player.direction === 'right') {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y-1][coords.x]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y+1][coords.x]; // close right
+    }
+
+    // console.log(this.mapGen.currentRoom.subtype)
 
     if (this.mapGen.currentRoom && this.mapGen.currentRoom.type === 3) {
-      const tile = this.mapGen.currentRoom.interactMap[coords.y][coords.x];
-      if (tile === 1) {
+      if (tile1 === 1 || tile2 === 1 || tile3 === 1) {
         // button prompts are going to have to be manual
         const button = new ButtonPrompt(
           this.canvas,
@@ -242,12 +269,95 @@ export class LevelFunctions {
       }
     }
     if (this.mapGen.currentRoom && this.mapGen.currentRoom.type === 4) {
+      // chest room
+      if (parseInt(this.mapGen.currentRoom.subtype) === 1) {
+        if (tile1 === 1 || tile2 === 1 || tile3 === 1) {
+          // button prompts are going to have to be manual
+          let x
+          let y
+          let id
 
+          let roomCenterX =
+            this.mapGen.currentRoom.x +
+            (this.mapGen.currentRoom.mapWidth * 16) / 2;
+          let roomCenterY =
+            this.mapGen.currentRoom.y +
+            (this.mapGen.currentRoom.mapHeight * 16) / 2;
+
+          let playerCenterX = this.player.x + this.player.width / 2;
+          let playerCenterY = this.player.y + this.player.height / 2;
+
+          if (playerCenterX < roomCenterX && playerCenterY < roomCenterY) {
+            x = this.mapGen.currentRoom.x + (6*16+8) + 0.5
+            y = this.mapGen.currentRoom.y + (5*16+8)
+            id = 1
+          } else if (playerCenterX > roomCenterX && playerCenterY < roomCenterY) {
+            x = this.mapGen.currentRoom.x + (13*16+8) + 0.5
+            y = this.mapGen.currentRoom.y + (5*16+8)
+            id = 2
+          } else if (playerCenterX < roomCenterX && playerCenterY > roomCenterY) {
+            x = this.mapGen.currentRoom.x + (6*16+8) + 0.5
+            y = this.mapGen.currentRoom.y + (12*16+8)
+            id = 3
+          } else if (playerCenterX > roomCenterX && playerCenterY > roomCenterY) {
+            x = this.mapGen.currentRoom.x + (13*16+8) + 0.5
+            y = this.mapGen.currentRoom.y + (12*16+8)
+            id = 4
+          }
+
+          if (!(this.mapGen.currentRoom.chestDone.includes(id))) {
+            const button = new ButtonPrompt(
+              this.canvas,
+              this.mapGen,
+              "E",
+              x,
+              y,
+            );
+            this.interactAction = "Chest";
+          }
+        }
+      }
+
+      // shard room
+      if (parseInt(this.mapGen.currentRoom.subtype) === 2) {
+        if (tile1 === 1 || tile2 === 1 || tile3 === 1) {
+          // button prompts are going to have to be manual
+          let x
+          let y
+          let id
+
+          let roomCenterX =
+            this.mapGen.currentRoom.x +
+            (this.mapGen.currentRoom.mapWidth * 16) / 2;
+
+          let playerCenterX = this.player.x + this.player.width / 2;
+
+          if (playerCenterX < roomCenterX) {
+            x = this.mapGen.currentRoom.x + 7*16
+            y = this.mapGen.currentRoom.y + 8*16
+            id = 1
+          } else if (playerCenterX > roomCenterX) {
+            x = this.mapGen.currentRoom.x + 13 * 16
+            y = this.mapGen.currentRoom.y + 11 * 16
+            id = 2
+          }
+
+          if (!(this.mapGen.currentRoom.shardDone.includes(id))) {
+            const button = new ButtonPrompt(
+              this.canvas,
+              this.mapGen,
+              "E",
+              x,
+              y,
+            );
+            this.interactAction = "Shard";
+          }
+        }
+      }
 
       // well room
-      if (this.mapGen.currentRoom.type === 4) {
-        const tile = this.mapGen.currentRoom.interactMap[coords.y][coords.x];
-        if (tile === 1) {
+      if (parseInt(this.mapGen.currentRoom.subtype) === 3) {
+        if (tile1 === 1 || tile2 === 1 || tile3 === 1) {
           // button prompts are going to have to be manual
           const button = new ButtonPrompt(
             this.canvas,
@@ -269,7 +379,7 @@ export class LevelFunctions {
     switch (e.code) {
       case "KeyE":
         if (!this.interacted) {
-          this.interacted = true; // change back to false after interaction is done
+          if (this.interactAction !== 'none') this.interacted = true; // change back to false after interaction is done
 
           // interaction
           if (this.interactAction === "EndStage") {
@@ -308,6 +418,114 @@ export class LevelFunctions {
               upg.showCards(this.mapGen, true)
             }, 3000)
           }
+
+          // chest
+          if (this.interactAction === 'Chest') {
+            let id
+            let roomCenterX =
+              this.mapGen.currentRoom.x +
+              (this.mapGen.currentRoom.mapWidth * 16) / 2;
+            let roomCenterY =
+              this.mapGen.currentRoom.y +
+              (this.mapGen.currentRoom.mapHeight * 16) / 2;
+
+            let playerCenterX = this.player.x + this.player.width / 2;
+            let playerCenterY = this.player.y + this.player.height / 2;
+
+            if (playerCenterX < roomCenterX && playerCenterY < roomCenterY) {
+              id = 1
+            } else if (playerCenterX > roomCenterX && playerCenterY < roomCenterY) {
+              id = 2
+            } else if (playerCenterX < roomCenterX && playerCenterY > roomCenterY) {
+              id = 3
+            } else if (playerCenterX > roomCenterX && playerCenterY > roomCenterY) {
+              id = 4
+            }
+
+            const idValues = {
+              1: 0.1,
+              2: 0.3,
+              3: 0.6,
+              4: 0.9
+            }
+            let closestId = null
+            let closestDiff = Infinity
+            for (const [key, value] of Object.entries(idValues)) {
+              const diff = Math.abs(this.mapGen.currentRoom.chest - value)
+              if (diff < closestDiff) {
+                closestDiff = diff
+                closestId = parseInt(key)
+              }
+            }
+
+            if (closestId === id) {
+              const rng = Math.random()
+              if (rng < 0.5 && !(this.player.hp >= this.player.maxHp)) {
+                this.announcerSub(text.chestUsefulHeart, 1000);
+
+                this.player.hp++
+
+                const hearts = document.querySelectorAll(".heart");
+
+                for (let i = 0; i <= hearts.length; i++) {
+                  const heart = hearts[i];
+                  if (heart.src.includes("/heart-dead.png")) {
+                    heart.src = "./heart.png";
+                    break; // stops after healing one heart
+                  }
+                }
+              } else {
+                this.announcerSub(text.chestUsefulShard, 1000);
+                const exp = Math.ceil(Math.random() * 4) + 1;
+                for (let i = 0; i < exp; i++) {
+                  const shard = new Shard(
+                    this.player.x + this.player.width/2,
+                    this.player.y + this.player.height/2,
+                    this.player,
+                    this.shardsArray,
+                    this.shards,
+                  );
+                }
+              }
+            } else {
+              this.announcerSub(text.chestUseless, 1000);
+            }
+
+            this.mapGen.currentRoom.chestDone.push(id)
+
+            this.interacted = false
+          }
+
+          if (this.interactAction === 'Shard') {
+            let id
+
+            let roomCenterX =
+              this.mapGen.currentRoom.x +
+              (this.mapGen.currentRoom.mapWidth * 16) / 2;
+
+            let playerCenterX = this.player.x + this.player.width / 2;
+
+            if (playerCenterX < roomCenterX) {
+              id = 1
+            } else if (playerCenterX > roomCenterX) {
+              id = 2
+            }
+
+            const exp = Math.ceil(Math.random() * 3) + 3;
+            for (let i = 0; i < exp; i++) {
+              const shard = new Shard(
+                this.player.x + this.player.width/2,
+                this.player.y + this.player.height/2,
+                this.player,
+                this.shardsArray,
+                this.shards,
+              );
+            }
+
+            this.mapGen.currentRoom.shardDone.push(id)
+
+            this.interacted = false
+          }
         }
         break;
     }
@@ -327,6 +545,7 @@ export class LevelFunctions {
     // this.checkBattleRoom()
     if (this.interacted && this.interactAction === "EndStage")
       this.showEndStatue();
+    this.checkChest()
   }
 
   showEndStatue() {
@@ -436,5 +655,38 @@ export class LevelFunctions {
       document.getElementById('end-rooms').textContent = text.rooms + this.level + '-' + this.sublevel
     document.getElementById('end-enemies').textContent = text.enemiesDefeated + this.enemiesDefeated.count
     document.getElementById('end-shards').textContent = text.shardsCollected + this.shards.count
+  }
+
+  checkChest() {
+    this.mapGen.currentRoom.chestDone.forEach((e) => {
+      if (e === 1) {
+        this.ctx.drawImage(
+          this.img2,
+          this.mapGen.currentRoom.x + 6 * 16,
+          this.mapGen.currentRoom.y + 4 * 16,
+        );
+      }
+      if (e === 2) {
+        this.ctx.drawImage(
+          this.img2,
+          this.mapGen.currentRoom.x + 13 * 16,
+          this.mapGen.currentRoom.y + 4 * 16,
+        );
+      }
+      if (e === 3) {
+        this.ctx.drawImage(
+          this.img2,
+          this.mapGen.currentRoom.x + 6 * 16,
+          this.mapGen.currentRoom.y + 11 * 16,
+        );
+      }
+      if (e === 4) {
+        this.ctx.drawImage(
+          this.img2,
+          this.mapGen.currentRoom.x + 13 * 16,
+          this.mapGen.currentRoom.y + 11 * 16,
+        );
+      }
+    })
   }
 }

@@ -21,12 +21,17 @@ export class Shard {
     this.display = document.getElementById('shard-txt')
     // this.display2 = document.getElementById('shard-txt-alt')
 
+    this.spawnBuffer = true
     this.spawn()
   }
 
   spawn() {
     this.targetX = this.x + Math.random()*64 - 32;
     this.targetY = this.y + Math.random()*64 - 32;
+
+    setTimeout(() => {
+      this.spawnBuffer = false
+    },500)
   }
 
   lerp() {
@@ -36,6 +41,8 @@ export class Shard {
   }
 
   checkPlayerDist() {
+    if (this.spawnBuffer) return
+
     const dist = Math.sqrt((this.player.x + this.player.width/2 - this.x)**2 + (this.player.y + this.player.height/2 - this.y)**2);
 
     if (dist <= 32) {

@@ -7,6 +7,9 @@ export let text = {
   roomClear: "Room Clear",
   bought: 'Bought',
   well: 'This well seems suspicious...',
+  chestUseless: 'You find nothing of interest.',
+  chestUsefulHeart: 'You find some healing supplies.',
+  chestUsefulShard: 'You find some shards.',
 
   // end
   endTitleVictory: 'Redemption',

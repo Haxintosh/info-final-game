@@ -134,7 +134,7 @@ export class MapGenerator {
     this.start = { x: start.x, y: start.y };
     this.end = { x: end.x, y: end.y };
 
-    this.grid[start.y][start.x] = 4.1;
+    this.grid[start.y][start.x] = 2;
     this.grid[end.y][end.x] = 3;
 
     let x = start.x;
@@ -177,7 +177,7 @@ export class MapGenerator {
           Math.random() < 1
         ) {
           const side = Math.floor(Math.random() * 4);
-          let type = Math.ceil(Math.random() * 4) / 10;
+          let type = Math.ceil(Math.random() * 3) / 10;
           if (type === 0) type = 0.1;
 
           if (side === 0 && this.grid[y - 1]?.[x] === 0) {
