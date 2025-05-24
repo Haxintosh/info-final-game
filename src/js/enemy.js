@@ -13,12 +13,11 @@ export class Enemy {
     this.spritesheetRun = null;
     this.spritesheetAttack = null;
     this.spritesheetDeath = null;
-    this.spritesheetCurrent = this.spritesheetIdle;
     this.frameX = 0;
     this.frameY = 0;
-    this.animationSpeed = 5; // frames per animation change
+    this.animationSpeed = 10; // frames per animation change
     this.frameCounter = 0;
-    this.direction = "down";
+    this.direction = 'down'
     this.color = "red"; // default color
 
     this.path = [];
@@ -36,12 +35,39 @@ export class Enemy {
     this.hp = hp;
   }
 
-  async loadSpritesheet(spritesheetPath) {
-    this.spritesheet = new Image();
-    this.spritesheet.src = spritesheetPath;
+  async loadSpritesheetIdle(spritesheetPath) {
+    this.spritesheetIdle = new Image();
+    this.spritesheetIdle.src = spritesheetPath;
     return new Promise((resolve, reject) => {
-      this.spritesheet.onload = () => resolve();
-      this.spritesheet.onerror = () =>
+      this.spritesheetIdle.onload = () => resolve();
+      this.spritesheetIdle.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+  async loadSpritesheetRun(spritesheetPath) {
+    this.spritesheetRun = new Image();
+    this.spritesheetRun.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetRun.onload = () => resolve();
+      this.spritesheetRun.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+  async loadSpritesheetAttack(spritesheetPath) {
+    this.spritesheetAttack = new Image();
+    this.spritesheetAttack.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetAttack.onload = () => resolve();
+      this.spritesheetAttack.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+  async loadSpritesheetDeath(spritesheetPath) {
+    this.spritesheetDeath = new Image();
+    this.spritesheetDeath.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetDeath.onload = () => resolve();
+      this.spritesheetDeath.onerror = () =>
         reject(new Error("failed to load player spritesheet"));
     });
   }
@@ -84,24 +110,20 @@ export class Enemy {
     if (Math.abs(dx) >= Math.abs(dy)) {
       // Moving more horizontally than vertically
       if (dx > 0) {
-        this.direction = "right";
+        this.direction = 'right';
       } else {
-        this.direction = "left";
+        this.direction = 'left';
       }
     } else {
       // Moving more vertically than horizontally
       if (dy > 0) {
-        this.direction = "down";
+        this.direction = 'down';
       } else {
-        this.direction = "up";
+        this.direction = 'up';
       }
     }
 
-    if (dx === 0 && dy === 0) {
-      this.spritesheetCurrent = this.spritesheetIdle;
-    } else {
-      this.spritesheetCurrent = this.spritesheetRun;
-    }
+    this.moving = !(Math.abs(dx) <= 0.1 && Math.abs(dy) <= 0.1);
   }
 
   randomWander(room) {
@@ -229,18 +251,16 @@ export class Enemy {
       this.randomWander(this.room);
     }
     this.followPath(this.room.enemyMap);
-    this.animate();
+    this.animate()
     this.render(ctx);
     this.hpCheck();
-
-    console.log(this.hp);
   }
 
   animate() {
     this.frameCounter++;
     if (this.frameCounter >= this.animationSpeed) {
       this.frameCounter = 0;
-      this.frameX = (this.frameX + 1) % 8; // assuming 8 frames per animation
+      this.frameX = (this.frameX + 1) % 6; // assuming 8 frames per animation
     }
 
     // set frameY based on direction
@@ -261,27 +281,45 @@ export class Enemy {
   }
 
   render(ctx) {
-    // this.frameCounter++;
-    // if (this.frameCounter >= this.animationSpeed) {
-    //   this.frameCounter = 0;
-    //   this.frameX = (this.frameX + 1) % 4;
-    // }
+    if (this.spritesheetRun === null)  return
+    const frameWidth = this.spritesheetRun.width / 6;
+    const frameHeight = this.spritesheetRun.height / 4;
 
-    console.log(this.spritesheetCurrent, this.spritesheetIdle);
-    if (this.spritesheetCurrent) {
-      const frameWidth = this.spritesheetCurrent.width / 6;
-      const frameHeight = this.spritesheetCurrent.height / 4;
-
+    if (this.state === 'attacking') {
       ctx.drawImage(
-        this.spritesheetCurrent,
+        this.spritesheetAttack,
         this.frameX * frameWidth,
         this.frameY * frameHeight,
         frameWidth,
         frameHeight,
-        this.x,
-        this.y,
-        this.width,
-        this.height,
+        this.x - frameWidth/2,
+        this.y - frameHeight/2 - 5,
+        frameWidth,
+        frameHeight,
+      );
+    } else if (!this.moving) {
+      ctx.drawImage(
+        this.spritesheetIdle,
+        this.frameX * frameWidth,
+        this.frameY * frameHeight,
+        frameWidth,
+        frameHeight,
+        this.x - frameWidth/2,
+        this.y - frameHeight/2 - 5,
+        frameWidth,
+        frameHeight,
+      );
+    } else if (this.moving) {
+      ctx.drawImage(
+        this.spritesheetRun,
+        this.frameX * frameWidth,
+        this.frameY * frameHeight,
+        frameWidth,
+        frameHeight,
+        this.x - frameWidth/2,
+        this.y - frameHeight/2 - 5,
+        frameWidth,
+        frameHeight,
       );
     }
 

@@ -34,7 +34,7 @@ export class LevelFunctions {
     this.updateEnemies = this.updateEnemies.bind(this);
   }
 
-  spawnEnemies(room) {
+  async spawnEnemies(room) {
     const enemyCount = Math.floor(Math.random() * 3) + 1; // min 1 max 3
     // console.log(room);
 
@@ -48,9 +48,15 @@ export class LevelFunctions {
         // console.log(tileX, tileY);
         // console.log(room);
         if (room.enemyMap[tileY][tileX] === 0) {
-          const enemy = new Enemy(room, x, y, 4, 4, 0.3, this.player);
+          const enemy = new Enemy(room, x, y, 16, 24, 0.3, this.player);
           // this.enemies.push(enemy);
           room.enemies.push(enemy);
+
+          // load images
+          await enemy.loadSpritesheetIdle('../../enemies/enemy1-idle.png')
+          await enemy.loadSpritesheetRun('../../enemies/enemy1-run.png')
+          await enemy.loadSpritesheetAttack('../../enemies/enemy1-attack.png')
+          await enemy.loadSpritesheetDeath('../../enemies/enemy1-death.png')
         }
         break;
       }
