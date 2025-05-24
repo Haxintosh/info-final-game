@@ -1,5 +1,6 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
+import { text } from './text.js';
 export class Enemy {
   constructor(
     room,
@@ -315,7 +316,7 @@ export class Enemy {
           this.levelFunctions.battling = false;
           this.levelFunctions.wavesLeft = this.levelFunctions.level;
 
-          this.levelFunctions.announcer("Room Clear", 2000);
+          this.levelFunctions.announcer(text.roomClear, 2000);
         }
       }
     }

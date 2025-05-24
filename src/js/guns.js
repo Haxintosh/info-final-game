@@ -199,6 +199,8 @@ export class Projectile {
       this.sprite,
       -this.sprite.width / 2,
       -this.sprite.height / 2,
+      this.sprite.width*0.75,
+      this.sprite.height*0.75,
     );
 
     this.ctx.restore();
@@ -267,7 +269,7 @@ export const starterWeapons = [
   new Weapon(
     "Shotgun",
     8, // damage per pellet
-    0.5, // speed
+    5, // speed
     1000, // range
     "shotgun", // type
     300, // cost

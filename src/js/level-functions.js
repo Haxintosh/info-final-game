@@ -1,5 +1,6 @@
 import { ButtonPrompt } from "./button-prompt.js";
 import { Enemy } from "./enemy.js";
+import { text } from './text.js'
 export class LevelFunctions {
   constructor(canvas, mapGen, player, camera) {
     this.canvas = canvas;
@@ -121,9 +122,9 @@ export class LevelFunctions {
     }
 
     this.player.x =
-      this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
+      this.mapGen.end.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
-      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2;
+      this.mapGen.end.y * 40 * 16 + 10 * 16 - this.player.height / 2;
     this.camera.position.x =
       this.player.x +
       this.player.width / 2 -
@@ -133,12 +134,13 @@ export class LevelFunctions {
       this.player.height / 2 -
       this.camera.scaledCanvas.height / 2;
     this.player.movementLocked = false;
+    this.player.direction = 'down'
 
     this.interacted = false;
     this.interactAction = null;
 
     setTimeout(
-      () => this.announcer("LAYER " + this.level + "-" + this.sublevel, 2000),
+      () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
       500,
     );
   }
@@ -199,7 +201,7 @@ export class LevelFunctions {
             this.player.movementLocked = true;
 
             this.announcerSub(
-              "The statue's bloody red eyes stare back at you...",
+              text.endStatue,
               3000,
             );
 
