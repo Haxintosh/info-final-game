@@ -204,6 +204,11 @@ export class Projectile {
     );
 
     this.ctx.restore();
+
+    // this.ctx.beginPath();
+    // this.ctx.arc(this.position.x, this.position.y, this.size, 0, 2 * Math.PI);
+    // this.ctx.fillStyle = this.color;
+    // this.ctx.fill();
   }
 
   checkCollisionWithMap(room) {

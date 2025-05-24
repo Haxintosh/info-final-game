@@ -1,6 +1,8 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
-import { text } from './text.js';
+import { text } from "./text.js";
+import { Projectile } from "./guns.js";
+import { Vec2 } from "./utils.js";
 export class Enemy {
   constructor(
     room,
@@ -42,6 +44,15 @@ export class Enemy {
     this.room = room;
     this.wanderDelay = 90; // frames to wait before choosing a new target
 
+    this.shootDelay = 60; // frames to wait before shooting again
+    this.projectiles = [];
+    this.projectileSpeed = 2;
+    this.projectileDamage = 1;
+    this.projectileRange = 1000;
+    this.projectileColor = "rgba(255, 0, 0, 1)";
+    this.projectileSize = 4;
+    this.projectileSprite = new Image();
+    this.projectileSprite.src = "../../bullets/bullet-enemy.png";
     this.player = player;
 
     this.effects = [];
@@ -322,6 +333,95 @@ export class Enemy {
     }
   }
 
+  attackPlayer() {
+    this.shootDelay--;
+    if (
+      this.state === "hunting" && // hunting
+      // Math.hypot(this.x - this.player.x, this.y - this.player.y) < 16 && // in range
+      this.shootDelay <= 0 // cooldown
+    ) {
+      const origin = new Vec2(this.x, this.y);
+      const angle = Math.atan2(
+        this.player.y + this.player.height / 2 - this.y,
+        this.player.x + this.player.width / 2 - this.x,
+      );
+      //translate angle to directional vector
+      const dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
+      const projectile = new Projectile(
+        origin,
+        dir,
+        this.projectileSpeed,
+        this.projectileRange,
+        this.projectileDamage,
+        this.projectileColor,
+        this.mapGen.canvas,
+        this.projectileSprite,
+        angle,
+      );
+
+      this.projectiles.push(projectile);
+
+      this.shootDelay = 60; // reset cooldown
+    }
+
+    // if (
+    //   attackX < this.player.x + this.player.width &&
+    //   attackX + 16 > this.player.x &&
+    //   attackY < this.player.y + this.player.height &&
+    //   attackY + 16 > this.player.y
+    // ) {
+    //   this.player.hp -= 1; // damage
+    // }
+  }
+
+  checkBulletCollision(ctx) {
+    for (const projectile of this.projectiles) {
+      if (!projectile.alive) {
+        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
+        continue;
+      }
+      const bulletHitbox = {
+        x: projectile.position.x - this.projectileSize / 2,
+        y: projectile.position.y - this.projectileSize / 2,
+        width: this.projectileSize,
+        height: this.projectileSize,
+      };
+      const playerHitbox = {
+        x: this.player.x + this.player.width / 2 - 5,
+        y: this.player.y + this.player.height / 5 + 4,
+        width: 10,
+        height: 20,
+      };
+
+      // ctx.fillStyle = "rgba(0, 255, 0, 0.5)";
+      // ctx.fillRect(
+      //   playerHitbox.x,
+      //   playerHitbox.y,
+      //   playerHitbox.width,
+      //   playerHitbox.height,
+      // );
+
+      // ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+      // ctx.fillRect(
+      //   bulletHitbox.x,
+      //   bulletHitbox.y,
+      //   bulletHitbox.width,
+      //   bulletHitbox.height,
+      // );
+
+      if (
+        bulletHitbox.x < playerHitbox.x + playerHitbox.width &&
+        bulletHitbox.x + bulletHitbox.width > playerHitbox.x &&
+        bulletHitbox.y < playerHitbox.y + playerHitbox.height &&
+        bulletHitbox.y + bulletHitbox.height > playerHitbox.y
+      ) {
+        console.log("player hit");
+        this.player.hp -= 1;
+        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
+      }
+    }
+  }
+
   drawDebugSquare(x, y, room, ctx) {
     ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
     ctx.fillRect(x * 16 + room.x, y * 16 + room.y, 16, 16);
@@ -338,7 +438,12 @@ export class Enemy {
     this.followPath(this.room.enemyMap);
     this.animate();
     this.render(ctx);
+    this.attackPlayer();
+    for (const projectile of this.projectiles) {
+      projectile.update(16, 1, this.mapGen.currentRoom);
+    }
     this.hpCheck();
+    this.checkBulletCollision(ctx);
   }
 
   animate() {
