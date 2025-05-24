@@ -313,10 +313,6 @@ export class Player {
     const x = this.getCenterX() + Math.cos(this.angle) * a;
     const y = this.getCenterY() + Math.sin(this.angle) * b;
 
-    const dx = this.weaponTargetX - x;
-    const dy = this.weaponTargetY - y;
-    const rotation = Math.atan2(dy, dx);
-
     this.ctx.save();
     this.ctx.translate(x, y);
     this.ctx.rotate(this.angle);
@@ -421,18 +417,24 @@ export class Player {
     }
   }
 
-  shootGun(angle) {
+  shootGun() {
     if (!this.gun) {
       console.error("No gun! Visit America!");
       return;
     }
 
+    const a = this.radiusX;
+    const b = this.radiusY;
+
+    const x = this.getCenterX() + Math.cos(this.angle) * a;
+    const y = this.getCenterY() + Math.sin(this.angle) * b;
+
     const startV = new UTILS.Vec2(
-      this.x + this.width / 2,
-      this.y + this.height / 2,
+      x,
+      y,
     );
 
-    this.gun.shoot(startV, angle);
+    this.gun.shoot(startV, this.angle);
   }
 
   assignGun(gun) {

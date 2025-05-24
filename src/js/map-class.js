@@ -147,7 +147,7 @@ export class Map {
 
     // DEEP COPY to reservedTiles
     this.reservedTiles = JSON.parse(JSON.stringify(this.enemyMap));
-    console.log("rsvp", this.reservedTiles);
+    // console.log("rsvp", this.reservedTiles);
     // console.log(this.enemyMap);
   }
 
