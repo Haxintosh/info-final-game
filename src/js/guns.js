@@ -27,8 +27,8 @@ export class Weapon {
     this.image = image;
     this.desc = desc;
     this.projectileColor = projectileColor;
-    this.projectileSprite = new Image()
-    this.projectileSprite.src = projectilePath
+    this.projectileSprite = new Image();
+    this.projectileSprite.src = projectilePath;
     this.spreadAngle = spreadAngle;
     this.numProjectiles = numProjectiles;
     this.magSize = magSize;
@@ -162,7 +162,7 @@ export class Projectile {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
     this.alive = true;
-    this.sprite = sprite
+    this.sprite = sprite;
     this.size = size;
     this.angle = angle;
   }
@@ -188,22 +188,20 @@ export class Projectile {
   draw() {
     if (!this.ctx) return;
     if (!this.alive) return;
-    this.ctx.beginPath();
-    this.ctx.arc(this.position.x, this.position.y, this.size, 0, 2 * Math.PI);
-    this.ctx.fillStyle = this.color;
-    this.ctx.fill();
 
-    // this.ctx.fillStyle = this.color
-    // this.ctx.fillRect(this.position.x, this.position.y, 10, 10)
+    this.ctx.save();
 
-    const angle2 = Math.atan2(this.direction.y , this.direction.x)
-    // console.log(this.angle)
+    this.ctx.translate(this.position.x, this.position.y);
 
-    this.ctx.save()
-    this.ctx.translate(-this.sprite.width/2, -this.sprite.height/2)
-    this.ctx.rotate(0)
-    this.ctx.drawImage(this.sprite, this.position.x , this.position.y)
-    this.ctx.restore()
+    this.ctx.rotate(this.angle);
+
+    this.ctx.drawImage(
+      this.sprite,
+      -this.sprite.width / 2,
+      -this.sprite.height / 2,
+    );
+
+    this.ctx.restore();
   }
 
   checkCollisionWithMap(room) {
@@ -276,7 +274,7 @@ export const starterWeapons = [
     "1_32", // image
     "Powerful at close range, spreads projectiles for maximum damage.", // desc
     "#FF4500", // projectileColor
-    '../../bullets/bullet-blood.png',
+    "../../bullets/bullet-blood.png",
     1, // spread
     0.2, // spreadAngle
     8, // numProjectiles
