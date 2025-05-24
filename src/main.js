@@ -51,9 +51,9 @@ player.assignGun(gun);
 animate();
 
 // TO BE REMOVED
-levelFunctions.spawnEnemies(mapGen.currentRoom);
-levelFunctions.spawnEnemies(mapGen.currentRoom);
-levelFunctions.spawnEnemies(mapGen.currentRoom);
+// levelFunctions.spawnEnemies(mapGen.currentRoom);
+// levelFunctions.spawnEnemies(mapGen.currentRoom);
+// levelFunctions.spawnEnemies(mapGen.currentRoom);
 
 function animate() {
   requestAnimationFrame(animate);

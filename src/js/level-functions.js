@@ -32,10 +32,11 @@ export class LevelFunctions {
     this.battling = false;
     this.enemies = [];
     this.updateEnemies = this.updateEnemies.bind(this);
+    this.wavesLeft = this.level
   }
 
   async spawnEnemies(room) {
-    const enemyCount = Math.floor(Math.random() * 3) + 1; // min 1 max 3
+    const enemyCount = Math.floor(Math.random() * 3) + 5; // min 5 max 8
     // console.log(room);
 
     for (let i = 0; i < enemyCount; i++) {
@@ -48,7 +49,7 @@ export class LevelFunctions {
         // console.log(tileX, tileY);
         // console.log(room);
         if (room.enemyMap[tileY][tileX] === 0) {
-          const enemy = new Enemy(room, x, y, 16, 24, 0.3, this.player);
+          const enemy = new Enemy(room, x, y, 16, 24, 0.3, this.player, this, this.mapGen);
           // this.enemies.push(enemy);
           room.enemies.push(enemy);
 
@@ -238,6 +239,8 @@ export class LevelFunctions {
       if (this.battling) return; // trigger once
       this.battling = true;
 
+      this.wavesLeft--
+
       this.mapGen.lockdownRoom(
         this.mapGen.currentRoom.x / (40 * 16),
         this.mapGen.currentRoom.y / (40 * 16),
@@ -274,6 +277,9 @@ export class LevelFunctions {
 
       // spawn enemy logic
       // make sure to add these after all enemies are defeated:
+
+      setTimeout(() => {this.spawnEnemies(this.mapGen.currentRoom)}, 500)
+
       // this.mapGen.unlockRooms();
       // this.mapGen.currentRoom.battleRoomDone = true;
       // this.battling = false;

@@ -1,12 +1,15 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
 export class Enemy {
-  constructor(room, x, y, width, height, speed, player, hp = 10) {
+  constructor(room, x, y, width, height, speed, player, levelFunctions, mapGen, hp = 10) {
     this.x = x;
     this.y = y;
     this.width = width; // hitbox width
     this.height = height; // hitbox height
     this.speed = speed || 0.5;
+
+    this.levelFunctions = levelFunctions
+    this.mapGen = mapGen
 
     // animation
     this.spritesheetIdle = null;
@@ -239,6 +242,23 @@ export class Enemy {
         Math.floor((this.x - this.room.x) / 16)
       ] = 0;
       this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
+
+      if (this.room.enemies.length <= 0) {
+        if (this.levelFunctions.wavesLeft > 0) {
+          setTimeout(() => {
+            this.levelFunctions.wavesLeft--
+            this.levelFunctions.spawnEnemies(this.mapGen.currentRoom)
+          },500)
+        }
+        else {
+          this.mapGen.unlockRooms();
+          this.mapGen.currentRoom.battleRoomDone = true;
+          this.levelFunctions.battling = false;
+          this.levelFunctions.wavesLeft = this.levelFunctions.level
+
+          this.levelFunctions.announcer('Room Clear', 2000)
+        }
+      }
     }
   }
 
