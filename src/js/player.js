@@ -405,8 +405,8 @@ export class Player {
 
     for (let i = hearts.length - 1; i >= 0; i--) {
       const heart = hearts[i];
-      if (heart.src.includes("/heart.png")) {
-        heart.src = "/heart-dead.png";
+      if (heart.src.includes("./heart.png")) {
+        heart.src = "./heart-dead.png";
         break; // stops after breaking one heart
       }
     }
