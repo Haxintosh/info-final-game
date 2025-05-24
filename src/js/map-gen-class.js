@@ -27,51 +27,75 @@ export class MapGenerator {
     // this.iterationCount = [];
     // this.totalIterations = 0;
   }
-  async init() {
+  async init(progressCallback = () => {}) {
     this.generateLevel();
 
     const loadMap = async (path, x = 0, y = 0) => {
-      // console.log(this.canvas);
       const map = new Map(this.canvas, path, x, y);
       await map.loadMapFromFile(path.replace("spritesheet.png", "map.json"));
       return map;
     };
 
+    const totalMaps = 11;
+    let loadedMaps = 0;
+
+    const updateProgress = () => {
+      loadedMaps++;
+      const progress = Math.round((loadedMaps / totalMaps) * 100);
+      progressCallback(progress);
+    };
+
     this.mapInstances.rooms.battle = await loadMap(
       "./map-assets/room_battle_1/spritesheet.png",
     );
+    updateProgress();
+
     this.mapInstances.rooms.start = await loadMap(
       "./map-assets/room_start/spritesheet.png",
     );
+    updateProgress();
+
     this.mapInstances.rooms.end = await loadMap(
       "./map-assets/room_end/spritesheet.png",
     );
+    updateProgress();
 
     for (let i = 1; i <= 4; i++) {
       this.mapInstances.rooms[`special_${i}`] = await loadMap(
         `./map-assets/room_special_${i}/spritesheet.png`,
       );
+      updateProgress();
     }
 
     this.mapInstances.halls.horizontal = await loadMap(
       "./map-assets/hall_h/spritesheet.png",
     );
+    updateProgress();
+
     this.mapInstances.halls.vertical = await loadMap(
       "./map-assets/hall_v/spritesheet.png",
     );
+    updateProgress();
 
     this.mapInstances.blocks.horizontalLeft = await loadMap(
       "./map-assets/room_block_h/spritesheet.png",
     );
+    updateProgress();
+
     this.mapInstances.blocks.horizontalRight = await loadMap(
       "./map-assets/room_block_h/spritesheet.png",
     );
+    updateProgress();
+
     this.mapInstances.blocks.verticalTop = await loadMap(
       "./map-assets/room_block_v/spritesheet.png",
     );
+    updateProgress();
+
     this.mapInstances.blocks.verticalBottom = await loadMap(
       "./map-assets/room_block_v/spritesheet.png",
     );
+    updateProgress();
   }
 
   generateLevel() {

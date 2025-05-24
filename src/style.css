@@ -7,14 +7,49 @@ body {
     font-family: ending;
 }
 * {
-    cursor: url("../cursor.png"), auto
+    cursor: url("../cursor.png"), auto;
 }
 @font-face {
     font-family: ending;
     src: url("../alagard.ttf");
 }
+
+.loadBlocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+#logo {
+    width: 200px;
+    height: auto;
+    image-rendering: pixelated;
+    color: white;
+    z-index: 1001;
+}
+
 #canvas {
     image-rendering: crisp-edges;
+}
+
+.progressBarCont {
+    position: absolute;
+    top: 100%;
+    left: 0%;
+    transform: translate(0, -100%);
+    width: 0%;
+    height: 20px;
+    background-color: white;
+    transition: 100ms cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 #blackout {
@@ -149,11 +184,11 @@ body {
     flex-direction: column;
 }
 .upg-title {
-     font-size: 4em;
-     color: #ffffff;
-     text-align: center;
-     margin-bottom: 0px;
- }
+    font-size: 4em;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 0px;
+}
 .upg-subtitle {
     font-size: 1.5em;
     color: #bbbbbb;

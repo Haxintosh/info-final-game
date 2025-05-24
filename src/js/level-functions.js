@@ -131,19 +131,26 @@ export class LevelFunctions {
     }
   }
 
-  async start() {
+  async start(progressCallback = () => {}) {
     setTimeout(() => {
       this.blackout.style.opacity = "0";
     }, 400);
 
-    // setup
-    await this.mapGen.init();
+    // Step 1: Setup map generation
+    progressCallback(10);
+    await this.mapGen.init((mapGenProgress) => {
+      progressCallback(10 + mapGenProgress * 0.7); // loading  70% total progress
+    });
+    progressCallback(80);
+
     try {
       this.mapGen.drawLayout();
+      progressCallback(90);
     } catch (error) {
       console.error(error);
     }
 
+    // Step 2: Position player and camera
     this.player.x =
       this.mapGen.end.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
@@ -159,13 +166,21 @@ export class LevelFunctions {
     this.player.movementLocked = false;
     this.player.direction = "down";
 
+    progressCallback(90);
+
+    // Step 3: Reset interaction state
     this.interacted = false;
     this.interactAction = null;
 
+    progressCallback(95);
+
+    // Step 4: Announce level start
     setTimeout(
       () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
       500,
     );
+
+    progressCallback(100); // BEGIN GAME
   }
 
   announcer(msg, time) {
@@ -222,7 +237,7 @@ export class LevelFunctions {
 
           if (this.interactAction === "EndStage") {
             this.player.movementLocked = true;
-            this.player.moving = false
+            this.player.moving = false;
 
             this.announcerSub(text.endStatue, 3000);
 
@@ -239,7 +254,7 @@ export class LevelFunctions {
   }
 
   intermission(upg) {
-    upg.showCards()
+    upg.showCards();
 
     this.sublevel++;
     if (this.sublevel > 3) {
