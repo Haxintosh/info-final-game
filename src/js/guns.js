@@ -121,10 +121,10 @@ export class Weapon {
     this.projectiles = this.projectiles.filter((p) => p.alive);
   }
 
-  updateProjectiles(tileWidth, scale) {
+  updateProjectiles(tileWidth, scale, currentMap) {
     // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     for (let i = 0; i < this.projectiles.length; i++) {
-      this.projectiles[i].update(tileWidth, scale);
+      this.projectiles[i].update(tileWidth, scale, currentMap);
     }
     this.cleanProjectilesArray();
   }
@@ -136,7 +136,16 @@ export class Weapon {
 }
 
 export class Projectile {
-  constructor(origin, direction, speed, range, damage, color, canvas) {
+  constructor(
+    origin,
+    direction,
+    speed,
+    range,
+    damage,
+    color,
+    canvas,
+    size = 1.5,
+  ) {
     this.origin = origin;
     this.position = origin.copy();
     this.direction = direction;
@@ -147,9 +156,10 @@ export class Projectile {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
     this.alive = true;
+    this.size = size;
   }
 
-  update(tileWidth, scale) {
+  update(tileWidth, scale, currentMap) {
     if (!this.alive) return;
     this.position = this.position.add(
       this.direction.scale((this.speed * 10) / (tileWidth * scale)),
@@ -171,22 +181,36 @@ export class Projectile {
     if (!this.ctx) return;
     if (!this.alive) return;
     this.ctx.beginPath();
-    this.ctx.arc(this.position.x, this.position.y, 1, 0, 2 * Math.PI);
+    this.ctx.arc(this.position.x, this.position.y, this.size, 0, 2 * Math.PI);
     this.ctx.fillStyle = this.color;
     this.ctx.fill();
   }
 
   checkCollisionWithMap(room) {
     const tilePos = {
-      x: Math.floor(this.position.x - this.room.x / 16),
-      y: Math.floor(this.position.y - this.room.y / 16),
+      x: Math.floor((this.position.x - room.x) / 16),
+      y: Math.floor((this.position.y - room.y) / 16),
     };
 
-    if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
-      this.alive = false;
-      console.log("hit WALL");
-      return true;
+    // console.log(tilePos);
+
+    try {
+      if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
+        this.alive = false;
+        console.log("hit WALL");
+        // handle collision effect here
+      }
+    } catch (error) {
+      // console.log(error);
+      //
     }
+    // if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
+    //   this.alive = false;
+    //   console.log("hit WALL");
+    //   // handle collision effect here
+
+    //   return true;
+    // }
   }
 }
 

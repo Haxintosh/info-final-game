@@ -60,11 +60,34 @@ export class LevelFunctions {
   }
 
   updateEnemies(ctx) {
-    this.enemies.forEach((enemy) => {
+    this.mapGen.currentRoom.enemies.forEach((enemy) => {
       // Update enemy position or behavior
       // console.log();
-      enemy.update(this.ctx);
+      this.projectilesEnemyCollision();
+      enemy.update(ctx);
     });
+  }
+
+  projectilesEnemyCollision() {
+    for (let enemy of this.mapGen.currentRoom.enemies) {
+      for (let projectile of this.player.gun.projectiles) {
+        if (
+          projectile.position.x < enemy.x + enemy.width &&
+          projectile.position.x + projectile.size > enemy.x &&
+          projectile.position.y < enemy.y + enemy.height &&
+          projectile.position.y + projectile.size > enemy.y
+        ) {
+          // console.log("hit");
+          enemy.hp -= projectile.damage;
+          this.player.gun.projectiles.splice(
+            this.player.gun.projectiles.indexOf(projectile),
+            1,
+          );
+        } else {
+          // console.log("miss");
+        }
+      }
+    }
   }
 
   async start() {

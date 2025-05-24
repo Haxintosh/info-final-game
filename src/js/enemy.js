@@ -18,7 +18,7 @@ export class Enemy {
     this.frameY = 0;
     this.animationSpeed = 5; // frames per animation change
     this.frameCounter = 0;
-    this.direction = 'down'
+    this.direction = "down";
     this.color = "red"; // default color
 
     this.path = [];
@@ -84,23 +84,23 @@ export class Enemy {
     if (Math.abs(dx) >= Math.abs(dy)) {
       // Moving more horizontally than vertically
       if (dx > 0) {
-        this.direction = 'right';
+        this.direction = "right";
       } else {
-        this.direction = 'left';
+        this.direction = "left";
       }
     } else {
       // Moving more vertically than horizontally
       if (dy > 0) {
-        this.direction = 'down';
+        this.direction = "down";
       } else {
-        this.direction = 'up';
+        this.direction = "up";
       }
     }
 
     if (dx === 0 && dy === 0) {
-      this.spritesheetCurrent = this.spritesheetIdle
+      this.spritesheetCurrent = this.spritesheetIdle;
     } else {
-      this.spritesheetCurrent = this.spritesheetRun
+      this.spritesheetCurrent = this.spritesheetRun;
     }
   }
 
@@ -229,9 +229,11 @@ export class Enemy {
       this.randomWander(this.room);
     }
     this.followPath(this.room.enemyMap);
-    this.animate()
+    this.animate();
     this.render(ctx);
     this.hpCheck();
+
+    console.log(this.hp);
   }
 
   animate() {
@@ -265,7 +267,7 @@ export class Enemy {
     //   this.frameX = (this.frameX + 1) % 4;
     // }
 
-    console.log(this.spritesheetCurrent, this.spritesheetIdle)
+    console.log(this.spritesheetCurrent, this.spritesheetIdle);
     if (this.spritesheetCurrent) {
       const frameWidth = this.spritesheetCurrent.width / 6;
       const frameHeight = this.spritesheetCurrent.height / 4;
