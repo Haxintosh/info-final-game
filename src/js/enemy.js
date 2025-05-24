@@ -103,7 +103,7 @@ export class Enemy {
   }
 
   followPath(grid) {
-    if (this.state === "dead") return;
+    if (this.state === "dead" || this.attackLock) return;
 
     if (!this.path || this.path.length === 0) {
       const tileSize = 16;
@@ -196,7 +196,7 @@ export class Enemy {
   }
 
   randomWander(room) {
-    if (this.state === "dead") return;
+    if (this.state === "dead" || this.attackLock) return;
 
     if (this.wanderTarget) return;
 
@@ -344,18 +344,18 @@ export class Enemy {
             this.levelFunctions.announcer(text.roomClear, 2000);
           }
         }
-      }, 1000);
 
-      const exp = Math.ceil(Math.random() * 3);
-      for (let i = 0; i < exp; i++) {
-        const shard = new Shard(
-          this.x,
-          this.y,
-          this.player,
-          this.levelFunctions.shardsArray,
-          this.levelFunctions.shards,
-        );
-      }
+        const exp = Math.ceil(Math.random() * 2) + 1;
+        for (let i = 0; i < exp; i++) {
+          const shard = new Shard(
+            this.x,
+            this.y,
+            this.player,
+            this.levelFunctions.shardsArray,
+            this.levelFunctions.shards,
+          );
+        }
+      }, 1000);
     }
   }
 
