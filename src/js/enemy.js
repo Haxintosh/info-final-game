@@ -1,15 +1,26 @@
 import { aStar } from "./pathfinder.js";
 import { ddaRaycast } from "./dda.js";
 export class Enemy {
-  constructor(room, x, y, width, height, speed, player, levelFunctions, mapGen, hp = 10) {
+  constructor(
+    room,
+    x,
+    y,
+    width,
+    height,
+    speed,
+    player,
+    levelFunctions,
+    mapGen,
+    hp = 10,
+  ) {
     this.x = x;
     this.y = y;
     this.width = width; // hitbox width
     this.height = height; // hitbox height
     this.speed = speed || 0.5;
 
-    this.levelFunctions = levelFunctions
-    this.mapGen = mapGen
+    this.levelFunctions = levelFunctions;
+    this.mapGen = mapGen;
 
     // animation
     this.spritesheetIdle = null;
@@ -20,8 +31,8 @@ export class Enemy {
     this.frameY = 0;
     this.animationSpeed = 10; // frames per animation change
     this.frameCounter = 0;
-    this.direction = 'down'
-    this.color = "red"; // default color
+    this.direction = "down";
+    this.color = "rgba(255, 0, 0, 0.2)"; // default color
 
     this.path = [];
     this.pathIndex = 0;
@@ -36,6 +47,8 @@ export class Enemy {
     this.effectDuration = 0;
 
     this.hp = hp;
+
+    this.oldTilePos = { x: null, y: null };
   }
 
   async loadSpritesheetIdle(spritesheetPath) {
@@ -77,18 +90,36 @@ export class Enemy {
 
   followPath(grid) {
     if (!this.path || this.path.length === 0) {
-      this.wanderTarget = null; // rst
+      const tileSize = 16;
+      const currentTileX = Math.floor((this.x - this.room.x) / tileSize);
+      const currentTileY = Math.floor((this.y - this.room.y) / tileSize);
+
+      if (
+        this.oldTilePos.x !== currentTileX ||
+        this.oldTilePos.y !== currentTileY
+      ) {
+        if (this.oldTilePos.x !== null && this.oldTilePos.y !== null) {
+          this.room.reservedTiles[this.oldTilePos.y][this.oldTilePos.x] = 0;
+          // console.log(oldTilePos.x, oldTilePos.y, "UNMARKED");
+        }
+
+        this.room.reservedTiles[currentTileY][currentTileX] = 1;
+        // console.log(currentTileX, currentTileY, "MARKED");
+        this.oldTilePos.x = currentTileX;
+        this.oldTilePos.y = currentTileY;
+      }
+
+      // console.log("no path");
+      this.wanderTarget = null; // reset wander target
       return;
     }
 
     const tileSize = 16;
 
-    // curr target tile
     const targetTile = this.path[this.pathIndex];
     const targetX = this.room.x + targetTile.x * tileSize + tileSize / 2;
     const targetY = this.room.y + targetTile.y * tileSize + tileSize / 2;
 
-    // dist to target
     const dx = targetX - this.x;
     const dy = targetY - this.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -99,30 +130,49 @@ export class Enemy {
       this.pathIndex++;
 
       if (this.pathIndex >= this.path.length) {
+        for (const tile of this.path) {
+          this.room.reservedTiles[tile.y][tile.x] = 0;
+          // console.log(tile.x, tile.y, "UNMARKED");
+        }
+
+        const currentTileX = Math.floor((this.x - this.room.x) / tileSize);
+        const currentTileY = Math.floor((this.y - this.room.y) / tileSize);
+
+        // Mark the new tile as reserved
+        this.room.reservedTiles[currentTileY][currentTileX] = 1;
+        // console.log(currentTileX, currentTileY, "MARKED");
+
         this.path = [];
         this.pathIndex = 0;
         this.wanderTarget = null;
-        // this.wanderDelay = 90; // frames to wait before choosing a new target
       }
     } else {
+      if (this.oldTilePos.x === null || this.oldTilePos.y === null) {
+        this.oldTilePos.x = Math.floor((this.x - this.room.x) / tileSize);
+        this.oldTilePos.y = Math.floor((this.y - this.room.y) / tileSize);
+      }
+      this.room.reservedTiles[this.oldTilePos.y][this.oldTilePos.x] = 0;
       this.x += (dx / distance) * this.speed;
       this.y += (dy / distance) * this.speed;
+      this.oldTilePos.x = Math.floor((this.x - this.room.x) / tileSize);
+      this.oldTilePos.y = Math.floor((this.y - this.room.y) / tileSize);
+      this.room.reservedTiles[this.oldTilePos.y][this.oldTilePos.x] = 1;
     }
 
-    // check for direction
+    // Check for direction
     if (Math.abs(dx) >= Math.abs(dy)) {
       // Moving more horizontally than vertically
       if (dx > 0) {
-        this.direction = 'right';
+        this.direction = "right";
       } else {
-        this.direction = 'left';
+        this.direction = "left";
       }
     } else {
       // Moving more vertically than horizontally
       if (dy > 0) {
-        this.direction = 'down';
+        this.direction = "down";
       } else {
-        this.direction = 'up';
+        this.direction = "up";
       }
     }
 
@@ -148,8 +198,13 @@ export class Enemy {
       };
 
       this.wanderTarget = player;
-      this.path = aStar(room.enemyMap, enemy, player, 2);
+      this.path = aStar(room.reservedTiles, enemy, player, 2);
       this.pathIndex = 0;
+
+      // console.log(room);
+      for (const tile of this.path) {
+        room.reservedTiles[tile.y][tile.x] = 1;
+      }
 
       return;
     }
@@ -184,10 +239,14 @@ export class Enemy {
           x: Math.floor((this.x - room.x) / tileSize),
           y: Math.floor((this.y - room.y) / tileSize),
         };
-        const goal = this.wanderTarget;
 
-        this.path = aStar(room.enemyMap, start, goal, 1);
+        const goal = this.wanderTarget;
+        this.path = aStar(room.reservedTiles, start, goal, 2);
         this.pathIndex = 0;
+
+        for (const tile of this.path) {
+          room.reservedTiles[tile.y][tile.x] = 1;
+        }
         break;
       }
     }
@@ -224,12 +283,12 @@ export class Enemy {
     // console.log(rayStart, rayEnd, res);
 
     if (res === null) {
-      this.color = "green"; // visible
+      this.color = "rgba(0, 255, 0, 0.2)"; // visible
       this.state = "hunting";
       this.speed = 0.65; // speed up
       this.wanderDelay = 0; // reset wander delay
     } else {
-      this.color = "red"; // not visible
+      this.color = "rgba(255, 0, 0, 0.2)"; // not visible
       this.state = "wander";
       this.speed = 0.3; // slow down
       this.wanderDelay = 90; // reset wander delay
@@ -238,28 +297,33 @@ export class Enemy {
 
   hpCheck() {
     if (this.hp <= 0) {
-      this.room.enemyMap[Math.floor((this.y - this.room.y) / 16)][
-        Math.floor((this.x - this.room.x) / 16)
-      ] = 0;
+      for (const tile of this.path) {
+        this.room.reservedTiles[tile.y][tile.x] = 0;
+      }
+
       this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
 
       if (this.room.enemies.length <= 0) {
         if (this.levelFunctions.wavesLeft > 0) {
           setTimeout(() => {
-            this.levelFunctions.wavesLeft--
-            this.levelFunctions.spawnEnemies(this.mapGen.currentRoom)
-          },500)
-        }
-        else {
+            this.levelFunctions.wavesLeft--;
+            this.levelFunctions.spawnEnemies(this.mapGen.currentRoom);
+          }, 500);
+        } else {
           this.mapGen.unlockRooms();
           this.mapGen.currentRoom.battleRoomDone = true;
           this.levelFunctions.battling = false;
-          this.levelFunctions.wavesLeft = this.levelFunctions.level
+          this.levelFunctions.wavesLeft = this.levelFunctions.level;
 
-          this.levelFunctions.announcer('Room Clear', 2000)
+          this.levelFunctions.announcer("Room Clear", 2000);
         }
       }
     }
+  }
+
+  drawDebugSquare(x, y, room, ctx) {
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    ctx.fillRect(x * 16 + room.x, y * 16 + room.y, 16, 16);
   }
 
   update(ctx) {
@@ -271,7 +335,7 @@ export class Enemy {
       this.randomWander(this.room);
     }
     this.followPath(this.room.enemyMap);
-    this.animate()
+    this.animate();
     this.render(ctx);
     this.hpCheck();
   }
@@ -301,19 +365,19 @@ export class Enemy {
   }
 
   render(ctx) {
-    if (this.spritesheetRun === null)  return
+    if (this.spritesheetRun === null) return;
     const frameWidth = this.spritesheetRun.width / 6;
     const frameHeight = this.spritesheetRun.height / 4;
 
-    if (this.state === 'attacking') {
+    if (this.state === "attacking") {
       ctx.drawImage(
         this.spritesheetAttack,
         this.frameX * frameWidth,
         this.frameY * frameHeight,
         frameWidth,
         frameHeight,
-        this.x - frameWidth/2,
-        this.y - frameHeight/2 - 5,
+        this.x - frameWidth / 2,
+        this.y - frameHeight / 2 - 5,
         frameWidth,
         frameHeight,
       );
@@ -324,8 +388,8 @@ export class Enemy {
         this.frameY * frameHeight,
         frameWidth,
         frameHeight,
-        this.x - frameWidth/2,
-        this.y - frameHeight/2 - 5,
+        this.x - frameWidth / 2,
+        this.y - frameHeight / 2 - 5,
         frameWidth,
         frameHeight,
       );
@@ -336,8 +400,8 @@ export class Enemy {
         this.frameY * frameHeight,
         frameWidth,
         frameHeight,
-        this.x - frameWidth/2,
-        this.y - frameHeight/2 - 5,
+        this.x - frameWidth / 2,
+        this.y - frameHeight / 2 - 5,
         frameWidth,
         frameHeight,
       );
@@ -351,6 +415,27 @@ export class Enemy {
       this.width,
       this.height,
     );
+
+    // this.drawPath(ctx);
+    //
+    // draw reservedTiles
+    // for (let y = 0; y < this.room.mapHeight; y++) {
+    //   for (let x = 0; x < this.room.mapWidth; x++) {
+    //     if (this.room.reservedTiles[y][x] === 1) {
+    //       this.drawDebugSquare(x, y, this.room, ctx);
+    //     }
+    //   }
+    // }
     // console.log(this.x, this.y);
+  }
+
+  // draw path
+  drawPath(ctx) {
+    if (this.path) {
+      for (let i = 0; i < this.path.length; i++) {
+        const tile = this.path[i];
+        this.drawDebugSquare(tile.x, tile.y, this.room, ctx);
+      }
+    }
   }
 }

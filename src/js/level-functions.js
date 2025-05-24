@@ -32,7 +32,7 @@ export class LevelFunctions {
     this.battling = false;
     this.enemies = [];
     this.updateEnemies = this.updateEnemies.bind(this);
-    this.wavesLeft = this.level
+    this.wavesLeft = this.level;
   }
 
   async spawnEnemies(room) {
@@ -49,15 +49,25 @@ export class LevelFunctions {
         // console.log(tileX, tileY);
         // console.log(room);
         if (room.enemyMap[tileY][tileX] === 0) {
-          const enemy = new Enemy(room, x, y, 16, 24, 0.3, this.player, this, this.mapGen);
+          const enemy = new Enemy(
+            room,
+            x,
+            y,
+            16,
+            24,
+            0.3,
+            this.player,
+            this,
+            this.mapGen,
+          );
           // this.enemies.push(enemy);
           room.enemies.push(enemy);
 
           // load images
-          await enemy.loadSpritesheetIdle('../../enemies/enemy1-idle.png')
-          await enemy.loadSpritesheetRun('../../enemies/enemy1-run.png')
-          await enemy.loadSpritesheetAttack('../../enemies/enemy1-attack.png')
-          await enemy.loadSpritesheetDeath('../../enemies/enemy1-death.png')
+          await enemy.loadSpritesheetIdle("../../enemies/enemy1-idle.png");
+          await enemy.loadSpritesheetRun("../../enemies/enemy1-run.png");
+          await enemy.loadSpritesheetAttack("../../enemies/enemy1-attack.png");
+          await enemy.loadSpritesheetDeath("../../enemies/enemy1-death.png");
         }
         break;
       }
@@ -239,7 +249,7 @@ export class LevelFunctions {
       if (this.battling) return; // trigger once
       this.battling = true;
 
-      this.wavesLeft--
+      this.wavesLeft--;
 
       this.mapGen.lockdownRoom(
         this.mapGen.currentRoom.x / (40 * 16),
@@ -278,7 +288,9 @@ export class LevelFunctions {
       // spawn enemy logic
       // make sure to add these after all enemies are defeated:
 
-      setTimeout(() => {this.spawnEnemies(this.mapGen.currentRoom)}, 500)
+      setTimeout(() => {
+        this.spawnEnemies(this.mapGen.currentRoom);
+      }, 500);
 
       // this.mapGen.unlockRooms();
       // this.mapGen.currentRoom.battleRoomDone = true;

@@ -101,11 +101,11 @@ window.addEventListener("resize", () => {
   camera.scaledCanvas.height = canvas.height / camera.zoomFactor;
 });
 
-window.addEventListener('mousemove', (e) => {
+window.addEventListener("mousemove", (e) => {
   const rect = canvas.getBoundingClientRect();
   player.weaponTargetX = e.clientX - rect.left;
   player.weaponTargetY = e.clientY - rect.top;
-  player.angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2)
+  player.angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2);
 });
 
 // testing

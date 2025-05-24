@@ -44,13 +44,13 @@ export class Player {
     this.hp = this.maxHp;
 
     // weapon
-    this.angle = 0
-    this.radiusX = 20
-    this.radiusY = 20
+    this.angle = 0;
+    this.radiusX = 20;
+    this.radiusY = 20;
     this.weaponSprite = new Image();
-    this.weaponSprite.src = '../../weapon.png';
-    this.weaponTargetX = 0
-    this.weaponTargetY = 0
+    this.weaponSprite.src = "../../weapon.png";
+    this.weaponTargetX = 0;
+    this.weaponTargetY = 0;
 
     // debug
     this.debugMode = false;
@@ -190,8 +190,8 @@ export class Player {
 
   checkCollisionWithMap(map, blocks) {
     this.hitbox = {
-      x: this.x + this.width/2 - 5,
-      y: this.y + this.height/2 + 4,
+      x: this.x + this.width / 2 - 5,
+      y: this.y + this.height / 2 + 4,
       width: 10,
       height: 10,
     };
@@ -320,7 +320,11 @@ export class Player {
     this.ctx.save();
     this.ctx.translate(x, y);
     this.ctx.rotate(this.angle);
-    this.ctx.drawImage(this.weaponSprite, -this.weaponSprite.width / 2, -this.weaponSprite.height / 2);
+    this.ctx.drawImage(
+      this.weaponSprite,
+      -this.weaponSprite.width / 2,
+      -this.weaponSprite.height / 2,
+    );
     this.ctx.restore();
 
     // draw collision box in debug mode

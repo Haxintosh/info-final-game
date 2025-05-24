@@ -18,6 +18,7 @@ export class Map {
     this.collisionMap = []; // use this for collision
     this.enemyMap = []; // use this for enemy spawn points
     this.interactMap = []; // use this for interact blocks
+    this.reservedTiles = []; // use this for reserved tiles
     this.debugMode = false;
     this.x = x;
     this.y = y;
@@ -64,6 +65,10 @@ export class Map {
 
     // init interaction map
     this.interactMap = Array(this.mapHeight)
+      .fill()
+      .map(() => Array(this.mapWidth).fill(0));
+
+    this.reservedTiles = Array(this.mapHeight)
       .fill()
       .map(() => Array(this.mapWidth).fill(0));
 
@@ -114,6 +119,10 @@ export class Map {
       .fill()
       .map(() => Array(this.mapWidth).fill(0));
 
+    this.reservedTiles = Array(this.mapHeight)
+      .fill()
+      .map(() => Array(this.mapWidth).fill(0));
+
     // processing each layer that has collider=true in the .json file
     for (const layer of this.layers) {
       if (layer.collider === true) {
@@ -135,6 +144,10 @@ export class Map {
       this.enemyMap[i][0] = 1;
       this.enemyMap[i][this.enemyMap[i].length - 1] = 1;
     }
+
+    // DEEP COPY to reservedTiles
+    this.reservedTiles = JSON.parse(JSON.stringify(this.enemyMap));
+    console.log("rsvp", this.reservedTiles);
     // console.log(this.enemyMap);
   }
 
@@ -296,6 +309,7 @@ export class Map {
     clonedMap.collisionMap = JSON.parse(JSON.stringify(this.collisionMap));
     clonedMap.interactMap = JSON.parse(JSON.stringify(this.interactMap));
     clonedMap.enemyMap = JSON.parse(JSON.stringify(this.enemyMap));
+    clonedMap.reservedTiles = JSON.parse(JSON.stringify(this.reservedTiles));
     return clonedMap;
   }
 }
