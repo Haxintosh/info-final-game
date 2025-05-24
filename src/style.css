@@ -102,3 +102,111 @@ body {
     margin: 0;
     width: 100px;
 }
+
+/*upgrade*/
+.upgrade-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    transition: 200ms;
+    opacity: 0;
+    width: 1200px;
+    height: 800px;
+    /*border: 2px white solid;*/
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.shard-container-alt {
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    border-radius: 3px;
+    margin: 10px auto;
+}
+#shard-alt {
+    height: 48px;
+    width: auto;
+    image-rendering: pixelated;
+}
+#shard-txt-alt {
+    color: #ffffff;
+    margin: 0;
+    width: 100px;
+    font-size: 3em;
+}
+.upgrades {
+    display: flex;
+    flex-direction: row;
+}
+.upgrade {
+    width: 320px;
+    height: 600px;
+    margin: 20px auto;
+    border: 2px white solid;
+    display: flex;
+    flex-direction: column;
+}
+.upg-title {
+     font-size: 4em;
+     color: #ffffff;
+     text-align: center;
+     margin-bottom: 0px;
+ }
+.upg-subtitle {
+    font-size: 1.5em;
+    color: #bbbbbb;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.upg-img {
+    width: 160px;
+    height: auto;
+    margin: 10px auto;
+    image-rendering: pixelated;
+}
+.upg-desc {
+    font-size: 1.5em;
+    color: #ffffff;
+    text-align: center;
+    margin: 15px 0;
+    padding: 0 10px;
+}
+.shard-container-cost {
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    margin: 10px auto;
+    width: 200px;
+    background-color: rgba(2, 43, 141, 0.59);
+}
+.shard-container-cost:hover {
+    background-color: #3e63bb;
+}
+.shard-cost {
+    height: 48px;
+    width: auto;
+    image-rendering: pixelated;
+    margin: auto 0 0 auto;
+}
+.shard-txt-cost {
+    color: #ffffff;
+    margin: 0 auto 0 0;
+    font-size: 3em;
+}
+#upg-close {
+    width: 60px;
+    height: 60px;
+    margin: auto;
+    background-color: rgba(141, 2, 7, 0.57);
+}
+#upg-close:hover {
+    background-color: rgb(196, 91, 94);
+}
+#upg-close h1 {
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    margin: 8px auto;
+}

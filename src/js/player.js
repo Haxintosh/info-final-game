@@ -45,8 +45,8 @@ export class Player {
 
     // weapon
     this.angle = 0;
-    this.radiusX = 20;
-    this.radiusY = 20;
+    this.radiusX = 18;
+    this.radiusY = 18;
     this.weaponSprite = new Image();
     this.weaponSprite.src = "../../weapon.png";
     this.weaponTargetX = 0;

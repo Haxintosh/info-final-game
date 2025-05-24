@@ -98,7 +98,7 @@ export class LevelFunctions {
         this.mapGen.currentRoom.explosions.splice(i, 1);
       }
     }
-    console.log(this.mapGen.currentRoom.explosions);
+    // console.log(this.mapGen.currentRoom.explosions);
   }
 
   projectilesEnemyCollision() {
@@ -214,7 +214,7 @@ export class LevelFunctions {
     }
   }
 
-  interact(e) {
+  interact(e, upg) {
     switch (e.code) {
       case "KeyE":
         if (!this.interacted) {
@@ -222,6 +222,7 @@ export class LevelFunctions {
 
           if (this.interactAction === "EndStage") {
             this.player.movementLocked = true;
+            this.player.moving = false
 
             this.announcerSub(text.endStatue, 3000);
 
@@ -229,7 +230,7 @@ export class LevelFunctions {
               this.blackout.style.opacity = "1";
             }, 4000);
             setTimeout(() => {
-              this.intermission();
+              this.intermission(upg);
             }, 4500);
           }
         }
@@ -237,16 +238,14 @@ export class LevelFunctions {
     }
   }
 
-  intermission() {
-    // put upgrades here
+  intermission(upg) {
+    upg.showCards()
 
     this.sublevel++;
     if (this.sublevel > 3) {
       this.level++;
       this.sublevel = 1;
     }
-
-    this.start();
   }
 
   update() {
