@@ -405,7 +405,7 @@ export class Player {
 
     for (let i = hearts.length - 1; i >= 0; i--) {
       const heart = hearts[i];
-      if (heart.src.includes("./heart.png")) {
+      if (heart.src.includes("/heart.png")) {
         heart.src = "./heart-dead.png";
         break; // stops after breaking one heart
       }
@@ -417,7 +417,7 @@ export class Player {
     }
   }
 
-  shootGun() {
+  shootGun(levelFunctions) {
     if (!this.gun) {
       console.error("No gun! Visit America!");
       return;
@@ -431,7 +431,7 @@ export class Player {
 
     const startV = new UTILS.Vec2(x, y);
 
-    this.gun.shoot(startV, this.angle);
+    this.gun.shoot(startV, this.angle, levelFunctions);
   }
 
   assignGun(gun) {

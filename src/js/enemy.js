@@ -3,6 +3,7 @@ import { ddaRaycast } from "./dda.js";
 import { text } from "./text.js";
 import { Projectile, Explosion } from "./guns.js";
 import { Vec2 } from "./utils.js";
+import { Shard } from './shard.js'
 export class Enemy {
   constructor(
     room,
@@ -329,6 +330,11 @@ export class Enemy {
 
           this.levelFunctions.announcer(text.roomClear, 2000);
         }
+      }
+
+      const exp = Math.ceil(Math.random()*3);
+      for (let i = 0; i < exp; i++) {
+        const shard = new Shard(this.x, this.y, this.player, this.levelFunctions.shardsArray, this.levelFunctions.shards)
       }
     }
   }

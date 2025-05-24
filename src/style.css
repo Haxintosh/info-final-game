@@ -149,28 +149,28 @@ body {
     transition: 200ms;
     opacity: 0;
     width: 1200px;
-    height: 800px;
+    height: 750px;
     /*border: 2px white solid;*/
     background-color: rgba(0, 0, 0, 0.5);
 }
-.shard-container-alt {
-    display: flex;
-    gap: 10px;
-    padding: 5px;
-    border-radius: 3px;
-    margin: 10px auto;
-}
-#shard-alt {
-    height: 48px;
-    width: auto;
-    image-rendering: pixelated;
-}
-#shard-txt-alt {
-    color: #ffffff;
-    margin: 0;
-    width: 100px;
-    font-size: 3em;
-}
+/*.shard-container-alt {*/
+/*    display: flex;*/
+/*    gap: 10px;*/
+/*    padding: 5px;*/
+/*    border-radius: 3px;*/
+/*    margin: 10px auto;*/
+/*}*/
+/*#shard-alt {*/
+/*    height: 48px;*/
+/*    width: auto;*/
+/*    image-rendering: pixelated;*/
+/*}*/
+/*#shard-txt-alt {*/
+/*    color: #ffffff;*/
+/*    margin: 0;*/
+/*    width: 100px;*/
+/*    font-size: 3em;*/
+/*}*/
 .upgrades {
     display: flex;
     flex-direction: row;
@@ -179,7 +179,20 @@ body {
     width: 320px;
     height: 600px;
     margin: 20px auto;
-    border: 2px white solid;
+    border: 5px white solid;
+    display: flex;
+    flex-direction: column;
+
+    --s: 80px;
+    -webkit-mask:
+            conic-gradient(at var(--s) var(--s),#0000 75%,#000 0)
+            0 0/calc(100% - var(--s)) calc(100% - var(--s)),
+            linear-gradient(#000 0 0) content-box;
+}
+.upg-title-container {
+    height: 132px;
+    margin-top: 40px;
+    margin-bottom: 0px;
     display: flex;
     flex-direction: column;
 }
@@ -187,19 +200,26 @@ body {
     font-size: 4em;
     color: #ffffff;
     text-align: center;
-    margin-bottom: 0px;
+    margin: auto;
+}
+.upg-subtitle-container {
+    margin: 10px auto;
+    padding-bottom: 10px;
+    width: 250px;
+    border-bottom: 2px white solid;
 }
 .upg-subtitle {
     font-size: 1.5em;
     color: #bbbbbb;
     text-align: center;
-    margin-bottom: 10px;
+    margin: 0 auto;
 }
 .upg-img {
     width: 160px;
     height: auto;
     margin: 10px auto;
     image-rendering: pixelated;
+    user-select: none;
 }
 .upg-desc {
     font-size: 1.5em;
@@ -212,8 +232,8 @@ body {
     display: flex;
     gap: 10px;
     padding: 5px;
-    margin: 10px auto;
-    width: 200px;
+    margin: auto auto 20px;
+    width: 250px;
     background-color: rgba(2, 43, 141, 0.59);
 }
 .shard-container-cost:hover {

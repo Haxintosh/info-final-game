@@ -52,9 +52,9 @@ export class Weapon {
     // this.tweenGroup = new TWEEN.Group();
   }
 
-  shoot(origin, angle) {
+  shoot(origin, angle, levelFunctions) {
     // origin: Vec2, angle: number (in radians)
-    if (Date.now() - this.lastFired < 500 / this.speed) {
+    if (Date.now() - this.lastFired < 500 / (this.speed * levelFunctions.upgrades.speedMulti)) {
       console.log("cooldown");
       this.currentAct = "cooldown";
       return;

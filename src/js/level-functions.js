@@ -35,6 +35,16 @@ export class LevelFunctions {
     this.enemies = [];
     this.updateEnemies = this.updateEnemies.bind(this);
     this.wavesLeft = this.level;
+
+    // shards
+    this.shards = {count: 0}
+    this.shardsArray = []
+
+    // upgrade stuff
+    this.upgrades = {
+      dmgMulti: 1,
+      speedMulti: 1,
+    }
   }
 
   async spawnEnemies(room) {
@@ -119,7 +129,7 @@ export class LevelFunctions {
             projectile.color,
           );
           this.mapGen.currentRoom.explosions.push(explosion);
-          enemy.hp -= projectile.damage;
+          enemy.hp -= projectile.damage * this.upgrades.dmgMulti;
           this.player.gun.projectiles.splice(
             this.player.gun.projectiles.indexOf(projectile),
             1,
@@ -152,9 +162,9 @@ export class LevelFunctions {
 
     // Step 2: Position player and camera
     this.player.x =
-      this.mapGen.end.x * 40 * 16 + 10 * 16 - this.player.width / 2;
+      this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
-      this.mapGen.end.y * 40 * 16 + 10 * 16 - this.player.height / 2;
+      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2;
     this.camera.position.x =
       this.player.x +
       this.player.width / 2 -
@@ -332,5 +342,11 @@ export class LevelFunctions {
       // this.mapGen.currentRoom.battleRoomDone = true;
       // this.battling = false;
     }
+  }
+
+  updateShards() {
+    this.shardsArray.forEach((e) => {
+      e.update(this.ctx)
+    })
   }
 }

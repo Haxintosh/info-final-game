@@ -72,7 +72,7 @@ const gun = starterWeapons.find((gun) => gun.name === "Shotgun");
 player.assignGun(gun);
 animate();
 
-const upg = new UpgCard(levelFunctions);
+const upg = new UpgCard(levelFunctions,player);
 document
   .getElementById("shard-container-cost-1")
   .addEventListener("click", () => upg.buy(1));
@@ -100,6 +100,7 @@ function animate() {
   camera.begin();
   camera.updateCamBox();
 
+  // update map
   try {
     mapGen.update();
   } catch (error) {
@@ -109,15 +110,22 @@ function animate() {
   mapGen.findCurrentRoom(player);
   levelFunctions.checkBattleRoom();
 
+  // update map sprites
   if (player.direction !== "down") levelFunctions.update();
 
   player.update(mapGen.currentRoom, mapGen.renderedBlocks);
 
   // console.log(player.getFacingTile(mapGen.currentRoom))
   levelFunctions.checkInteract();
+
+  // update map sprites
   if (player.direction === "down") levelFunctions.update();
+
   levelFunctions.updateEnemies(ctx);
+  levelFunctions.updateShards()
+
   levelFunctions.updateExplosions();
+
   camera.end();
 
   // Debug
@@ -156,6 +164,6 @@ window.addEventListener("mousedown", (e) => {
   // console.log("mouse", e.x, e.y);
   // calculate angle enter of screen - mouse
   // const angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2);
-  player.shootGun();
+  player.shootGun(levelFunctions);
   // console.log("angle", angle * (180 / Math.PI));
 });

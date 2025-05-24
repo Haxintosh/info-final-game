@@ -36,6 +36,9 @@
         </div>
 
         <canvas id="canvas" height="3000" width="3000"></canvas>
+
+        <div id="blackout"></div>
+
         <div id="ui">
             <div id="announcer">
                 <h1 id="announcer-txt">LEVEL 1-1</h1>
@@ -58,24 +61,28 @@
             </div>
         </div>
 
-        <div id="blackout"></div>
-
         <div class="upgrade-container" id="upgrade-container">
-            <div class="shard-container-alt">
-                <img src="/shard.png" alt="Shard" id="shard-alt" />
-                <h1 id="shard-txt-alt">0</h1>
-            </div>
+<!--            <div class="shard-container-alt">-->
+<!--                <img src="/shard.png" alt="Shard" id="shard-alt" />-->
+<!--                <h1 id="shard-txt-alt">0</h1>-->
+<!--            </div>-->
             <div class="upgrades">
                 <div class="upgrade" id="upg-1">
-                    <h1 id="upg-title-1" class="upg-title">Attack Damage</h1>
-                    <h2 id="upg-subtitle-1" class="upg-subtitle">Basic</h2>
+                    <div class="upg-title-container">
+                        <h1 id="upg-title-1" class="upg-title">Attack</h1>
+                    </div>
+                    <div class="upg-subtitle-container">
+                        <h2 id="upg-subtitle-1" class="upg-subtitle">Basic</h2>
+                    </div>
                     <img
-                        src="/icons/7/Skillicon7_01.png"
-                        alt=""
-                        class="upg-img"
-                        id="upg-img-1"
+                            src="/icons/7/Skillicon7_01.png"
+                            alt=""
+                            class="upg-img"
+                            id="upg-img-1"
                     />
-                    <h3 id="upg-desc-1" class="upg-desc">+1 nothing</h3>
+                    <div class="upg-desc-container">
+                        <h3 id="upg-desc-1" class="upg-desc">+1 nothing</h3>
+                    </div>
                     <div
                         class="shard-container-cost"
                         id="shard-container-cost-1"
@@ -90,15 +97,21 @@
                     </div>
                 </div>
                 <div class="upgrade" id="upg-2">
-                    <h1 id="upg-title-2" class="upg-title"></h1>
-                    <h2 id="upg-subtitle-2" class="upg-subtitle"></h2>
+                    <div class="upg-title-container">
+                        <h1 id="upg-title-2" class="upg-title"></h1>
+                    </div>
+                    <div class="upg-subtitle-container">
+                        <h2 id="upg-subtitle-2" class="upg-subtitle"></h2>
+                    </div>
                     <img
                         src="/7/Skillicon7_01.png"
                         alt=""
                         class="upg-img"
                         id="upg-img-2"
                     />
-                    <h3 id="upg-desc-2" class="upg-desc"></h3>
+                    <div class="upg-desc-container">
+                        <h3 id="upg-desc-2" class="upg-desc"></h3>
+                    </div>
                     <div
                         class="shard-container-cost"
                         id="shard-container-cost-2"
@@ -113,15 +126,21 @@
                     </div>
                 </div>
                 <div class="upgrade" id="upg-3">
-                    <h1 id="upg-title-3" class="upg-title"></h1>
-                    <h2 id="upg-subtitle-3" class="upg-subtitle"></h2>
+                    <div class="upg-title-container">
+                        <h1 id="upg-title-3" class="upg-title"></h1>
+                    </div>
+                    <div class="upg-subtitle-container">
+                        <h2 id="upg-subtitle-3" class="upg-subtitle"></h2>
+                    </div>
                     <img
                         src="/7/Skillicon7_01.png"
                         alt=""
                         class="upg-img"
                         id="upg-img-3"
                     />
-                    <h3 id="upg-desc-3" class="upg-desc"></h3>
+                    <div class="upg-desc-container">
+                        <h3 id="upg-desc-3" class="upg-desc"></h3>
+                    </div>
                     <div
                         class="shard-container-cost"
                         id="shard-container-cost-3"
