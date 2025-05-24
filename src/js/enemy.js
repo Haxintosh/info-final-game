@@ -3,7 +3,7 @@ import { ddaRaycast } from "./dda.js";
 import { text } from "./text.js";
 import { Projectile, Explosion } from "./guns.js";
 import { Vec2 } from "./utils.js";
-import { Shard } from './shard.js'
+import { Shard } from "./shard.js";
 export class Enemy {
   constructor(
     room,
@@ -62,6 +62,7 @@ export class Enemy {
     this.hp = hp;
 
     this.oldTilePos = { x: null, y: null };
+    this.attackLock = false; // attack lock
   }
 
   async loadSpritesheetIdle(spritesheetPath) {
@@ -102,6 +103,8 @@ export class Enemy {
   }
 
   followPath(grid) {
+    if (this.state === "dead") return;
+
     if (!this.path || this.path.length === 0) {
       const tileSize = 16;
       const currentTileX = Math.floor((this.x - this.room.x) / tileSize);
@@ -193,6 +196,8 @@ export class Enemy {
   }
 
   randomWander(room) {
+    if (this.state === "dead") return;
+
     if (this.wanderTarget) return;
 
     if (this.state === "hunting") {
@@ -266,6 +271,8 @@ export class Enemy {
   }
 
   checkPlayerVisibility() {
+    if (this.state === "dead") return;
+
     const MAX_RANGE = 8; // max range to check for player visibility
 
     const rayStart = {
@@ -309,67 +316,90 @@ export class Enemy {
   }
 
   hpCheck() {
+    if (this.state === "dead") return;
+
     if (this.hp <= 0) {
       for (const tile of this.path) {
         this.room.reservedTiles[tile.y][tile.x] = 0;
       }
 
-      this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
+      this.state = "dead";
+      this.frameX = 0;
+      setTimeout(() => {
+        this.room.enemies.splice(this.room.enemies.indexOf(this), 1);
+        this.levelFunctions.enemiesDefeated.count += 1;
 
-      this.levelFunctions.enemiesDefeated.count += 1
+        if (this.room.enemies.length <= 0) {
+          if (this.levelFunctions.wavesLeft > 0) {
+            setTimeout(() => {
+              this.levelFunctions.wavesLeft--;
+              this.levelFunctions.spawnEnemies(this.mapGen.currentRoom);
+            }, 500);
+          } else {
+            this.mapGen.unlockRooms();
+            this.mapGen.currentRoom.battleRoomDone = true;
+            this.levelFunctions.battling = false;
+            this.levelFunctions.wavesLeft = this.levelFunctions.level;
 
-      if (this.room.enemies.length <= 0) {
-        if (this.levelFunctions.wavesLeft > 0) {
-          setTimeout(() => {
-            this.levelFunctions.wavesLeft--;
-            this.levelFunctions.spawnEnemies(this.mapGen.currentRoom);
-          }, 500);
-        } else {
-          this.mapGen.unlockRooms();
-          this.mapGen.currentRoom.battleRoomDone = true;
-          this.levelFunctions.battling = false;
-          this.levelFunctions.wavesLeft = this.levelFunctions.level;
-
-          this.levelFunctions.announcer(text.roomClear, 2000);
+            this.levelFunctions.announcer(text.roomClear, 2000);
+          }
         }
-      }
+      }, 1000);
 
-      const exp = Math.ceil(Math.random()*3);
+      const exp = Math.ceil(Math.random() * 3);
       for (let i = 0; i < exp; i++) {
-        const shard = new Shard(this.x, this.y, this.player, this.levelFunctions.shardsArray, this.levelFunctions.shards)
+        const shard = new Shard(
+          this.x,
+          this.y,
+          this.player,
+          this.levelFunctions.shardsArray,
+          this.levelFunctions.shards,
+        );
       }
     }
   }
 
   attackPlayer() {
+    if (this.state === "dead") return;
+
     this.shootDelay--;
     if (
       this.state === "hunting" && // hunting
       // Math.hypot(this.x - this.player.x, this.y - this.player.y) < 16 && // in range
       this.shootDelay <= 0 // cooldown
     ) {
-      const origin = new Vec2(this.x, this.y);
-      const angle = Math.atan2(
-        this.player.y + this.player.height / 2 - this.y,
-        this.player.x + this.player.width / 2 - this.x,
-      );
-      //translate angle to directional vector
-      const dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
-      const projectile = new Projectile(
-        origin,
-        dir,
-        this.projectileSpeed,
-        this.projectileRange,
-        this.projectileDamage,
-        this.projectileColor,
-        this.mapGen.canvas,
-        this.projectileSprite,
-        angle,
-      );
+      if (this.attackLock) return; // prevent multiple attacks
+      this.attackLock = true; // lock attack
+      this.frameX = 0; // reset attack animation
+      this.frameY = 0; // reset attack animation
+      setTimeout(() => {
+        const origin = new Vec2(this.x, this.y);
+        const angle = Math.atan2(
+          this.player.y + this.player.height / 2 - this.y,
+          this.player.x + this.player.width / 2 - this.x,
+        );
+        //translate angle to directional vector
+        const dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
+        const projectile = new Projectile(
+          origin,
+          dir,
+          this.projectileSpeed,
+          this.projectileRange,
+          this.projectileDamage,
+          this.projectileColor,
+          this.mapGen.canvas,
+          this.projectileSprite,
+          angle,
+        );
 
-      this.projectiles.push(projectile);
-
-      this.shootDelay = 60; // reset cooldown
+        this.projectiles.push(projectile);
+        this.shootDelay = 60; // reset cooldown
+        setTimeout(() => {
+          this.attackLock = false;
+          this.frameX = 0; // reset attack animation
+          this.frameY = 0; // reset attack animation
+        }, 400);
+      }, 500);
     }
 
     // if (
@@ -383,6 +413,8 @@ export class Enemy {
   }
 
   checkBulletCollision(canvas) {
+    if (this.state === "dead") return;
+
     for (const projectile of this.projectiles) {
       if (!projectile.alive) {
         this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
@@ -465,7 +497,11 @@ export class Enemy {
     this.frameCounter++;
     if (this.frameCounter >= this.animationSpeed) {
       this.frameCounter = 0;
-      this.frameX = (this.frameX + 1) % 6; // assuming 8 frames per animation
+      if (this.state === "dead") {
+        this.frameX = (this.frameX + 1) % 10; // assuming 8 frames per animation
+      } else {
+        this.frameX = (this.frameX + 1) % 6; // assuming 8 frames per animation
+      }
     }
 
     // set frameY based on direction
@@ -490,7 +526,22 @@ export class Enemy {
     const frameWidth = this.spritesheetRun.width / 6;
     const frameHeight = this.spritesheetRun.height / 4;
 
-    if (this.state === "attacking") {
+    if (this.state === "dead") {
+      ctx.drawImage(
+        this.spritesheetDeath,
+        this.frameX * frameWidth,
+        0,
+        frameWidth,
+        frameHeight,
+        this.x - frameWidth / 2,
+        this.y - frameHeight / 2 - 5,
+        frameWidth,
+        frameHeight,
+      );
+      return;
+    }
+
+    if (this.attackLock) {
       ctx.drawImage(
         this.spritesheetAttack,
         this.frameX * frameWidth,
@@ -527,15 +578,14 @@ export class Enemy {
         frameHeight,
       );
     }
-
-    // debug
-    ctx.fillStyle = this.color;
-    ctx.fillRect(
-      this.x - this.width / 2,
-      this.y - this.height / 2,
-      this.width,
-      this.height,
-    );
+    // // debug
+    // ctx.fillStyle = this.color;
+    // ctx.fillRect(
+    //   this.x - this.width / 2,
+    //   this.y - this.height / 2,
+    //   this.width,
+    //   this.height,
+    // );
 
     // this.drawPath(ctx);
     //
