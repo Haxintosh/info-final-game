@@ -52,7 +52,7 @@ export class Enemy {
     this.projectileColor = "rgba(132, 28, 180, 1)";
     this.projectileSize = 4;
     this.projectileSprite = new Image();
-    this.projectileSprite.src = "../../bullets/bullet-enemy.png";
+    this.projectileSprite.src = "./bullets/bullet-enemy.png";
     this.player = player;
 
     this.effects = [];

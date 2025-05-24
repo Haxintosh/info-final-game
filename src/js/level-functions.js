@@ -66,10 +66,10 @@ export class LevelFunctions {
           room.enemies.push(enemy);
 
           // load images
-          await enemy.loadSpritesheetIdle("../../enemies/enemy1-idle.png");
-          await enemy.loadSpritesheetRun("../../enemies/enemy1-run.png");
-          await enemy.loadSpritesheetAttack("../../enemies/enemy1-attack.png");
-          await enemy.loadSpritesheetDeath("../../enemies/enemy1-death.png");
+          await enemy.loadSpritesheetIdle("./enemies/enemy1-idle.png");
+          await enemy.loadSpritesheetRun("./enemies/enemy1-run.png");
+          await enemy.loadSpritesheetAttack("./enemies/enemy1-attack.png");
+          await enemy.loadSpritesheetDeath("./enemies/enemy1-death.png");
         }
         break;
       }

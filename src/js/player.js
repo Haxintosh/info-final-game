@@ -48,7 +48,7 @@ export class Player {
     this.radiusX = 18;
     this.radiusY = 18;
     this.weaponSprite = new Image();
-    this.weaponSprite.src = "../../weapon.png";
+    this.weaponSprite.src = "./weapon.png";
     this.weaponTargetX = 0;
     this.weaponTargetY = 0;
 
@@ -429,10 +429,7 @@ export class Player {
     const x = this.getCenterX() + Math.cos(this.angle) * a;
     const y = this.getCenterY() + Math.sin(this.angle) * b;
 
-    const startV = new UTILS.Vec2(
-      x,
-      y,
-    );
+    const startV = new UTILS.Vec2(x, y);
 
     this.gun.shoot(startV, this.angle);
   }

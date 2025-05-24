@@ -38,8 +38,8 @@ const player = new Player(
   2,
   mapGen,
 );
-await player.loadSpritesheet("../character/idle2.png");
-await player.loadSpritesheet2("../character/walk2.png");
+await player.loadSpritesheet("./character/idle2.png");
+await player.loadSpritesheet2("./character/walk2.png");
 
 // player movement
 window.addEventListener("keydown", (e) => player.handleKeyDown(e));
