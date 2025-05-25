@@ -390,7 +390,7 @@ body {
   transform: translate(-50%, -50%);
   overflow: hidden;
   width: 0px;
-  height: 100px;
+  height: 150px;
   transition: 500ms;
 }
 #announcer-txt {

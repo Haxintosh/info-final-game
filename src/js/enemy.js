@@ -402,6 +402,7 @@ export class Enemy {
       this.frameX = 0; // reset attack animation
       this.frameY = 0; // reset attack animation
       setTimeout(() => {
+        if (this.state === "dead") return;
         const origin = new Vec2(this.x, this.y);
         const angle = Math.atan2(
           this.player.y + this.player.height / 2 - this.y,
@@ -437,8 +438,6 @@ export class Enemy {
         setTimeout(() => {
           this.attackLock = false;
           if (this.state === "dead") return;
-          this.frameX = 0; // reset attack animation
-          this.frameY = 0; // reset attack animation
         }, 400);
       }, 500);
 
@@ -631,7 +630,9 @@ export class Enemy {
     if (this.frameCounter >= this.animationSpeed) {
       this.frameCounter = 0;
       if (this.state === "dead") {
-        this.frameX = (this.frameX + 1) % 10; // assuming 8 frames per animation
+        // console.log("PRESET", this.frameX);
+        this.frameX = (this.frameX + 1) % 15; // assuming 8 frames per animation
+        // console.log("POSTSET", this.frameX);
       } else {
         this.frameX = (this.frameX + 1) % 6; // assuming 8 frames per animation
       }
