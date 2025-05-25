@@ -52,6 +52,53 @@
             </div>
         </div>
 
+        <div class="helpPannel">
+            <h2>Comment jouer</h2>
+            <div class="helpContent">
+                <p class="para">[WASD] pour bouger le joueur</p>
+                <p class="para">[M1] pour tirer</p>
+                <p class="para">[E] pour intéragir</p>
+                <p class="para">Utilisez la souris pour viser</p>
+                <p class="para">
+                    Vainquez tous les enemies d'une chambre pour continuer
+                </p>
+            </div>
+
+            <div class="btn" id="helpClose">
+                Fermer <span class="chevron">&gt;</span>
+            </div>
+        </div>
+
+        <div class="settingsPanel">
+            <h2>Settings</h2>
+            <div class="settingsContent">
+                <div class="volumeCont">
+                    <label for="volumeSlider" class="settingsLabel"
+                        >Volume:</label
+                    >
+                    <input
+                        type="range"
+                        id="volumeSlider"
+                        min="0"
+                        max="100"
+                        value="50"
+                        class="slider"
+                    />
+                </div>
+                <div class="fullscreenCont">
+                    <label for="fullscreenToggle" class="settingsLabel"
+                        >Fullscreen:</label
+                    >
+                    <button id="fullscreenToggle" class="btn">
+                        Toggle Fullscreen
+                    </button>
+                </div>
+            </div>
+            <div class="btn" id="settingsClose">
+                Close <span class="chevron">&gt;</span>
+            </div>
+        </div>
+
         <canvas id="canvas" height="3000" width="3000"></canvas>
 
         <div id="blackout"></div>

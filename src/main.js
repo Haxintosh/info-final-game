@@ -24,13 +24,57 @@ if (!IS_LOADBLOACKER_ENABLED) {
 
 const playButton = document.getElementById("startGame");
 const menuContainer = document.querySelector(".mainMenuContainer");
+const helpPanel = document.querySelector(".helpPannel");
+const helpButton = document.getElementById("help");
+const helpCloseButton = document.getElementById("helpClose");
+const settingsButton = document.getElementById("settings");
+const settingsPanel = document.querySelector(".settingsPanel");
+const volumeSlider = document.getElementById("volumeSlider");
+const fullscreenToggle = document.getElementById("fullscreenToggle");
+
 playButton.addEventListener("click", () => {
   menuContainer.style.opacity = "0";
+  helpPanel.style.visibility = "hidden";
+  animate();
   setTimeout(() => {
     menuContainer.style.display = "none";
     menuContainer.remove();
     startGame();
-  }, 500);
+  }, 1300);
+});
+
+settingsButton.addEventListener("click", () => {
+  settingsPanel.style.opacity = "1";
+  settingsPanel.style.visibility = "visible";
+});
+
+document.getElementById("settingsClose").addEventListener("click", () => {
+  settingsPanel.style.opacity = "0";
+  settingsPanel.style.visibility = "hidden";
+});
+
+volumeSlider.addEventListener("input", (e) => {
+  const volume = e.target.value / 100;
+  audio.setVolume(volume); // Assuming `audio` is a global object managing sound
+  music.setVolume(volume); // Assuming `music` is a global object managing music
+});
+
+fullscreenToggle.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+helpButton.addEventListener("click", () => {
+  helpPanel.style.opacity = "1";
+  helpPanel.style.visibility = "visible";
+});
+
+helpCloseButton.addEventListener("click", () => {
+  helpPanel.style.opacity = "0";
+  helpPanel.style.visibility = "hidden";
 });
 let isStarted = false;
 
@@ -115,7 +159,6 @@ function startGame() {
     500,
   );
 
-  animate();
   isStarted = true;
 }
 

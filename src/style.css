@@ -51,7 +51,112 @@ body {
     border-radius: 10px;
     color: white;
     z-index: 999;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 1.3s ease-in-out;
+}
+
+.settingsPanel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    color: white;
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    /* transition: opacity 0.5s ease-in-out; */
+}
+
+.settingsPanel h2 {
+    font-size: 6em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.settingsContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 50px;
+    margin-bottom: 50px;
+}
+
+.volumeCont {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 5px;
+}
+.fullscreenCont {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 5px;
+}
+.settingsContent label {
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+.settingsContent input[type="range"] {
+    width: 300px;
+    height: 20px;
+    background: black;
+    border: 2px solid white;
+    outline: none;
+    appearance: none;
+    image-rendering: pixelated;
+    cursor: pointer;
+}
+
+.settingsContent input[type="range"]::-webkit-slider-thumb {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 4px solid black;
+    border-radius: 0%;
+    cursor: pointer;
+    image-rendering: pixelated;
+}
+
+.settingsContent input[type="range"]::-moz-range-thumb {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 4px solid black;
+    border-radius: 0%;
+    cursor: pointer;
+    image-rendering: pixelated;
+}
+
+/* .settingsContent input[type="range"]:hover {
+    background: white;
+    border: 2px solid black;
+} */
+
+.settingsContent button {
+    font-size: 2em;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+    font-family: ending;
+}
+
+.settingsContent button:hover {
+    background-color: white;
+    color: black;
+    transform: scale(1.1);
 }
 .menuContentContainer {
     display: flex;
@@ -98,6 +203,46 @@ body {
 .btn:hover .chevron {
     opacity: 1;
     transform: translateX(0); /* Chevron moves into view */
+}
+
+.helpPannel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    color: white;
+    z-index: 999;
+    /* transition: opacity 1.3s ease-in-out; */
+    visibility: hidden;
+}
+.helpPannel h2 {
+    font-size: 6em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.helpPannel p {
+    font-size: 2em;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.helpContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+}
+
+.helpPannel .btn {
+    margin-top: 30px;
 }
 
 #canvas {
@@ -190,9 +335,9 @@ body {
     border: 2px solid white;
     --s: 10px;
     -webkit-mask:
-            conic-gradient(at var(--s) var(--s),#0000 75%,#000 0)
-            0 0/calc(100% - var(--s)) calc(100% - var(--s)),
-            linear-gradient(#000 0 0) content-box;
+        conic-gradient(at var(--s) var(--s), #0000 75%, #000 0) 0 0 /
+            calc(100% - var(--s)) calc(100% - var(--s)),
+        linear-gradient(#000 0 0) content-box;
 }
 .shard-container-2 {
     display: flex;
