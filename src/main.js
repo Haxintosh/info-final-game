@@ -8,7 +8,7 @@ import { ButtonPrompt } from "./js/button-prompt.js";
 import { starterWeapons } from "./js/guns.js";
 import { UpgCard } from "./js/upg-card.js";
 import { audio, music } from "./js/audio.js";
-
+import { text } from "./js/text.js";
 const IS_LOADBLOACKER_ENABLED = true;
 if (!IS_LOADBLOACKER_ENABLED) {
   // remove itselt
@@ -16,7 +16,23 @@ if (!IS_LOADBLOACKER_ENABLED) {
   loadBlocker.style.display = "none";
   loadBlocker.style.opacity = "0";
   loadBlocker.remove();
+  const playButton = document.getElementById("startGame");
+  const menuContainer = document.querySelector(".mainMenuContainer");
+  menuContainer.style.opacity = "0";
+  menuContainer.remove();
 }
+
+const playButton = document.getElementById("startGame");
+const menuContainer = document.querySelector(".mainMenuContainer");
+playButton.addEventListener("click", () => {
+  menuContainer.style.opacity = "0";
+  setTimeout(() => {
+    menuContainer.style.display = "none";
+    menuContainer.remove();
+    startGame();
+  }, 500);
+});
+let isStarted = false;
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -71,9 +87,8 @@ player.levelFunctions = levelFunctions;
 // give player a gun
 const gun = starterWeapons.find((gun) => gun.name === "Shotgun");
 player.assignGun(gun);
-animate();
 
-const upg = new UpgCard(levelFunctions,player);
+const upg = new UpgCard(levelFunctions, player);
 document
   .getElementById("shard-container-cost-1")
   .addEventListener("click", () => upg.buy(1));
@@ -93,6 +108,16 @@ window.addEventListener("keydown", (e) => levelFunctions.interact(e, upg));
 // levelFunctions.spawnEnemies(mapGen.currentRoom);
 // levelFunctions.spawnEnemies(mapGen.currentRoom);
 // levelFunctions.spawnEnemies(mapGen.currentRoom);
+function startGame() {
+  if (isStarted) return;
+  setTimeout(
+    () => levelFunctions.announcer(text.layer + 1 + "-" + 1, 2000),
+    500,
+  );
+
+  animate();
+  isStarted = true;
+}
 
 function animate() {
   requestAnimationFrame(animate);
@@ -123,7 +148,7 @@ function animate() {
   if (player.direction === "down") levelFunctions.update();
 
   levelFunctions.updateEnemies(ctx);
-  levelFunctions.updateShards()
+  levelFunctions.updateShards();
 
   levelFunctions.updateExplosions();
 
@@ -165,7 +190,7 @@ window.addEventListener("mousedown", (e) => {
   // console.log("mouse", e.x, e.y);
   // calculate angle enter of screen - mouse
   // const angle = Math.atan2(e.y - canvas.height / 2, e.x - canvas.width / 2);
-  if (!player.movementLocked)
-    player.shootGun(levelFunctions);
+  if (!isStarted) return;
+  if (!player.movementLocked) player.shootGun(levelFunctions);
   // console.log("angle", angle * (180 / Math.PI));
 });

@@ -3,7 +3,7 @@ import { Enemy } from "./enemy.js";
 import { text } from "./text.js";
 import { Explosion } from "./guns.js";
 import { Shard } from "./shard.js";
-import {audio, music} from "./audio.js";
+import { audio, music } from "./audio.js";
 
 export class LevelFunctions {
   constructor(canvas, mapGen, player, camera) {
@@ -53,7 +53,7 @@ export class LevelFunctions {
     };
 
     // end screen stat
-    this.audioTriggered = false
+    this.audioTriggered = false;
     this.enemiesDefeated = { count: 0 };
   }
 
@@ -200,13 +200,13 @@ export class LevelFunctions {
 
     progressCallback(95);
 
-    // level start
-    setTimeout(
-      () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
-      500,
-    );
-    audio.level.currentTime = 0
+    audio.level.currentTime = 0;
     // await audio.level.play() // add later cuz stupid autoplay
+    // // Step 4: Announce level start
+    // setTimeout(
+    //   () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
+    //   500,
+    // );
 
     progressCallback(100); // BEGIN GAME
   }
@@ -650,10 +650,10 @@ export class LevelFunctions {
       // this.battling = false;
 
       // audio
-      audio.battle.currentTime = 0
-      audio.battle.play()
-      music.hunted.currentTime = 0
-      music.hunted.play()
+      audio.battle.currentTime = 0;
+      audio.battle.play();
+      music.hunted.currentTime = 0;
+      music.hunted.play();
     }
   }
 
@@ -664,7 +664,7 @@ export class LevelFunctions {
   }
 
   endScreen(status) {
-    this.mapGen.currentRoom.enemies = []
+    this.mapGen.currentRoom.enemies = [];
 
     document.getElementById("end-screen-background").style.visibility =
       "visible";
@@ -713,24 +713,24 @@ export class LevelFunctions {
       text.shardsCollected + this.shards.count;
 
     // audio
-    if (this.audioTriggered) return
-    this.audioTriggered = true
+    if (this.audioTriggered) return;
+    this.audioTriggered = true;
 
     setTimeout(() => {
-      this.audioTriggered = false
-    }, 1000)
+      this.audioTriggered = false;
+    }, 1000);
 
-    audio.boom.currentTime = 0
-    audio.boom.play()
-    music.ambience.pause()
-    music.hunted.pause()
+    audio.boom.currentTime = 0;
+    audio.boom.play();
+    music.ambience.pause();
+    music.hunted.pause();
 
-    if (status === 'Victory') {
-      music.redemption.currentTime = 0
-      music.redemption.play()
+    if (status === "Victory") {
+      music.redemption.currentTime = 0;
+      music.redemption.play();
     } else {
-      music.devestation.currentTime = 0
-      music.devestation.play()
+      music.devestation.currentTime = 0;
+      music.devestation.play();
     }
   }
 
