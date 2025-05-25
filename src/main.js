@@ -8,7 +8,7 @@ import { ButtonPrompt } from "./js/button-prompt.js";
 import { starterWeapons } from "./js/guns.js";
 import { UpgCard } from "./js/upg-card.js";
 import { audio, music , setAudioVolume} from "./js/audio.js";
-import { text } from "./js/text.js";
+import { text, textEN } from "./js/text.js";
 import { menuAnim, menuDone } from "./js/menu.js";
 
 // const IS_LOADBLOACKER_ENABLED = false;
@@ -85,6 +85,14 @@ fullscreenToggle.addEventListener("click", () => {
   audio.click.currentTime = 0
   audio.click.play()
 });
+
+document.getElementById('languageToggle').addEventListener('click', () => {
+  if (document.getElementById('languageToggle').textContent.includes('French')) {
+    window.open("/info-final-game/","_self")
+  } else {
+    window.open("/info-final-game/index-en.html","_self")
+  }
+})
 
 helpButton.addEventListener("click", () => {
   helpPanel.style.opacity = "1";

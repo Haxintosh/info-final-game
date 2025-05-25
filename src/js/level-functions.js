@@ -220,7 +220,7 @@ export class LevelFunctions {
     // anims
     this.announcerTxt.textContent = msg;
 
-    this.announcerCard.style.width = "600px";
+    this.announcerCard.style.width = "800px";
     setTimeout(() => {
       this.announcerCard.style.width = "0px";
     }, time);

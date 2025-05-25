@@ -67,7 +67,7 @@ export let text = {
   layer: "NIVEAU ",
   endStatue: "Les yeux rouge sang de la statue te fixent...",
   endStatue2: "Tu soutiens le regard de la statue sans la moindre peur.",
-  roomClear: "Chambre Complète",
+  roomClear: "Chambre Complété",
   bought: "Acheté",
   well: "Ce puits semble suspect...",
   chestUseless: "Tu ne trouves rien d’intéressant.",
@@ -123,3 +123,8 @@ export let text = {
     },
   },
 };
+
+// language
+if (window.location.pathname === '/info-final-game/index-en.html') {
+  text = textEN
+}
