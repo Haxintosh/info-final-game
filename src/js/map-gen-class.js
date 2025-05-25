@@ -215,7 +215,7 @@ export class MapGenerator {
       }
     }
 
-    console.log(this.grid)
+    console.log(this.grid);
   }
 
   drawLayout() {
