@@ -59,6 +59,7 @@ body {
   transform: translate(-50%, -50%);
   height: 30%;
   filter: invert(100%);
+  pointer-events: none;
 }
 #img-studio {
   position: absolute;
@@ -228,6 +229,7 @@ body {
   left: 20px;
   height: 10%;
   filter: invert(100%);
+  pointer-events: none;
 }
 .gameTitle {
   font-size: 6em;

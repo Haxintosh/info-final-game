@@ -377,6 +377,7 @@ function togglePauseMenu() {
     pauseContainer.style.opacity = "1";
     pauseContainer.style.zIndex = "1005";
     music.ambience.pause();
+    music.menu.currentTime = 0;
     music.menu.play();
   } else {
     pauseContainer.style.opacity = "0";
