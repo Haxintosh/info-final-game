@@ -1,53 +1,63 @@
-import { text } from './text.js'
-import {audio} from "./audio.js";
+import { text } from "./text.js";
+import { audio } from "./audio.js";
 
 export class UpgCard {
   constructor(levelFunctions, player) {
     // this.img = new Image()
     // this.img.src = imgPath
-    this.levelFunctions = levelFunctions
-    this.player = player
+    this.levelFunctions = levelFunctions;
+    this.player = player;
 
-    this.choosing = false
-    this.upgradesArray = [text.basic.dmg, text.basic.speed, text.basic.heal] // push new upgrades here
+    this.choosing = false;
+    this.upgradesArray = [text.basic.dmg, text.basic.speed, text.basic.heal]; // push new upgrades here
 
-    this.upgrades = document.getElementById('upgrade-container')
+    this.upgrades = document.getElementById("upgrade-container");
   }
 
   showCards(mapGen, well) {
-    this.choosing = true
+    this.choosing = true;
 
-    this.upgrades.style.opacity = '1'
-    this.upgrades.style.top = '50%'
+    this.upgrades.style.opacity = "1";
+    this.upgrades.style.top = "50%";
 
-    console.log(mapGen.currentRoom.wellUpg)
+    console.log(mapGen.currentRoom.wellUpg);
 
     for (let i = 0; i < 3; i++) {
-      const rng = Math.floor(Math.random()*this.upgradesArray.length)
+      const rng = Math.floor(Math.random() * this.upgradesArray.length);
       const upg = this.upgradesArray[rng];
       // console.log(this.upgrades.length, rng, upg)
 
       if (!well || mapGen.currentRoom.wellUpg.length <= 3) {
         document.getElementById(`upg-title-${i + 1}`).textContent = upg.title;
-        document.getElementById(`upg-subtitle-${i + 1}`).textContent = upg.subtitle;
-        document.getElementById(`upg-desc-${i + 1}`).textContent = upg.description;
-        document.getElementById(`shard-txt-cost-${i + 1}`).textContent = upg.cost;
+        document.getElementById(`upg-subtitle-${i + 1}`).textContent =
+          upg.subtitle;
+        document.getElementById(`upg-desc-${i + 1}`).textContent =
+          upg.description;
+        document.getElementById(`shard-txt-cost-${i + 1}`).textContent =
+          upg.cost;
         document.getElementById(`upg-img-${i + 1}`).src = upg.src;
         document.getElementById(`upg-img-${i + 1}`).alt = upg.title;
 
-        if (well && mapGen.currentRoom.wellUpg <= 3) mapGen.currentRoom.wellUpg.push(upg)
+        if (well && mapGen.currentRoom.wellUpg <= 3)
+          mapGen.currentRoom.wellUpg.push(upg);
       }
 
       if (upg.cost > this.levelFunctions.shards.count) {
-        document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
+        document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
+          "rgb(255,186,186)";
       } else {
-        document.getElementById(`shard-txt-cost-${i + 1}`).style.color = '#ffffff';
+        document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
+          "#ffffff";
       }
       if (well && mapGen.currentRoom.wellUpg.length > 3) {
-        if (mapGen.currentRoom.wellUpg[i].cost > this.levelFunctions.shards.count) {
-          document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
+        if (
+          mapGen.currentRoom.wellUpg[i].cost > this.levelFunctions.shards.count
+        ) {
+          document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
+            "rgb(255,186,186)";
         } else {
-          document.getElementById(`shard-txt-cost-${i + 1}`).style.color = '#ffffff';
+          document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
+            "#ffffff";
         }
       }
     }
@@ -58,63 +68,77 @@ export class UpgCard {
 
     if (card === 4) {
       this.choosing = false;
-      this.upgrades.style.opacity = '0';
-      this.upgrades.style.top = '60%';
-      this.levelFunctions.interacted = false
+      this.upgrades.style.opacity = "0";
+      this.upgrades.style.top = "60%";
+      this.levelFunctions.interacted = false;
 
-      if (this.levelFunctions.interactAction === 'EndStage')
+      if (this.levelFunctions.interactAction === "EndStage")
         this.levelFunctions.start();
       else {
-        this.player.movementLocked = false
+        this.player.movementLocked = false;
       }
 
-      audio.click.currentTime = 0
-      audio.click.play()
-    }
-    else if (parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent) <= this.levelFunctions.shards.count && document.getElementById(`shard-txt-cost-${card}`).textContent !== text.bought) {
-      this.levelFunctions.shards.count -= parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent)
+      audio.click.currentTime = 0;
+      audio.click.play();
+    } else if (
+      parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent) <=
+        this.levelFunctions.shards.count &&
+      document.getElementById(`shard-txt-cost-${card}`).textContent !==
+        text.bought
+    ) {
+      this.levelFunctions.shards.count -= parseInt(
+        document.getElementById(`shard-txt-cost-${card}`).textContent,
+      );
 
-      document.getElementById('shard-txt').textContent = this.levelFunctions.shards.count
+      document.getElementById("shard-txt").textContent =
+        this.levelFunctions.shards.count;
       // document.getElementById('shard-txt-alt').textContent = this.levelFunctions.shards.count
 
-      document.getElementById(`shard-txt-cost-${card}`).textContent = text.bought;
-      document.getElementById(`shard-txt-cost-${card}`).style.color = 'rgb(255,186,186)';
+      document.getElementById(`shard-txt-cost-${card}`).textContent =
+        text.bought;
+      document.getElementById(`shard-txt-cost-${card}`).style.color =
+        "rgb(255,186,186)";
 
-      const title = document.getElementById(`upg-title-${card}`).textContent
+      const title = document.getElementById(`upg-title-${card}`).textContent;
       if (title === text.basic.dmg.title) {
-        this.dmgUpg(text.basic.dmg.value) // to change multiplier value go to text.js
+        this.dmgUpg(text.basic.dmg.value); // to change multiplier value go to text.js
       }
       if (title === text.basic.speed.title) {
-        this.speedUpg(text.basic.speed.value)
+        this.speedUpg(text.basic.speed.value);
       }
       if (title === text.basic.heal.title) {
-        this.healUpg(text.basic.heal.value)
+        this.healUpg(text.basic.heal.value);
       }
 
       for (let i = 0; i < 3; i++) {
-        if (parseInt(document.getElementById(`shard-txt-cost-${i + 1}`).textContent) > this.levelFunctions.shards.count) {
-          document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
+        if (
+          parseInt(
+            document.getElementById(`shard-txt-cost-${i + 1}`).textContent,
+          ) > this.levelFunctions.shards.count
+        ) {
+          document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
+            "rgb(255,186,186)";
         }
       }
 
       // audio
-      audio.pickup.currentTime = 0
-      audio.pickup.play()
+      audio.pickup.currentTime = 0;
+      audio.pickup.play();
     }
   }
 
   dmgUpg(value) {
     // add to multiplier
-    this.levelFunctions.upgrades.dmgMulti += value
+    this.levelFunctions.upgrades.dmgMulti += value;
   }
 
   speedUpg(value) {
-    this.levelFunctions.upgrades.speedMulti += value
+    this.levelFunctions.upgrades.speedMulti += value;
   }
 
   healUpg(value) {
-    if (this.player.hp >= this.player.maxHp) return
-    this.player.hp++
+    if (this.player.hp >= this.player.maxHp) return;
+    this.player.hp++;
 
     const hearts = document.querySelectorAll(".heart");
 

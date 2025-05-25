@@ -1,19 +1,26 @@
-const canvas = document.getElementById('menu-canvas');
-const ctx = canvas.getContext('2d');
-ctx.imageSmoothingEnabled = false
+const canvas = document.getElementById("menu-canvas");
+const ctx = canvas.getContext("2d");
+ctx.imageSmoothingEnabled = false;
 
-export let menuDone = {done: false}
+export let menuDone = { done: false };
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
 // central image
 const centralImg = new Image();
-centralImg.src = './menu.png';
+centralImg.src = "./menu.png";
 
-const imageNames = ['./sigils/blood.png', './sigils/bone.png', './sigils/rot.png', './sigils/ash.png', './sigils/phantom.png', './sigils/witchfire.png'];
+const imageNames = [
+  "./sigils/blood.png",
+  "./sigils/bone.png",
+  "./sigils/rot.png",
+  "./sigils/ash.png",
+  "./sigils/phantom.png",
+  "./sigils/witchfire.png",
+];
 
-const sigils = imageNames.map(name => ({
+const sigils = imageNames.map((name) => ({
   img: (() => {
     const image = new Image();
     image.src = name;
@@ -22,7 +29,7 @@ const sigils = imageNames.map(name => ({
   angle: Math.random() * Math.PI * 2,
   speed: (0.01 + Math.random() * 0.02) * (Math.random() < 0.5 ? -1 : 1),
   radiusX: 50 + Math.random() * 40,
-  radiusY: 50 + Math.random() * 40
+  radiusY: 50 + Math.random() * 40,
 }));
 
 export function menuAnim() {
@@ -34,7 +41,7 @@ export function menuAnim() {
 
   ctx.save();
   ctx.translate(centerX, centerY); // Move origin to center
-  ctx.scale(4, 4);                 // Zoom in
+  ctx.scale(4, 4); // Zoom in
   ctx.translate(-centerX, -centerY); // Move origin back
 
   for (const sigil of sigils) {
@@ -51,7 +58,13 @@ export function menuAnim() {
   const width = centralImg.width * 1.5;
   const height = centralImg.height * 1.5;
   if (centralImg.complete) {
-    ctx.drawImage(centralImg, centerX - width / 2, centerY - height / 2, width, height);
+    ctx.drawImage(
+      centralImg,
+      centerX - width / 2,
+      centerY - height / 2,
+      width,
+      height,
+    );
   }
 
   ctx.restore();

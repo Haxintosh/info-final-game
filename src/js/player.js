@@ -60,15 +60,15 @@ export class Player {
     this.gun = null;
 
     // dmg
-    this.offCanvas = document.createElement('canvas');
+    this.offCanvas = document.createElement("canvas");
     this.offCanvas.width = this.width;
     this.offCanvas.height = this.height;
-    this.offCtx = this.offCanvas.getContext('2d', {willReadFrequently: true});
-    this.dmged = false
-    this.interations = 0
+    this.offCtx = this.offCanvas.getContext("2d", { willReadFrequently: true });
+    this.dmged = false;
+    this.interations = 0;
 
     // audio
-    this.stepped = false
+    this.stepped = false;
   }
 
   async loadSpritesheet(spritesheetPath) {
@@ -318,8 +318,7 @@ export class Player {
           this.width,
           this.height,
         );
-    }
-    else {
+    } else {
       if (!this.moving) {
         this.offCtx.drawImage(
           this.spritesheet,
@@ -334,8 +333,7 @@ export class Player {
         );
         // this.offCtx.fillStyle = 'red'
         // this.offCtx.fillRect(0, 0, 20, 20)
-      }
-      else
+      } else
         this.offCtx.drawImage(
           this.spritesheet2,
           this.frameX * frameWidth,
@@ -362,10 +360,10 @@ export class Player {
       // }
       // this.offCtx.putImageData(imageData, 0, 0);
 
-      this.offCtx.globalCompositeOperation = 'source-atop'
-      this.offCtx.fillStyle = 'rgba(255, 0, 0, 0.3)'
-      this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height)
-      this.offCtx.globalCompositeOperation = 'source-over'
+      this.offCtx.globalCompositeOperation = "source-atop";
+      this.offCtx.fillStyle = "rgba(255, 0, 0, 0.3)";
+      this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height);
+      this.offCtx.globalCompositeOperation = "source-over";
 
       // this.offCtx.fillStyle = 'red'
       // this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height)
@@ -379,10 +377,10 @@ export class Player {
         this.x,
         this.y,
         this.width,
-        this.height
+        this.height,
       );
 
-      this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height)
+      this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
     }
 
     // weapon
@@ -404,14 +402,14 @@ export class Player {
 
     // audio
     if (this.moving) {
-      if (!this.stepped && (this.frameX === 2)) {
-        this.stepped = true
-        const rng = Math.ceil(Math.random()*5)
-        audio.steps['step' + rng].currentTime = 0
-        audio.steps['step' + rng].play()
+      if (!this.stepped && this.frameX === 2) {
+        this.stepped = true;
+        const rng = Math.ceil(Math.random() * 5);
+        audio.steps["step" + rng].currentTime = 0;
+        audio.steps["step" + rng].play();
         // console.log('step')
       } else if (this.frameX !== 2) {
-        this.stepped = false
+        this.stepped = false;
       }
     }
 
@@ -508,19 +506,21 @@ export class Player {
       this.movementLocked = true;
 
       setTimeout(() => {
-        document.getElementById('end-screen-background').style.opacity = "1";
+        document.getElementById("end-screen-background").style.opacity = "1";
       }, 200);
       setTimeout(() => {
-        levelFunctions.endScreen('Defeat');
+        levelFunctions.endScreen("Defeat");
       }, 400);
     }
 
-    this.dmged = true
-    setTimeout(() => {this.dmged = false}, 100)
+    this.dmged = true;
+    setTimeout(() => {
+      this.dmged = false;
+    }, 100);
 
     // audio
-    audio.hurt.currentTime = 0
-    audio.hurt.play()
+    audio.hurt.currentTime = 0;
+    audio.hurt.play();
   }
 
   shootGun(levelFunctions) {

@@ -80,8 +80,7 @@ export let text = {
     "La statue repose dans toute sa splendeur, sa malédiction levée, ses ombres dissipées. La crypte expire son dernier souffle, et toi aussi. Non dans la mort, mais dans la délivrance. <br><br>",
   endTxtVictory2:
     "Le poids de tes péchés s’allège alors que le silence revient. Tu n’es plus le prêtre que tu étais, mais l’âme qui a affronté l’abime sans vaciller.",
-  endSubtitleVictory:
-    'Tu es <span style="color: indianred"> rédimé</span>.',
+  endSubtitleVictory: 'Tu es <span style="color: indianred"> rédimé</span>.',
   endTitleDefeat: "Damnation",
   endTxtDefeat:
     "La crypte se tait à nouveau, non par paix, mais parce que sa faim est apaisée. Ton corps rejoint les ossements de ceux qui ont osé avant toi, un autre réceptacle vidé par le crypte. <br><br>",
@@ -125,6 +124,6 @@ export let text = {
 };
 
 // language
-if (window.location.pathname === '/info-final-game/index-en.html') {
-  text = textEN
+if (window.location.pathname === "/info-final-game/index-en.html") {
+  text = textEN;
 }

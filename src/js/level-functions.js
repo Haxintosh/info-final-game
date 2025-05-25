@@ -206,7 +206,7 @@ export class LevelFunctions {
     progressCallback(95);
 
     audio.level.currentTime = 0;
-    await audio.level.play() // add later cuz stupid autoplay
+    await audio.level.play(); // add later cuz stupid autoplay
     // // Step 4: Announce level start
     // setTimeout(
     //   () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),

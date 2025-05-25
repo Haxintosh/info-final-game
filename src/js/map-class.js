@@ -51,14 +51,14 @@ export class Map {
     this.explosions = [];
 
     // well
-    this.wellUpg = []
+    this.wellUpg = [];
 
     // chest
-    this.chest = Math.random()
-    this.chestDone = []
+    this.chest = Math.random();
+    this.chestDone = [];
 
     // shard room
-    this.shardDone = []
+    this.shardDone = [];
   }
 
   async loadMap(mapData) {

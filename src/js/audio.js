@@ -35,9 +35,9 @@ export function setAudioVolume(obj, volume) {
 
     if (value instanceof Audio) {
       value.volume = volume;
-    } else if (typeof value === 'number') {
+    } else if (typeof value === "number") {
       obj[key] = volume; // Update numeric default volume values
-    } else if (typeof value === 'object' && value !== null) {
+    } else if (typeof value === "object" && value !== null) {
       setAudioVolume(value, volume); // Recurse into nested objects
     }
   }

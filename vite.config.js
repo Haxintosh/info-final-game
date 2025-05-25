@@ -4,8 +4,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   base: "/info-final-game/",
   build: {
-    target: 'esnext'
-  }
+    target: "esnext",
+  },
   // build: {
   //     rollupOptions: {
   //         input: {
