@@ -1,6 +1,6 @@
 import * as UTILS from "./utils";
 import * as TWEEN from "@tweenjs/tween.js";
-import {audio} from "./audio.js";
+import { audio } from "./audio.js";
 
 export class Weapon {
   constructor(
@@ -19,6 +19,7 @@ export class Weapon {
     numProjectiles = 1,
     magSize = 10,
     reloadTime = 500, // ms
+    cooldown = 0.5, // seconds
   ) {
     this.name = name;
     this.damage = damage;
@@ -35,6 +36,8 @@ export class Weapon {
     this.numProjectiles = numProjectiles;
     this.magSize = magSize;
     this.reloadTime = reloadTime;
+
+    this.cooldown = cooldown;
     this.currentAct = "ready";
     // for in game use
     this.ammo = magSize;
@@ -55,7 +58,7 @@ export class Weapon {
 
   shoot(origin, angle, levelFunctions) {
     // origin: Vec2, angle: number (in radians)
-    if (Date.now() - this.lastFired < 500 / (this.speed * levelFunctions.upgrades.speedMulti)) {
+    if (Date.now() - this.lastFired < this.cooldown * 1000) {
       console.log("cooldown");
       this.currentAct = "cooldown";
       return;
@@ -64,8 +67,8 @@ export class Weapon {
     this.currentAct = "ready";
 
     // audio
-    const attack = new Audio('./audio/attack.mp3')
-    attack.play()
+    const attack = new Audio("./audio/attack.mp3");
+    attack.play();
 
     // calculate direction from angle
     let dir = new UTILS.Vec2(Math.cos(angle), Math.sin(angle)).normalize();
@@ -174,9 +177,9 @@ export class Projectile {
         this.alive = false;
         console.log("hit WALL");
 
-        const impact = new Audio('./audio/impact.mp3')
-        impact.volume = audio.impact
-        impact.play()
+        const impact = new Audio("./audio/impact.mp3");
+        impact.volume = audio.impact;
+        impact.play();
 
         if (this.canvas) {
           const explosion = new Explosion(
@@ -254,7 +257,6 @@ export class Explosion {
     this.duration = duration; // in milliseconds
     this.tweenGroup = tweenGroup;
     this.color = color; // "rgba(255, 0, 0, 1)"
-
     this.radius = 0;
     this.opacity = 1;
     this.alive = true;
@@ -309,20 +311,22 @@ export class Explosion {
 
 export const starterWeapons = [
   new Weapon(
-    "Pistol",
-    15, // damage
-    3, // speed
-    500, // range
+    "default",
+    8, // damage
+    2, // speed
+    1500, // range
     "handgun", // type
     100, // cost
     "0_16", // image
     "A reliable semi-automatic handgun. Balanced and easy to use.", // desc
-    "#FFD700", // projectileColor
-    0, // spread
-    0, // spreadAngle
-    1, // numProjectiles
-    12, // magSize
-    1000, // reloadTime
+    "rgba(255, 0, 0, 1)", // projectileColor
+    "./bullets/bullet-blood.png",
+    1, // spread
+    0.2, // spreadAngle
+    3, // numProjectiles
+    6, // magSize
+    1500, // reloadTime
+    0.75, // cooldown
   ),
   new Weapon(
     "Shotgun",

@@ -4,7 +4,7 @@ import { text } from "./text.js";
 import { Projectile, Explosion } from "./guns.js";
 import { Vec2 } from "./utils.js";
 import { Shard } from "./shard.js";
-import {audio, music} from "./audio.js";
+import { audio, music } from "./audio.js";
 export class Enemy {
   constructor(
     room,
@@ -361,9 +361,9 @@ export class Enemy {
             this.levelFunctions.announcer(text.roomClear, 2000);
 
             // audio
-            music.hunted.pause()
-            audio.clear.currentTime = 0
-            audio.clear.play()
+            music.hunted.pause();
+            audio.clear.currentTime = 0;
+            audio.clear.play();
           }
         }
 
@@ -381,10 +381,10 @@ export class Enemy {
 
       setTimeout(() => {
         // audio
-        const death = new Audio('./audio/death.mp3')
-        death.volume = audio.enemy
-        death.play()
-      }, 300)
+        const death = new Audio("./audio/death.mp3");
+        death.volume = audio.enemy;
+        death.play();
+      }, 300);
     }
   }
 
@@ -443,10 +443,10 @@ export class Enemy {
       }, 500);
 
       // audio
-      const rng = Math.ceil(Math.random()*4)
-      const sound = new Audio(`./audio/enemy-${rng}.mp3`)
-      sound.volume = audio.enemy
-      sound.play()
+      const rng = Math.ceil(Math.random() * 4);
+      const sound = new Audio(`./audio/enemy-${rng}.mp3`);
+      sound.volume = audio.enemy;
+      sound.play();
     }
 
     // if (
@@ -502,6 +502,7 @@ export class Enemy {
         bulletHitbox.y < playerHitbox.y + playerHitbox.height &&
         bulletHitbox.y + bulletHitbox.height > playerHitbox.y
       ) {
+        console.log(projectile.color);
         const explosion = new Explosion(
           projectile.position.copy(),
           canvas,
@@ -592,7 +593,7 @@ export class Enemy {
             selectedType.speed,
             selectedType.range,
             selectedType.damage,
-            selectedType.projectileColor,
+            selectedType.color,
             this.mapGen.canvas,
             this.projectileSprite,
             angles[i],
