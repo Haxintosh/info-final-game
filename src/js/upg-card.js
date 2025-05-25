@@ -20,14 +20,14 @@ export class UpgCard {
     this.upgrades.style.opacity = "1";
     this.upgrades.style.top = "50%";
 
-    console.log(mapGen.currentRoom.wellUpg);
+    // console.log(well);
 
     for (let i = 0; i < 3; i++) {
       const rng = Math.floor(Math.random() * this.upgradesArray.length);
       const upg = this.upgradesArray[rng];
       // console.log(this.upgrades.length, rng, upg)
 
-      if (!well || mapGen.currentRoom.wellUpg.length <= 3) {
+      if (!well || mapGen.currentRoom.wellUpg.length < 3) {
         document.getElementById(`upg-title-${i + 1}`).textContent = upg.title;
         document.getElementById(`upg-subtitle-${i + 1}`).textContent =
           upg.subtitle;
@@ -38,8 +38,7 @@ export class UpgCard {
         document.getElementById(`upg-img-${i + 1}`).src = upg.src;
         document.getElementById(`upg-img-${i + 1}`).alt = upg.title;
 
-        if (well && mapGen.currentRoom.wellUpg <= 3)
-          mapGen.currentRoom.wellUpg.push(upg);
+        // if (well && mapGen.currentRoom.wellUpg < 3)
       }
 
       if (upg.cost > this.levelFunctions.shards.count) {
@@ -49,7 +48,8 @@ export class UpgCard {
         document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
           "#ffffff";
       }
-      if (well && mapGen.currentRoom.wellUpg.length > 3) {
+      if (well && mapGen.currentRoom.wellUpg.length < 3) {
+        mapGen.currentRoom.wellUpg.push(upg);
         if (
           mapGen.currentRoom.wellUpg[i].cost > this.levelFunctions.shards.count
         ) {
@@ -61,6 +61,8 @@ export class UpgCard {
         }
       }
     }
+
+    // console.log(mapGen.currentRoom.wellUpg);
   }
 
   buy(card) {

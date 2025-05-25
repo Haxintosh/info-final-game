@@ -418,7 +418,7 @@ export class LevelFunctions {
             this.player.movementLocked = true;
             this.player.moving = false;
 
-            if (this.level === 3 && this.level === 3) {
+            if (this.level === 3 && this.sublevel === 3) {
               // put 4-1 if we have boss
               this.announcerSub(text.endStatue2, 3000);
 
