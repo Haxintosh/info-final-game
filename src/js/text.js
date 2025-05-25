@@ -3,7 +3,7 @@ export let text = {
   title: "Whispers Below",
   layer: "LAYER ",
   endStatue: "The statue's bloody red eyes stare back at you...",
-  endStatue2: "You stare back at the statue.",
+  endStatue2: "You stare back at the statue without a hint of fear.",
   roomClear: "Room Clear",
   bought: 'Bought',
   well: 'This well seems suspicious...',

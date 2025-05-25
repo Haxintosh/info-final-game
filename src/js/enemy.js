@@ -63,6 +63,13 @@ export class Enemy {
 
     this.oldTilePos = { x: null, y: null };
     this.attackLock = false; // attack lock
+
+    // dmg
+    this.offCanvas = document.createElement('canvas');
+    this.offCanvas.width = 48;
+    this.offCanvas.height = 48;
+    this.offCtx = this.offCanvas.getContext('2d', {willReadFrequently: true});
+    this.dmged = false
   }
 
   async loadSpritesheetIdle(spritesheetPath) {
@@ -545,43 +552,120 @@ export class Enemy {
       return;
     }
 
-    if (this.attackLock) {
-      ctx.drawImage(
-        this.spritesheetAttack,
-        this.frameX * frameWidth,
-        this.frameY * frameHeight,
-        frameWidth,
-        frameHeight,
-        this.x - frameWidth / 2,
-        this.y - frameHeight / 2 - 5,
-        frameWidth,
-        frameHeight,
-      );
-    } else if (!this.moving) {
-      ctx.drawImage(
-        this.spritesheetIdle,
-        this.frameX * frameWidth,
-        this.frameY * frameHeight,
-        frameWidth,
-        frameHeight,
-        this.x - frameWidth / 2,
-        this.y - frameHeight / 2 - 5,
-        frameWidth,
-        frameHeight,
-      );
-    } else if (this.moving) {
-      ctx.drawImage(
-        this.spritesheetRun,
-        this.frameX * frameWidth,
-        this.frameY * frameHeight,
-        frameWidth,
-        frameHeight,
-        this.x - frameWidth / 2,
-        this.y - frameHeight / 2 - 5,
-        frameWidth,
-        frameHeight,
-      );
+    if (!this.dmged) {
+      if (this.attackLock) {
+        ctx.drawImage(
+          this.spritesheetAttack,
+          this.frameX * frameWidth,
+          this.frameY * frameHeight,
+          frameWidth,
+          frameHeight,
+          this.x - frameWidth / 2,
+          this.y - frameHeight / 2 - 5,
+          frameWidth,
+          frameHeight,
+        );
+      } else if (!this.moving) {
+        ctx.drawImage(
+          this.spritesheetIdle,
+          this.frameX * frameWidth,
+          this.frameY * frameHeight,
+          frameWidth,
+          frameHeight,
+          this.x - frameWidth / 2,
+          this.y - frameHeight / 2 - 5,
+          frameWidth,
+          frameHeight,
+        );
+      } else if (this.moving) {
+        ctx.drawImage(
+          this.spritesheetRun,
+          this.frameX * frameWidth,
+          this.frameY * frameHeight,
+          frameWidth,
+          frameHeight,
+          this.x - frameWidth / 2,
+          this.y - frameHeight / 2 - 5,
+          frameWidth,
+          frameHeight,
+        );
+      }
     }
+    else {
+      if (this.attackLock) {
+        this.offCtx.drawImage(
+          this.spritesheetAttack,
+          this.frameX * frameWidth,
+          this.frameY * frameHeight,
+          frameWidth,
+          frameHeight,
+          0,
+          0,
+          frameWidth,
+          frameHeight,
+        );
+      } else if (!this.moving) {
+        this.offCtx.drawImage(
+          this.spritesheetIdle,
+          this.frameX * frameWidth,
+          this.frameY * frameHeight,
+          frameWidth,
+          frameHeight,
+          0,
+          0,
+          frameWidth,
+          frameHeight,
+        );
+      } else if (this.moving) {
+        this.offCtx.drawImage(
+          this.spritesheetRun,
+          this.frameX * frameWidth,
+          this.frameY * frameHeight,
+          frameWidth,
+          frameHeight,
+          0,
+          0,
+          frameWidth,
+          frameHeight,
+        );
+      }
+
+      // const imageData = this.offCtx.getImageData(0, 0, frameWidth, frameHeight);
+      // const data = imageData.data;
+      //
+      // for (let i = 0; i < data.length; i += 4) {
+      //   const alpha = data[i + 3];
+      //   if (alpha > 0) {
+      //     data[i] = Math.min(255, data[i]); // R
+      //     data[i + 1] *= 0.5;                     // G
+      //     data[i + 2] *= 0.5;                     // B
+      //   }
+      // }
+      // this.offCtx.putImageData(imageData, 0, 0);
+
+      this.offCtx.globalCompositeOperation = 'source-atop'
+      this.offCtx.fillStyle = 'rgba(255, 0, 0, 0.3)'
+      this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height)
+      this.offCtx.globalCompositeOperation = 'source-over'
+
+      // this.offCtx.fillStyle = 'red'
+      // this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height)
+
+      ctx.drawImage(
+        this.offCanvas,
+        0,
+        0,
+        frameWidth,
+        frameHeight,
+        this.x - frameWidth / 2,
+        this.y - frameHeight / 2 - 5,
+        frameWidth,
+        frameHeight,
+      );
+
+      this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height)
+    }
+
     // // debug
     // ctx.fillStyle = this.color;
     // ctx.fillRect(

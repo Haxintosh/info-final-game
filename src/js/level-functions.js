@@ -141,6 +141,8 @@ export class LevelFunctions {
             this.player.gun.projectiles.indexOf(projectile),
             1,
           );
+          enemy.dmged = true
+          setTimeout(() => {enemy.dmged = false}, 100)
         } else {
           // console.log("miss");
         }
