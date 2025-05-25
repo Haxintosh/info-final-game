@@ -162,6 +162,11 @@ export class LevelFunctions {
       this.blackout.style.opacity = "0";
     }, 400);
 
+    setTimeout(
+      () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
+      600,
+    );
+
     // map generation
     progressCallback(10);
     await this.mapGen.init((mapGenProgress) => {
@@ -201,7 +206,7 @@ export class LevelFunctions {
     progressCallback(95);
 
     audio.level.currentTime = 0;
-    // await audio.level.play() // add later cuz stupid autoplay
+    await audio.level.play() // add later cuz stupid autoplay
     // // Step 4: Announce level start
     // setTimeout(
     //   () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
@@ -215,7 +220,7 @@ export class LevelFunctions {
     // anims
     this.announcerTxt.textContent = msg;
 
-    this.announcerCard.style.width = "500px";
+    this.announcerCard.style.width = "600px";
     setTimeout(() => {
       this.announcerCard.style.width = "0px";
     }, time);
@@ -699,6 +704,8 @@ export class LevelFunctions {
       text["endTxt" + status + "2"];
     document.getElementById("end-screen-subtitle").innerHTML =
       text["endSubtitle" + status];
+    document.getElementById("end-back").innerHTML =
+      `${text.endBack} <span class="chevron">&gt;</span>`;
 
     // stats
     if (status === "Victory")

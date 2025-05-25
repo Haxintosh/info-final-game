@@ -67,6 +67,9 @@ export class UpgCard {
       else {
         this.player.movementLocked = false
       }
+
+      audio.click.currentTime = 0
+      audio.click.play()
     }
     else if (parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent) <= this.levelFunctions.shards.count && document.getElementById(`shard-txt-cost-${card}`).textContent !== text.bought) {
       this.levelFunctions.shards.count -= parseInt(document.getElementById(`shard-txt-cost-${card}`).textContent)

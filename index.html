@@ -2,9 +2,9 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Vite App</title>
+        <title>Whispers Below</title>
     </head>
     <body>
         <div class="loadBlocker">
@@ -35,20 +35,38 @@
             </div>
         </div>
 
-        <div class="mainMenuContainer">
+        <div id="start-overlay">
+            <img src="/goose.svg" id="start-overlay-img">
+            <h2 id="img-studio">Fait par The Goosentine Empire™</h2>
+            <h2 id="start-overlay-txt">Cliquez pour commencer</h2>
+        </div>
+
+        <div class="mainMenuContainer" id="mainMenuContainer">
             <div class="menuContentContainer">
                 <div class="gameTitle">Whispers Below</div>
                 <div class="buttonsContainer">
+                    <div class="btn" id="startGame">
+                        Jouer <span class="chevron">&gt;</span>
+                    </div>
                     <div class="btn" id="help">
-                        Help <span class="chevron">&gt;</span>
+                        Aide <span class="chevron">&gt;</span>
                     </div>
                     <div class="btn" id="settings">
-                        Settings <span class="chevron">&gt;</span>
-                    </div>
-                    <div class="btn" id="startGame">
-                        Play <span class="chevron">&gt;</span>
+                        Réglages <span class="chevron">&gt;</span>
                     </div>
                 </div>
+            </div>
+
+            <canvas id="menu-canvas" width="800px" height="800px"></canvas>
+            <img src="/goose.svg" id="menu-img">
+        </div>
+
+        <div class="loreDumpContainer" id="loreDumpContainer">
+            <h3 id="lore-txt">Vous êtes un prêtre en quête de rédemption. <br>
+                Une opportunité unique vous a été offerte : descendez dans le crypte et replacez toutes les statues, en échange de votre absolution.</h3>
+            <h3 id="lore-txt-2">Préparez-vous : chaque pas vous rapprochera autant du pardon que de la damnation.</h3>
+            <div class="btn" id="play-start">
+                Descendre <span class="chevron">&gt;</span>
             </div>
         </div>
 
@@ -60,7 +78,7 @@
                 <p class="para">[E] pour intéragir</p>
                 <p class="para">Utilisez la souris pour viser</p>
                 <p class="para">
-                    Vainquez tous les enemies d'une chambre pour continuer
+                    Vainquez tous les ennemis d'une chambre pour continuer
                 </p>
             </div>
 
@@ -70,7 +88,7 @@
         </div>
 
         <div class="settingsPanel">
-            <h2>Settings</h2>
+            <h2>Réglages</h2>
             <div class="settingsContent">
                 <div class="volumeCont">
                     <label for="volumeSlider" class="settingsLabel"
@@ -86,16 +104,16 @@
                     />
                 </div>
                 <div class="fullscreenCont">
-                    <label for="fullscreenToggle" class="settingsLabel"
-                        >Fullscreen:</label
-                    >
+<!--                    <label for="fullscreenToggle" class="settingsLabel"-->
+<!--                        >Plein Écran:</label-->
+<!--                    >-->
                     <button id="fullscreenToggle" class="btn">
-                        Toggle Fullscreen
+                        Mode Plein Écran
                     </button>
                 </div>
             </div>
             <div class="btn" id="settingsClose">
-                Close <span class="chevron">&gt;</span>
+                Fermer <span class="chevron">&gt;</span>
             </div>
         </div>
 
@@ -254,8 +272,8 @@
                 <h2 id="end-rooms">Layers: Fully Cleared</h2>
                 <h2 id="end-enemies">Enemies Defeated: 0</h2>
                 <h2 id="end-shards">Shards Collected: 0</h2>
-                <div id="end-back">
-                    <h1 id="end-back-txt">Back to Main Menu</h1>
+                <div class="btn" id="end-back">
+                    Revenir au menu principal <span class="chevron">&gt;</span>
                 </div>
             </div>
         </div>

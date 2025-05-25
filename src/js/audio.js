@@ -28,3 +28,17 @@ export const music = {
   redemption: new Audio("./audio/music/Redemption.mp3"),
   hunted: new Audio("./audio/music/Hunted.mp3"),
 };
+
+export function setAudioVolume(obj, volume) {
+  for (const key in obj) {
+    const value = obj[key];
+
+    if (value instanceof Audio) {
+      value.volume = volume;
+    } else if (typeof value === 'number') {
+      obj[key] = volume; // Update numeric default volume values
+    } else if (typeof value === 'object' && value !== null) {
+      setAudioVolume(value, volume); // Recurse into nested objects
+    }
+  }
+}
