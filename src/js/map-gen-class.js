@@ -37,7 +37,7 @@ export class MapGenerator {
       return map;
     };
 
-    const totalMaps = 11;
+    const totalMaps = 18;
     let loadedMaps = 0;
 
     const updateProgress = () => {
@@ -46,10 +46,16 @@ export class MapGenerator {
       progressCallback(progress);
     };
 
-    this.mapInstances.rooms.battle = await loadMap(
-      "./map-assets/room_battle_1/spritesheet.png",
-    );
-    updateProgress();
+    for (let i = 1; i <= 8; i++) {
+      this.mapInstances.rooms[`battle_${i}`] = await loadMap(
+        `./map-assets/room_battle_${i}/spritesheet.png`,
+      );
+      updateProgress();
+    }
+    // this.mapInstances.rooms.battle = await loadMap(
+    //   "./map-assets/room_battle_1/spritesheet.png",
+    // );
+    // updateProgress();
 
     this.mapInstances.rooms.start = await loadMap(
       "./map-assets/room_start/spritesheet.png",
@@ -147,23 +153,27 @@ export class MapGenerator {
     if (direction < 0.5) {
       while (x !== end.x) {
         x += x < end.x ? 1 : -1;
-        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+        let subtype = Math.ceil(Math.random() * 8) / 10;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1 + subtype;
       }
 
       while (y !== end.y) {
         y += y < end.y ? 1 : -1;
-        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+        let subtype = Math.ceil(Math.random() * 8) / 10;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1 + subtype;
       }
     } else {
       // Start vertical
       while (y !== end.y) {
         y += y < end.y ? 1 : -1;
-        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+        let subtype = Math.ceil(Math.random() * 8) / 10;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1 + subtype;
       }
 
       while (x !== end.x) {
         x += x < end.x ? 1 : -1;
-        if (this.grid[y][x] === 0) this.grid[y][x] = 1;
+        let subtype = Math.ceil(Math.random() * 8) / 10;
+        if (this.grid[y][x] === 0) this.grid[y][x] = 1 + subtype;
       }
     }
 
@@ -173,7 +183,7 @@ export class MapGenerator {
     for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 5; x++) {
         if (
-          this.grid[y][x] === 1 &&
+          Math.floor(this.grid[y][x]) === 1 &&
           branchOffs < maxBranchOff &&
           Math.random() < 1
         ) {
@@ -204,6 +214,8 @@ export class MapGenerator {
         }
       }
     }
+
+    console.log(this.grid)
   }
 
   drawLayout() {
@@ -271,7 +283,8 @@ export class MapGenerator {
   drawRoom(type, subtype, x, y) {
     let map;
     if (type === 1) {
-      map = this.mapInstances.rooms.battle.clone();
+      map = this.mapInstances.rooms[`battle_${subtype}`].clone();
+      // map = this.mapInstances.rooms.battle.clone();
     } else if (type === 2) {
       map = this.mapInstances.rooms.start.clone();
     } else if (type === 3) {
