@@ -85,7 +85,7 @@ export let text = {
   endTxtDefeat:
     "La crypte se tait à nouveau, non par paix, mais parce que sa faim est apaisée. Ton corps rejoint les ossements de ceux qui ont osé avant toi, un autre réceptacle vidé par le crypte. <br><br>",
   endTxtDefeat2:
-    "Le donjon perdure, ses murmures s’enfonçant plus profondément dans la terre, attendant une autre âme assez folle pour promettre la rédemption avec un sang qu’elle ne peut offrir.",
+    "Le donjon perdure, ses murmures s’enlisant plus profondément dans la terre, attendant une autre âme assez folle pour promettre la rédemption avec un sang qu’elle ne peut offrir.",
   endSubtitleDefeat:
     'Tu <span style="color: #9a5ccd"> n’étais pas à la hauteur</span>.',
   rooms: "Niveaux : ",

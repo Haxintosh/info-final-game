@@ -92,7 +92,7 @@ document.getElementById("languageToggle").addEventListener("click", () => {
   ) {
     window.open("/info-final-game/", "_self");
   } else {
-    window.open("/info-final-game/index-en.html", "_self");
+    window.open("/info-final-game/en/", "_self");
   }
 });
 
