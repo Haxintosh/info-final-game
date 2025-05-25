@@ -15,6 +15,8 @@ export class Enemy {
     player,
     levelFunctions,
     mapGen,
+    spdMultiplier,
+    nBulletsMultiplier,
     hp = 10,
   ) {
     this.x = x;
@@ -64,12 +66,19 @@ export class Enemy {
     this.oldTilePos = { x: null, y: null };
     this.attackLock = false; // attack lock
 
+    this.enemyTypes = ["default", "shotgun", "sniper", "shotgunBig"]; // default enemy type
+    this.enemyType =
+      this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
     // dmg
-    this.offCanvas = document.createElement('canvas');
+    this.offCanvas = document.createElement("canvas");
     this.offCanvas.width = 48;
     this.offCanvas.height = 48;
-    this.offCtx = this.offCanvas.getContext('2d', {willReadFrequently: true});
-    this.dmged = false
+    this.offCtx = this.offCanvas.getContext("2d", { willReadFrequently: true });
+    this.dmged = false;
+
+    // modifiers
+    this.spdMultiplier = spdMultiplier;
+    this.nBulletsMultiplier = nBulletsMultiplier;
   }
 
   async loadSpritesheetIdle(spritesheetPath) {
@@ -234,7 +243,7 @@ export class Enemy {
       return;
     }
 
-    const maxDistance = 5; // max dist from current position
+    const maxDistance = 8; // max dist from current position
     const tileSize = 16;
 
     for (let attempt = 0; attempt < 10; attempt++) {
@@ -387,23 +396,34 @@ export class Enemy {
         );
         //translate angle to directional vector
         const dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
-        const projectile = new Projectile(
+        // const projectile = new Projectile(
+        //   origin,
+        //   dir,
+        //   this.projectileSpeed,
+        //   this.projectileRange,
+        //   this.projectileDamage,
+        //   this.projectileColor,
+        //   this.mapGen.canvas,
+        //   this.projectileSprite,
+        //   angle,
+        // );
+        //
+        const projectiles = this.enemyAttackTypesGen(
+          this.enemyType,
           origin,
           dir,
-          this.projectileSpeed,
-          this.projectileRange,
-          this.projectileDamage,
-          this.projectileColor,
-          this.mapGen.canvas,
-          this.projectileSprite,
           angle,
         );
 
-        this.projectiles.push(projectile);
+        for (const projectile of projectiles) {
+          this.projectiles.push(projectile);
+        }
+
+        // this.projectiles.push(projectile);
         this.shootDelay = 60; // reset cooldown
         setTimeout(() => {
           this.attackLock = false;
-          if (this.state === 'dead') return
+          if (this.state === "dead") return;
           this.frameX = 0; // reset attack animation
           this.frameY = 0; // reset attack animation
         }, 400);
@@ -482,6 +502,90 @@ export class Enemy {
     ctx.fillRect(x * 16 + room.x, y * 16 + room.y, 16, 16);
   }
 
+  enemyAttackTypesGen(type, origin, dir, angle) {
+    const enemyAttackTypes = {
+      default: {
+        speed: 2 * this.spdMultiplier,
+        range: 1000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: 1,
+      },
+
+      shotgun: {
+        speed: 1 * this.spdMultiplier,
+        range: 1000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: Math.floor(3 * this.nBulletsMultiplier),
+        spreadAngle: Math.PI / 6, // 30 degrees
+      },
+
+      sniper: {
+        speed: 4 * this.spdMultiplier,
+        range: 2000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: 1,
+      },
+
+      shotgunBig: {
+        speed: 1 * this.spdMultiplier,
+        range: 1000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: Math.floor(5 * this.nBulletsMultiplier), // circle the enemy
+        spreadAngle: (Math.PI * 2) / Math.floor(5 * this.nBulletsMultiplier), // 90 degrees
+      },
+    };
+
+    if (enemyAttackTypes[type]) {
+      const selectedType = enemyAttackTypes[type];
+      let dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
+      let dirs = [];
+      let angles = [];
+
+      if (selectedType.nProjectiles > 1) {
+        const halfSpread =
+          ((selectedType.nProjectiles - 1) * selectedType.spreadAngle) / 2;
+        for (let i = 0; i < selectedType.nProjectiles; i++) {
+          const projectileAngle =
+            angle - halfSpread + i * selectedType.spreadAngle;
+          angles.push(projectileAngle);
+          dirs.push(
+            new Vec2(
+              Math.cos(projectileAngle),
+              Math.sin(projectileAngle),
+            ).normalize(),
+          );
+        }
+      } else {
+        angles.push(angle);
+        dirs.push(dir);
+      }
+
+      let projectiles = [];
+      for (let i = 0; i < dirs.length; i++) {
+        projectiles.push(
+          new Projectile(
+            origin,
+            dirs[i],
+            selectedType.speed,
+            selectedType.range,
+            selectedType.damage,
+            selectedType.projectileColor,
+            this.mapGen.canvas,
+            this.projectileSprite,
+            angles[i],
+            // this.tweenGroup,
+          ),
+        );
+      }
+
+      return projectiles;
+    }
+  }
+
   update(ctx, canvas) {
     if (this.wanderDelay > 0) {
       this.wanderDelay--;
@@ -502,8 +606,7 @@ export class Enemy {
   }
 
   animate() {
-    if (this.state !== 'dead' || this.frameX < 10)
-      this.frameCounter++;
+    if (this.state !== "dead" || this.frameX < 10) this.frameCounter++;
 
     if (this.frameCounter >= this.animationSpeed) {
       this.frameCounter = 0;
@@ -515,7 +618,7 @@ export class Enemy {
     }
 
     // set frameY based on direction
-    if (this.state === 'dead') return
+    if (this.state === "dead") return;
     switch (this.direction) {
       case "down":
         this.frameY = 0;
@@ -590,8 +693,7 @@ export class Enemy {
           frameHeight,
         );
       }
-    }
-    else {
+    } else {
       if (this.attackLock) {
         this.offCtx.drawImage(
           this.spritesheetAttack,
@@ -643,10 +745,10 @@ export class Enemy {
       // }
       // this.offCtx.putImageData(imageData, 0, 0);
 
-      this.offCtx.globalCompositeOperation = 'source-atop'
-      this.offCtx.fillStyle = 'rgba(255, 0, 0, 0.3)'
-      this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height)
-      this.offCtx.globalCompositeOperation = 'source-over'
+      this.offCtx.globalCompositeOperation = "source-atop";
+      this.offCtx.fillStyle = "rgba(255, 0, 0, 0.3)";
+      this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height);
+      this.offCtx.globalCompositeOperation = "source-over";
 
       // this.offCtx.fillStyle = 'red'
       // this.offCtx.fillRect(0, 0, this.offCanvas.width, this.offCanvas.height)
@@ -663,7 +765,7 @@ export class Enemy {
         frameHeight,
       );
 
-      this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height)
+      this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
     }
 
     // // debug

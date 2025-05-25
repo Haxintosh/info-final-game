@@ -2,7 +2,7 @@ import { ButtonPrompt } from "./button-prompt.js";
 import { Enemy } from "./enemy.js";
 import { text } from "./text.js";
 import { Explosion } from "./guns.js";
-import {Shard} from "./shard.js";
+import { Shard } from "./shard.js";
 export class LevelFunctions {
   constructor(canvas, mapGen, player, camera) {
     this.canvas = canvas;
@@ -41,17 +41,17 @@ export class LevelFunctions {
     this.wavesLeft = this.level;
 
     // shards
-    this.shards = {count: 20}
-    this.shardsArray = []
+    this.shards = { count: 20 };
+    this.shardsArray = [];
 
     // upgrade stuff
     this.upgrades = {
       dmgMulti: 1,
       speedMulti: 1,
-    }
+    };
 
     // end screen stat
-    this.enemiesDefeated = {count: 0}
+    this.enemiesDefeated = { count: 0 };
   }
 
   async spawnEnemies(room) {
@@ -78,6 +78,8 @@ export class LevelFunctions {
             this.player,
             this,
             this.mapGen,
+            this.level / 2 + 0.5,
+            this.level,
           );
           // this.enemies.push(enemy);
           room.enemies.push(enemy);
@@ -141,8 +143,10 @@ export class LevelFunctions {
             this.player.gun.projectiles.indexOf(projectile),
             1,
           );
-          enemy.dmged = true
-          setTimeout(() => {enemy.dmged = false}, 100)
+          enemy.dmged = true;
+          setTimeout(() => {
+            enemy.dmged = false;
+          }, 100);
         } else {
           // console.log("miss");
         }
@@ -227,29 +231,36 @@ export class LevelFunctions {
 
     const coords = this.player.getFacingTile(this.mapGen.currentRoom);
 
-    this.interactAction = "none"
+    this.interactAction = "none";
 
-    if (!coords || !this.mapGen.currentRoom.interactMap[coords.x-1] || !this.mapGen.currentRoom.interactMap[coords.x+1] || !this.mapGen.currentRoom.interactMap[coords.y-1] || !this.mapGen.currentRoom.interactMap[coords.y+1]) return; // if null return
+    if (
+      !coords ||
+      !this.mapGen.currentRoom.interactMap[coords.x - 1] ||
+      !this.mapGen.currentRoom.interactMap[coords.x + 1] ||
+      !this.mapGen.currentRoom.interactMap[coords.y - 1] ||
+      !this.mapGen.currentRoom.interactMap[coords.y + 1]
+    )
+      return; // if null return
 
     const tile1 = this.mapGen.currentRoom.interactMap[coords.y][coords.x]; // close center
     let tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x]; // close left
     let tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x]; // close right
 
-    if (this.player.direction === 'top') {
-      tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x-1]; // close left
-      tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x+1]; // close right
+    if (this.player.direction === "top") {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x - 1]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x + 1]; // close right
     }
-    if (this.player.direction === 'down') {
-      tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x-1]; // close left
-      tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x+1]; // close right
+    if (this.player.direction === "down") {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y][coords.x - 1]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y][coords.x + 1]; // close right
     }
-    if (this.player.direction === 'left') {
-      tile2 = this.mapGen.currentRoom.interactMap[coords.y+1][coords.x]; // close left
-      tile3 = this.mapGen.currentRoom.interactMap[coords.y-1][coords.x]; // close right
+    if (this.player.direction === "left") {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y + 1][coords.x]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y - 1][coords.x]; // close right
     }
-    if (this.player.direction === 'right') {
-      tile2 = this.mapGen.currentRoom.interactMap[coords.y-1][coords.x]; // close left
-      tile3 = this.mapGen.currentRoom.interactMap[coords.y+1][coords.x]; // close right
+    if (this.player.direction === "right") {
+      tile2 = this.mapGen.currentRoom.interactMap[coords.y - 1][coords.x]; // close left
+      tile3 = this.mapGen.currentRoom.interactMap[coords.y + 1][coords.x]; // close right
     }
 
     // console.log(this.mapGen.currentRoom.subtype)
@@ -275,9 +286,9 @@ export class LevelFunctions {
       if (parseInt(this.mapGen.currentRoom.subtype) === 1) {
         if (tile1 === 1 || tile2 === 1 || tile3 === 1) {
           // button prompts are going to have to be manual
-          let x
-          let y
-          let id
+          let x;
+          let y;
+          let id;
 
           let roomCenterX =
             this.mapGen.currentRoom.x +
@@ -290,24 +301,33 @@ export class LevelFunctions {
           let playerCenterY = this.player.y + this.player.height / 2;
 
           if (playerCenterX < roomCenterX && playerCenterY < roomCenterY) {
-            x = this.mapGen.currentRoom.x + (6*16+8) + 0.5
-            y = this.mapGen.currentRoom.y + (5*16+8)
-            id = 1
-          } else if (playerCenterX > roomCenterX && playerCenterY < roomCenterY) {
-            x = this.mapGen.currentRoom.x + (13*16+8) + 0.5
-            y = this.mapGen.currentRoom.y + (5*16+8)
-            id = 2
-          } else if (playerCenterX < roomCenterX && playerCenterY > roomCenterY) {
-            x = this.mapGen.currentRoom.x + (6*16+8) + 0.5
-            y = this.mapGen.currentRoom.y + (12*16+8)
-            id = 3
-          } else if (playerCenterX > roomCenterX && playerCenterY > roomCenterY) {
-            x = this.mapGen.currentRoom.x + (13*16+8) + 0.5
-            y = this.mapGen.currentRoom.y + (12*16+8)
-            id = 4
+            x = this.mapGen.currentRoom.x + (6 * 16 + 8) + 0.5;
+            y = this.mapGen.currentRoom.y + (5 * 16 + 8);
+            id = 1;
+          } else if (
+            playerCenterX > roomCenterX &&
+            playerCenterY < roomCenterY
+          ) {
+            x = this.mapGen.currentRoom.x + (13 * 16 + 8) + 0.5;
+            y = this.mapGen.currentRoom.y + (5 * 16 + 8);
+            id = 2;
+          } else if (
+            playerCenterX < roomCenterX &&
+            playerCenterY > roomCenterY
+          ) {
+            x = this.mapGen.currentRoom.x + (6 * 16 + 8) + 0.5;
+            y = this.mapGen.currentRoom.y + (12 * 16 + 8);
+            id = 3;
+          } else if (
+            playerCenterX > roomCenterX &&
+            playerCenterY > roomCenterY
+          ) {
+            x = this.mapGen.currentRoom.x + (13 * 16 + 8) + 0.5;
+            y = this.mapGen.currentRoom.y + (12 * 16 + 8);
+            id = 4;
           }
 
-          if (!(this.mapGen.currentRoom.chestDone.includes(id))) {
+          if (!this.mapGen.currentRoom.chestDone.includes(id)) {
             const button = new ButtonPrompt(
               this.canvas,
               this.mapGen,
@@ -324,9 +344,9 @@ export class LevelFunctions {
       if (parseInt(this.mapGen.currentRoom.subtype) === 2) {
         if (tile1 === 1 || tile2 === 1 || tile3 === 1) {
           // button prompts are going to have to be manual
-          let x
-          let y
-          let id
+          let x;
+          let y;
+          let id;
 
           let roomCenterX =
             this.mapGen.currentRoom.x +
@@ -335,16 +355,16 @@ export class LevelFunctions {
           let playerCenterX = this.player.x + this.player.width / 2;
 
           if (playerCenterX < roomCenterX) {
-            x = this.mapGen.currentRoom.x + 7*16
-            y = this.mapGen.currentRoom.y + 8*16
-            id = 1
+            x = this.mapGen.currentRoom.x + 7 * 16;
+            y = this.mapGen.currentRoom.y + 8 * 16;
+            id = 1;
           } else if (playerCenterX > roomCenterX) {
-            x = this.mapGen.currentRoom.x + 13 * 16
-            y = this.mapGen.currentRoom.y + 11 * 16
-            id = 2
+            x = this.mapGen.currentRoom.x + 13 * 16;
+            y = this.mapGen.currentRoom.y + 11 * 16;
+            id = 2;
           }
 
-          if (!(this.mapGen.currentRoom.shardDone.includes(id))) {
+          if (!this.mapGen.currentRoom.shardDone.includes(id)) {
             const button = new ButtonPrompt(
               this.canvas,
               this.mapGen,
@@ -366,10 +386,10 @@ export class LevelFunctions {
             this.mapGen,
             "E",
             this.mapGen.currentRoom.x +
-            (this.mapGen.currentRoom.mapWidth * 16) / 2,
+              (this.mapGen.currentRoom.mapWidth * 16) / 2,
             this.mapGen.currentRoom.y +
-            (this.mapGen.currentRoom.mapHeight * 16) / 2 -
-            16,
+              (this.mapGen.currentRoom.mapHeight * 16) / 2 -
+              16,
           );
           this.interactAction = "Well";
         }
@@ -381,21 +401,23 @@ export class LevelFunctions {
     switch (e.code) {
       case "KeyE":
         if (!this.interacted) {
-          if (this.interactAction !== 'none') this.interacted = true; // change back to false after interaction is done
+          if (this.interactAction !== "none") this.interacted = true; // change back to false after interaction is done
 
           // interaction
           if (this.interactAction === "EndStage") {
             this.player.movementLocked = true;
             this.player.moving = false;
 
-            if (this.level === 3 && this.level === 3) { // put 4-1 if we have boss
+            if (this.level === 3 && this.level === 3) {
+              // put 4-1 if we have boss
               this.announcerSub(text.endStatue2, 3000);
 
               setTimeout(() => {
-                document.getElementById('end-screen-background').style.opacity = "1";
+                document.getElementById("end-screen-background").style.opacity =
+                  "1";
               }, 4000);
               setTimeout(() => {
-                this.endScreen('Victory');
+                this.endScreen("Victory");
               }, 4700);
             } else {
               this.announcerSub(text.endStatue, 3000);
@@ -410,20 +432,20 @@ export class LevelFunctions {
           }
 
           // well room
-          if (this.interactAction === 'Well') {
+          if (this.interactAction === "Well") {
             this.player.movementLocked = true;
             this.player.moving = false;
 
             this.announcerSub(text.well, 2000);
 
             setTimeout(() => {
-              upg.showCards(this.mapGen, true)
-            }, 3000)
+              upg.showCards(this.mapGen, true);
+            }, 3000);
           }
 
           // chest
-          if (this.interactAction === 'Chest') {
-            let id
+          if (this.interactAction === "Chest") {
+            let id;
             let roomCenterX =
               this.mapGen.currentRoom.x +
               (this.mapGen.currentRoom.mapWidth * 16) / 2;
@@ -435,37 +457,46 @@ export class LevelFunctions {
             let playerCenterY = this.player.y + this.player.height / 2;
 
             if (playerCenterX < roomCenterX && playerCenterY < roomCenterY) {
-              id = 1
-            } else if (playerCenterX > roomCenterX && playerCenterY < roomCenterY) {
-              id = 2
-            } else if (playerCenterX < roomCenterX && playerCenterY > roomCenterY) {
-              id = 3
-            } else if (playerCenterX > roomCenterX && playerCenterY > roomCenterY) {
-              id = 4
+              id = 1;
+            } else if (
+              playerCenterX > roomCenterX &&
+              playerCenterY < roomCenterY
+            ) {
+              id = 2;
+            } else if (
+              playerCenterX < roomCenterX &&
+              playerCenterY > roomCenterY
+            ) {
+              id = 3;
+            } else if (
+              playerCenterX > roomCenterX &&
+              playerCenterY > roomCenterY
+            ) {
+              id = 4;
             }
 
             const idValues = {
               1: 0.1,
               2: 0.3,
               3: 0.6,
-              4: 0.9
-            }
-            let closestId = null
-            let closestDiff = Infinity
+              4: 0.9,
+            };
+            let closestId = null;
+            let closestDiff = Infinity;
             for (const [key, value] of Object.entries(idValues)) {
-              const diff = Math.abs(this.mapGen.currentRoom.chest - value)
+              const diff = Math.abs(this.mapGen.currentRoom.chest - value);
               if (diff < closestDiff) {
-                closestDiff = diff
-                closestId = parseInt(key)
+                closestDiff = diff;
+                closestId = parseInt(key);
               }
             }
 
             if (closestId === id) {
-              const rng = Math.random()
+              const rng = Math.random();
               if (rng < 0.5 && !(this.player.hp >= this.player.maxHp)) {
                 this.announcerSub(text.chestUsefulHeart, 1000);
 
-                this.player.hp++
+                this.player.hp++;
 
                 const hearts = document.querySelectorAll(".heart");
 
@@ -481,8 +512,8 @@ export class LevelFunctions {
                 const exp = Math.ceil(Math.random() * 4) + 1;
                 for (let i = 0; i < exp; i++) {
                   const shard = new Shard(
-                    this.player.x + this.player.width/2,
-                    this.player.y + this.player.height/2,
+                    this.player.x + this.player.width / 2,
+                    this.player.y + this.player.height / 2,
                     this.player,
                     this.shardsArray,
                     this.shards,
@@ -493,13 +524,13 @@ export class LevelFunctions {
               this.announcerSub(text.chestUseless, 1000);
             }
 
-            this.mapGen.currentRoom.chestDone.push(id)
+            this.mapGen.currentRoom.chestDone.push(id);
 
-            this.interacted = false
+            this.interacted = false;
           }
 
-          if (this.interactAction === 'Shard') {
-            let id
+          if (this.interactAction === "Shard") {
+            let id;
 
             let roomCenterX =
               this.mapGen.currentRoom.x +
@@ -508,25 +539,25 @@ export class LevelFunctions {
             let playerCenterX = this.player.x + this.player.width / 2;
 
             if (playerCenterX < roomCenterX) {
-              id = 1
+              id = 1;
             } else if (playerCenterX > roomCenterX) {
-              id = 2
+              id = 2;
             }
 
             const exp = Math.ceil(Math.random() * 3) + 3;
             for (let i = 0; i < exp; i++) {
               const shard = new Shard(
-                this.player.x + this.player.width/2,
-                this.player.y + this.player.height/2,
+                this.player.x + this.player.width / 2,
+                this.player.y + this.player.height / 2,
                 this.player,
                 this.shardsArray,
                 this.shards,
               );
             }
 
-            this.mapGen.currentRoom.shardDone.push(id)
+            this.mapGen.currentRoom.shardDone.push(id);
 
-            this.interacted = false
+            this.interacted = false;
           }
         }
         break;
@@ -547,7 +578,7 @@ export class LevelFunctions {
     // this.checkBattleRoom()
     if (this.interacted && this.interactAction === "EndStage")
       this.showEndStatue();
-    this.checkChest()
+    this.checkChest();
   }
 
   showEndStatue() {
@@ -617,46 +648,56 @@ export class LevelFunctions {
 
   updateShards() {
     this.shardsArray.forEach((e) => {
-      e.update(this.ctx)
-    })
+      e.update(this.ctx);
+    });
   }
 
   endScreen(status) {
-    document.getElementById('end-screen-background').style.visibility = 'visible'
-    document.getElementById('end-screen-container').style.visibility = 'visible'
+    document.getElementById("end-screen-background").style.visibility =
+      "visible";
+    document.getElementById("end-screen-container").style.visibility =
+      "visible";
 
-    document.getElementById('end-1').style.width = '100%'
+    document.getElementById("end-1").style.width = "100%";
 
     setTimeout(() => {
-      document.getElementById('end-screen-txt-1').style.opacity = '1'
-      document.getElementById('end-screen-txt-1').style.margin = '20px 0'
-    }, 1500)
+      document.getElementById("end-screen-txt-1").style.opacity = "1";
+      document.getElementById("end-screen-txt-1").style.margin = "20px 0";
+    }, 1500);
     setTimeout(() => {
-      document.getElementById('end-screen-txt-2').style.opacity = '1'
-      document.getElementById('end-screen-txt-2').style.margin = '20px 0'
-    }, 5000)
+      document.getElementById("end-screen-txt-2").style.opacity = "1";
+      document.getElementById("end-screen-txt-2").style.margin = "20px 0";
+    }, 5000);
     setTimeout(() => {
-      document.getElementById('end-2').style.opacity = '1'
-      document.getElementById('end-2').style.marginTop = '0px'
-    }, 8000)
+      document.getElementById("end-2").style.opacity = "1";
+      document.getElementById("end-2").style.marginTop = "0px";
+    }, 8000);
     setTimeout(() => {
-      document.getElementById('end-3').style.opacity = '1'
-      document.getElementById('end-3').style.marginTop = '0px'
-    }, 11000)
+      document.getElementById("end-3").style.opacity = "1";
+      document.getElementById("end-3").style.marginTop = "0px";
+    }, 11000);
 
     // change text
-    document.getElementById('end-screen-title').textContent = text['endTitle' + status]
-    document.getElementById('end-screen-txt-1').innerHTML = text['endTxt' + status]
-    document.getElementById('end-screen-txt-2').innerHTML = text['endTxt' + status + '2']
-    document.getElementById('end-screen-subtitle').innerHTML = text['endSubtitle' + status]
+    document.getElementById("end-screen-title").textContent =
+      text["endTitle" + status];
+    document.getElementById("end-screen-txt-1").innerHTML =
+      text["endTxt" + status];
+    document.getElementById("end-screen-txt-2").innerHTML =
+      text["endTxt" + status + "2"];
+    document.getElementById("end-screen-subtitle").innerHTML =
+      text["endSubtitle" + status];
 
     // stats
-    if (status === 'Victory')
-      document.getElementById('end-rooms').textContent = text.rooms + text.fullClear
+    if (status === "Victory")
+      document.getElementById("end-rooms").textContent =
+        text.rooms + text.fullClear;
     else
-      document.getElementById('end-rooms').textContent = text.rooms + this.level + '-' + this.sublevel
-    document.getElementById('end-enemies').textContent = text.enemiesDefeated + this.enemiesDefeated.count
-    document.getElementById('end-shards').textContent = text.shardsCollected + this.shards.count
+      document.getElementById("end-rooms").textContent =
+        text.rooms + this.level + "-" + this.sublevel;
+    document.getElementById("end-enemies").textContent =
+      text.enemiesDefeated + this.enemiesDefeated.count;
+    document.getElementById("end-shards").textContent =
+      text.shardsCollected + this.shards.count;
   }
 
   checkChest() {
@@ -689,6 +730,6 @@ export class LevelFunctions {
           this.mapGen.currentRoom.y + 11 * 16,
         );
       }
-    })
+    });
   }
 }
