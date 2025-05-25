@@ -4,6 +4,7 @@ import { text } from "./text.js";
 import { Projectile, Explosion } from "./guns.js";
 import { Vec2 } from "./utils.js";
 import { Shard } from "./shard.js";
+import {audio, music} from "./audio.js";
 export class Enemy {
   constructor(
     room,
@@ -358,6 +359,11 @@ export class Enemy {
             this.levelFunctions.wavesLeft = this.levelFunctions.level;
 
             this.levelFunctions.announcer(text.roomClear, 2000);
+
+            // audio
+            music.hunted.pause()
+            audio.clear.currentTime = 0
+            audio.clear.play()
           }
         }
 
@@ -372,6 +378,13 @@ export class Enemy {
           );
         }
       }, 1000);
+
+      setTimeout(() => {
+        // audio
+        const death = new Audio('./audio/death.mp3')
+        death.volume = audio.enemy
+        death.play()
+      }, 300)
     }
   }
 
@@ -428,6 +441,12 @@ export class Enemy {
           this.frameY = 0; // reset attack animation
         }, 400);
       }, 500);
+
+      // audio
+      const rng = Math.ceil(Math.random()*4)
+      const sound = new Audio(`./audio/enemy-${rng}.mp3`)
+      sound.volume = audio.enemy
+      sound.play()
     }
 
     // if (

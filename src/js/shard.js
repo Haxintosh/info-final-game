@@ -1,3 +1,5 @@
+import {audio} from "./audio.js";
+
 export class Shard {
   constructor(x, y, player, shardsArray, shards) {
     this.x = x;
@@ -67,6 +69,10 @@ export class Shard {
       // update displays
       this.display.textContent = this.shards.count
       // this.display2.textContent = this.shards.count
+
+      // audio
+      audio.pickup.currentTime = 0
+      audio.pickup.play()
     }
   }
 

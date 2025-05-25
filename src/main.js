@@ -7,6 +7,7 @@ import { LevelFunctions } from "./js/level-functions.js";
 import { ButtonPrompt } from "./js/button-prompt.js";
 import { starterWeapons } from "./js/guns.js";
 import { UpgCard } from "./js/upg-card.js";
+import { audio, music } from "./js/audio.js";
 
 const IS_LOADBLOACKER_ENABLED = true;
 if (!IS_LOADBLOACKER_ENABLED) {

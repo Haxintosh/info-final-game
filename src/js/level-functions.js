@@ -3,6 +3,8 @@ import { Enemy } from "./enemy.js";
 import { text } from "./text.js";
 import { Explosion } from "./guns.js";
 import { Shard } from "./shard.js";
+import {audio, music} from "./audio.js";
+
 export class LevelFunctions {
   constructor(canvas, mapGen, player, camera) {
     this.canvas = canvas;
@@ -41,7 +43,7 @@ export class LevelFunctions {
     this.wavesLeft = this.level;
 
     // shards
-    this.shards = { count: 20 };
+    this.shards = { count: 0 };
     this.shardsArray = [];
 
     // upgrade stuff
@@ -51,6 +53,7 @@ export class LevelFunctions {
     };
 
     // end screen stat
+    this.audioTriggered = false
     this.enemiesDefeated = { count: 0 };
   }
 
@@ -159,7 +162,7 @@ export class LevelFunctions {
       this.blackout.style.opacity = "0";
     }, 400);
 
-    // Step 1: Setup map generation
+    // map generation
     progressCallback(10);
     await this.mapGen.init((mapGenProgress) => {
       progressCallback(10 + mapGenProgress * 0.7); // loading  70% total progress
@@ -173,7 +176,7 @@ export class LevelFunctions {
       console.error(error);
     }
 
-    // Step 2: Position player and camera
+    // player and camera
     this.player.x =
       this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
     this.player.y =
@@ -191,17 +194,19 @@ export class LevelFunctions {
 
     progressCallback(90);
 
-    // Step 3: Reset interaction state
+    // interaction state
     this.interacted = false;
     this.interactAction = null;
 
     progressCallback(95);
 
-    // Step 4: Announce level start
+    // level start
     setTimeout(
       () => this.announcer(text.layer + this.level + "-" + this.sublevel, 2000),
       500,
     );
+    audio.level.currentTime = 0
+    // await audio.level.play() // add later cuz stupid autoplay
 
     progressCallback(100); // BEGIN GAME
   }
@@ -643,6 +648,12 @@ export class LevelFunctions {
       // this.mapGen.unlockRooms();
       // this.mapGen.currentRoom.battleRoomDone = true;
       // this.battling = false;
+
+      // audio
+      audio.battle.currentTime = 0
+      audio.battle.play()
+      music.hunted.currentTime = 0
+      music.hunted.play()
     }
   }
 
@@ -653,6 +664,8 @@ export class LevelFunctions {
   }
 
   endScreen(status) {
+    this.mapGen.currentRoom.enemies = []
+
     document.getElementById("end-screen-background").style.visibility =
       "visible";
     document.getElementById("end-screen-container").style.visibility =
@@ -667,15 +680,15 @@ export class LevelFunctions {
     setTimeout(() => {
       document.getElementById("end-screen-txt-2").style.opacity = "1";
       document.getElementById("end-screen-txt-2").style.margin = "20px 0";
-    }, 5000);
+    }, 7500);
     setTimeout(() => {
       document.getElementById("end-2").style.opacity = "1";
       document.getElementById("end-2").style.marginTop = "0px";
-    }, 8000);
+    }, 13500);
     setTimeout(() => {
       document.getElementById("end-3").style.opacity = "1";
       document.getElementById("end-3").style.marginTop = "0px";
-    }, 11000);
+    }, 16000);
 
     // change text
     document.getElementById("end-screen-title").textContent =
@@ -698,6 +711,27 @@ export class LevelFunctions {
       text.enemiesDefeated + this.enemiesDefeated.count;
     document.getElementById("end-shards").textContent =
       text.shardsCollected + this.shards.count;
+
+    // audio
+    if (this.audioTriggered) return
+    this.audioTriggered = true
+
+    setTimeout(() => {
+      this.audioTriggered = false
+    }, 1000)
+
+    audio.boom.currentTime = 0
+    audio.boom.play()
+    music.ambience.pause()
+    music.hunted.pause()
+
+    if (status === 'Victory') {
+      music.redemption.currentTime = 0
+      music.redemption.play()
+    } else {
+      music.devestation.currentTime = 0
+      music.devestation.play()
+    }
   }
 
   checkChest() {

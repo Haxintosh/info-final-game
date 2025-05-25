@@ -1,4 +1,5 @@
 import { text } from './text.js'
+import {audio} from "./audio.js";
 
 export class UpgCard {
   constructor(levelFunctions, player) {
@@ -92,6 +93,10 @@ export class UpgCard {
           document.getElementById(`shard-txt-cost-${i + 1}`).style.color = 'rgb(255,186,186)';
         }
       }
+
+      // audio
+      audio.pickup.currentTime = 0
+      audio.pickup.play()
     }
   }
 

@@ -1,5 +1,6 @@
 import * as UTILS from "./utils";
 import * as TWEEN from "@tweenjs/tween.js";
+import {audio} from "./audio.js";
 
 export class Weapon {
   constructor(
@@ -61,6 +62,10 @@ export class Weapon {
     }
 
     this.currentAct = "ready";
+
+    // audio
+    const attack = new Audio('./audio/attack.mp3')
+    attack.play()
 
     // calculate direction from angle
     let dir = new UTILS.Vec2(Math.cos(angle), Math.sin(angle)).normalize();
@@ -168,6 +173,10 @@ export class Projectile {
       if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
         this.alive = false;
         console.log("hit WALL");
+
+        const impact = new Audio('./audio/impact.mp3')
+        impact.volume = audio.impact
+        impact.play()
 
         if (this.canvas) {
           const explosion = new Explosion(

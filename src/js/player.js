@@ -1,4 +1,5 @@
 import * as UTILS from "./utils.js";
+import { audio, music } from "./audio.js";
 
 export class Player {
   constructor(canvas, x, y, width, height, speed = 2, mapGen) {
@@ -65,6 +66,9 @@ export class Player {
     this.offCtx = this.offCanvas.getContext('2d', {willReadFrequently: true});
     this.dmged = false
     this.interations = 0
+
+    // audio
+    this.stepped = false
   }
 
   async loadSpritesheet(spritesheetPath) {
@@ -398,6 +402,19 @@ export class Player {
     );
     this.ctx.restore();
 
+    // audio
+    if (this.moving) {
+      if (!this.stepped && (this.frameX === 2)) {
+        this.stepped = true
+        const rng = Math.ceil(Math.random()*5)
+        audio.steps['step' + rng].currentTime = 0
+        audio.steps['step' + rng].play()
+        // console.log('step')
+      } else if (this.frameX !== 2) {
+        this.stepped = false
+      }
+    }
+
     // draw collision box in debug mode
     if (this.debugMode) {
       this.ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
@@ -500,6 +517,10 @@ export class Player {
 
     this.dmged = true
     setTimeout(() => {this.dmged = false}, 100)
+
+    // audio
+    audio.hurt.currentTime = 0
+    audio.hurt.play()
   }
 
   shootGun(levelFunctions) {

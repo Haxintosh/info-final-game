@@ -1,4 +1,5 @@
 import { Map } from "./map-class.js";
+import {audio} from "./audio.js";
 
 export class MapGenerator {
   constructor(canvas) {
