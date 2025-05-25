@@ -120,13 +120,22 @@ body {
 
 .shard-container {
     display: flex;
-    gap: 10px;
     position: absolute;
     right: 20px;
     top: 20px;
+
+    border: 2px solid white;
+    --s: 10px;
+    -webkit-mask:
+            conic-gradient(at var(--s) var(--s),#0000 75%,#000 0)
+            0 0/calc(100% - var(--s)) calc(100% - var(--s)),
+            linear-gradient(#000 0 0) content-box;
+}
+.shard-container-2 {
+    display: flex;
+    gap: 10px;
     padding: 5px;
-    background-color: rgba(3, 75, 93, 0.5);
-    border-radius: 3px;
+    background-color: rgba(171, 86, 103, 0.5);
 }
 #shard {
     height: 32px;
