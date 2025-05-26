@@ -366,12 +366,14 @@ window.addEventListener("mousedown", (e) => {
 
   if (!player.movementLocked) player.shootGun(levelFunctions);
 });
-
+let isHuntedPlaying = false;
 function togglePauseMenu() {
   if (!started) return;
   isPaused = !isPaused;
 
   if (isPaused) {
+    isHuntedPlaying = music.hunted.currentTime > 0 && !music.hunted.paused;
+
     // pauseContainer.style.visibility = "visible";
     // pauseContainer.style.display = "flex";
     pauseContainer.style.opacity = "1";
@@ -379,6 +381,11 @@ function togglePauseMenu() {
     music.ambience.pause();
     music.menu.currentTime = 0;
     music.menu.play();
+    if (isHuntedPlaying) {
+      music.hunted.pause();
+      // isHuntedPlaying = false;
+      // music.hunted.currentTime = 0;
+    }
   } else {
     pauseContainer.style.opacity = "0";
     pauseContainer.style.zIndex = "-100";
@@ -386,5 +393,9 @@ function togglePauseMenu() {
     // pauseContainer.style.visibility = "hidden";
     music.ambience.play();
     music.menu.pause();
+    if (isHuntedPlaying) {
+      music.hunted.play();
+      // isHuntedPlaying = true;
+    }
   }
 }
