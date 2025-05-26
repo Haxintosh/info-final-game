@@ -150,6 +150,7 @@ export class Projectile {
     sprite,
     angle,
     size = 1.5,
+    bulletType = "straight", // straight, homing, sinusoidal,
   ) {
     this.origin = origin;
     this.position = origin.copy();
@@ -164,6 +165,14 @@ export class Projectile {
     this.sprite = sprite;
     this.size = size;
     this.angle = angle;
+    this.bulletType = bulletType;
+
+    this.originalDirection = direction.copy(); // for sin
+    this.homingFactor = 0.8; // how much homing
+
+    this.lifeTime = 0;
+    this.lastT = performance.now();
+    this.dT = 0;
   }
 
   checkCollisionWithMap(room) {
@@ -196,11 +205,67 @@ export class Projectile {
     }
   }
 
-  update(tileWidth, scale, currentMap) {
+  update(tileWidth, scale, currentMap, player = null) {
     if (!this.alive) return;
-    this.position = this.position.add(
-      this.direction.scale((this.speed * 10) / (tileWidth * scale)),
-    );
+
+    // this.position = this.position.add(
+    //   this.direction.scale((this.speed * 10) / (tileWidth * scale)),
+    // );
+    //
+
+    this.dT = performance.now() - this.lastT;
+    this.lastT = performance.now();
+    this.lifeTime += this.dT;
+
+    // new pos based on type of projectile
+    if (this.bulletType === "straight") {
+      console.log("Straight bullet");
+      this.position = this.position.add(
+        this.direction.scale((this.speed * 10) / (tileWidth * scale)),
+      );
+    } else if (this.bulletType === "homing" && player) {
+      // let bullet go straight for a bit before homing in
+      if (this.lifeTime < 500) {
+        this.position = this.position.add(
+          this.direction.scale((this.speed * 10) / (tileWidth * scale)),
+        );
+      } else {
+        const playerPos = new UTILS.Vec2(
+          player.x + player.width / 2,
+          player.y + player.height / 2,
+        );
+        let playerDir = playerPos.sub(this.position).normalize();
+        playerDir = this.direction
+          .scale(1 - this.homingFactor)
+          .add(playerDir.scale(this.homingFactor))
+          .normalize();
+        // calculate angle of projectile
+        this.angle = Math.atan2(playerDir.y, playerDir.x);
+
+        this.position = this.position.add(
+          playerDir.scale((this.speed * 10) / (tileWidth * scale)),
+        );
+      }
+    } else if (this.bulletType === "sinusoidal") {
+      const frequency = 0.005; // freq
+      const amplitude = 1; // amplitude
+
+      const perpendicular = new UTILS.Vec2(
+        -this.originalDirection.y,
+        this.originalDirection.x,
+      ).normalize();
+
+      const offset = Math.sin(this.lifeTime * frequency) * amplitude;
+      const sinusoidalDirection = this.originalDirection
+        .add(perpendicular.scale(offset))
+        .normalize();
+
+      this.angle = Math.atan2(sinusoidalDirection.y, sinusoidalDirection.x);
+
+      this.position = this.position.add(
+        sinusoidalDirection.scale((this.speed * 10) / (tileWidth * scale)),
+      );
+    }
 
     // check if projectile has reached max range
     if (

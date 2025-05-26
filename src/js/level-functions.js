@@ -61,7 +61,10 @@ export class LevelFunctions {
     audio.battle.currentTime = 0;
     audio.battle.play();
 
-    const enemyCount = Math.floor(Math.random() * 3) + 6 + Math.floor((this.level-0.5)*this.sublevel);
+    const enemyCount =
+      Math.floor(Math.random() * 3) +
+      6 +
+      Math.floor((this.level - 0.5) * this.sublevel);
     // console.log(room);
 
     for (let i = 0; i < enemyCount; i++) {
@@ -86,6 +89,7 @@ export class LevelFunctions {
             this.mapGen,
             this.level / 2 + 0.5,
             this.level,
+            10,
           );
           // this.enemies.push(enemy);
           room.enemies.push(enemy);
@@ -746,34 +750,18 @@ export class LevelFunctions {
     this.mapGen.renderedMap.forEach((map) => {
       map.chestDone.forEach((e) => {
         if (e === 1) {
-          this.ctx.drawImage(
-            this.img2,
-            map.x + 6 * 16,
-            map.y + 4 * 16,
-          );
+          this.ctx.drawImage(this.img2, map.x + 6 * 16, map.y + 4 * 16);
         }
         if (e === 2) {
-          this.ctx.drawImage(
-            this.img2,
-            map.x + 13 * 16,
-            map.y + 4 * 16,
-          );
+          this.ctx.drawImage(this.img2, map.x + 13 * 16, map.y + 4 * 16);
         }
         if (e === 3) {
-          this.ctx.drawImage(
-            this.img2,
-            map.x + 6 * 16,
-            map.y + 11 * 16,
-          );
+          this.ctx.drawImage(this.img2, map.x + 6 * 16, map.y + 11 * 16);
         }
         if (e === 4) {
-          this.ctx.drawImage(
-            this.img2,
-            map.x + 13 * 16,
-            map.y + 11 * 16,
-          );
+          this.ctx.drawImage(this.img2, map.x + 13 * 16, map.y + 11 * 16);
         }
       });
-    })
+    });
   }
 }

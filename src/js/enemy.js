@@ -19,6 +19,7 @@ export class Enemy {
     spdMultiplier,
     nBulletsMultiplier,
     hp = 10,
+    isBoss = false,
   ) {
     this.x = x;
     this.y = y;
@@ -80,6 +81,11 @@ export class Enemy {
     // modifiers
     this.spdMultiplier = spdMultiplier;
     this.nBulletsMultiplier = nBulletsMultiplier;
+
+    // boss
+    this.isBoss = isBoss;
+    this.currentAttackPattern = "chaos"; // default attack pattern
+    this.currentAttackIndex = 0; // current attack index in the pattern
   }
 
   async loadSpritesheetIdle(spritesheetPath) {
@@ -558,50 +564,211 @@ export class Enemy {
       },
     };
 
-    if (enemyAttackTypes[type]) {
-      const selectedType = enemyAttackTypes[type];
-      let dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
-      let dirs = [];
-      let angles = [];
+    const bossAttackTypes = {
+      default: {
+        // 3 homing bullet at the player
+        speed: 2 * this.spdMultiplier,
+        range: 1000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: 3,
+        spreadAngle: Math.PI / 8,
+        type: "homing",
+        isMixed: false,
+      },
 
-      if (selectedType.nProjectiles > 1) {
-        const halfSpread =
-          ((selectedType.nProjectiles - 1) * selectedType.spreadAngle) / 2;
-        for (let i = 0; i < selectedType.nProjectiles; i++) {
-          const projectileAngle =
-            angle - halfSpread + i * selectedType.spreadAngle;
-          angles.push(projectileAngle);
-          dirs.push(
-            new Vec2(
-              Math.cos(projectileAngle),
-              Math.sin(projectileAngle),
-            ).normalize(),
+      shotgun: {
+        speed: 1 * this.spdMultiplier,
+        range: 1000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: Math.floor(8 * this.nBulletsMultiplier),
+        spreadAngle: (Math.PI * 2) / Math.floor(8 * this.nBulletsMultiplier),
+        type: "sinusoidal",
+        isMixed: false,
+      },
+
+      sniper: {
+        speed: 3 * this.spdMultiplier,
+        range: 2000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: 2,
+        spreadAngle: Math.PI / 10, // 18 degrees
+        type: "homing",
+        isMixed: false,
+      },
+
+      shotgunBig: {
+        speed: 1 * this.spdMultiplier,
+        range: 1000,
+        damage: 1,
+        color: "rgba(132, 28, 180, 1)",
+        nProjectiles: Math.floor(10 * this.nBulletsMultiplier), // circle the enemy
+        spreadAngle: (Math.PI * 2) / Math.floor(10 * this.nBulletsMultiplier), // 90 degrees
+        type: "straight",
+        isMixed: true,
+      },
+    };
+
+    const bossAttackPatterns = {
+      default: [
+        bossAttackTypes.default,
+        bossAttackTypes.shotgun,
+        bossAttackTypes.sniper,
+        bossAttackTypes.shotgunBig,
+      ],
+      spiral: [
+        bossAttackTypes.shotgun,
+        bossAttackTypes.sniper,
+        bossAttackTypes.shotgunBig,
+        bossAttackTypes.default,
+      ],
+      wave: [
+        bossAttackTypes.shotgunBig,
+        bossAttackTypes.shotgun,
+        bossAttackTypes.default,
+        bossAttackTypes.sniper,
+      ],
+      chaos: [
+        bossAttackTypes.default,
+        bossAttackTypes.shotgun,
+        bossAttackTypes.sniper,
+        bossAttackTypes.shotgunBig,
+        bossAttackTypes.default,
+        bossAttackTypes.sniper,
+      ],
+    };
+
+    if (this.isBoss) {
+      if (bossAttackPatterns[this.currentAttackPattern]) {
+        const selectedType =
+          bossAttackPatterns[this.currentAttackPattern][
+            this.currentAttackIndex
+          ];
+        let dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
+        let dirs = [];
+        let angles = [];
+
+        if (selectedType.nProjectiles > 1) {
+          const halfSpread =
+            ((selectedType.nProjectiles - 1) * selectedType.spreadAngle) / 2;
+          for (let i = 0; i < selectedType.nProjectiles; i++) {
+            const projectileAngle =
+              angle - halfSpread + i * selectedType.spreadAngle;
+            angles.push(projectileAngle);
+            dirs.push(
+              new Vec2(
+                Math.cos(projectileAngle),
+                Math.sin(projectileAngle),
+              ).normalize(),
+            );
+          }
+        } else {
+          angles.push(angle);
+          dirs.push(dir);
+        }
+
+        let projectiles = [];
+        let isOther = false;
+
+        for (let i = 0; i < dirs.length; i++) {
+          if (selectedType.isMixed && isOther) {
+            projectiles.push(
+              new Projectile(
+                origin,
+                dirs[i],
+                selectedType.speed,
+                selectedType.range,
+                selectedType.damage,
+                selectedType.color,
+                this.mapGen.canvas,
+                this.projectileSprite,
+                angles[i],
+                1.5,
+                "sinusoidal",
+                // this.tweenGroup,
+              ),
+            );
+            isOther = !isOther;
+            continue;
+          }
+          projectiles.push(
+            new Projectile(
+              origin,
+              dirs[i],
+              selectedType.speed,
+              selectedType.range,
+              selectedType.damage,
+              selectedType.color,
+              this.mapGen.canvas,
+              this.projectileSprite,
+              angles[i],
+              1.5,
+              selectedType.type,
+              // this.tweenGroup,
+            ),
+          );
+          isOther = !isOther;
+        }
+
+        this.currentAttackIndex++;
+        if (
+          this.currentAttackIndex >=
+          bossAttackPatterns[this.currentAttackPattern].length
+        ) {
+          this.currentAttackIndex = 0;
+        }
+        return projectiles;
+      }
+    } else {
+      if (enemyAttackTypes[type]) {
+        const selectedType = enemyAttackTypes[type];
+        let dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
+        let dirs = [];
+        let angles = [];
+
+        if (selectedType.nProjectiles > 1) {
+          const halfSpread =
+            ((selectedType.nProjectiles - 1) * selectedType.spreadAngle) / 2;
+          for (let i = 0; i < selectedType.nProjectiles; i++) {
+            const projectileAngle =
+              angle - halfSpread + i * selectedType.spreadAngle;
+            angles.push(projectileAngle);
+            dirs.push(
+              new Vec2(
+                Math.cos(projectileAngle),
+                Math.sin(projectileAngle),
+              ).normalize(),
+            );
+          }
+        } else {
+          angles.push(angle);
+          dirs.push(dir);
+        }
+
+        let projectiles = [];
+        for (let i = 0; i < dirs.length; i++) {
+          projectiles.push(
+            new Projectile(
+              origin,
+              dirs[i],
+              selectedType.speed,
+              selectedType.range,
+              selectedType.damage,
+              selectedType.color,
+              this.mapGen.canvas,
+              this.projectileSprite,
+              angles[i],
+              1.5,
+              "straight",
+              // this.tweenGroup,
+            ),
           );
         }
-      } else {
-        angles.push(angle);
-        dirs.push(dir);
-      }
 
-      let projectiles = [];
-      for (let i = 0; i < dirs.length; i++) {
-        projectiles.push(
-          new Projectile(
-            origin,
-            dirs[i],
-            selectedType.speed,
-            selectedType.range,
-            selectedType.damage,
-            selectedType.color,
-            this.mapGen.canvas,
-            this.projectileSprite,
-            angles[i],
-            // this.tweenGroup,
-          ),
-        );
+        return projectiles;
       }
-
-      return projectiles;
     }
   }
 
@@ -618,7 +785,7 @@ export class Enemy {
     this.render(ctx);
     this.attackPlayer();
     for (const projectile of this.projectiles) {
-      projectile.update(16, 1, this.mapGen.currentRoom);
+      projectile.update(16, 1, this.mapGen.currentRoom, this.player);
     }
     this.hpCheck();
     this.checkBulletCollision(canvas);
