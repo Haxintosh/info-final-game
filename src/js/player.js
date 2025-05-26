@@ -504,6 +504,7 @@ export class Player {
     // dead
     if (this.hp <= 0) {
       this.movementLocked = true;
+      this.moving = false
 
       setTimeout(() => {
         document.getElementById("end-screen-background").style.opacity = "1";

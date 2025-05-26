@@ -223,9 +223,9 @@ function startGame() {
       setTimeout(() => {
         document.getElementById("play-start").style.opacity = "1";
         document.getElementById("play-start").style.top = "60%";
-      }, 4000);
-    }, 6000);
-  }, 700);
+      }, 0.4000);
+    }, 0.6000);
+  }, 0.700);
 }
 
 let started = false;
