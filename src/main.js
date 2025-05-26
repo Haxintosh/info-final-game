@@ -399,3 +399,46 @@ function togglePauseMenu() {
     }
   }
 }
+
+document.getElementById('loreDumpContainer').addEventListener('click', () => {
+  document.getElementById("lore-txt").style.opacity = "1";
+  document.getElementById("lore-txt").style.top = "30%";
+
+  setTimeout(() => {
+    menuDone.done = true;
+
+    document.getElementById("lore-txt-2").style.opacity = "1";
+    document.getElementById("lore-txt-2").style.top = "45%";
+
+    setTimeout(() => {
+      document.getElementById("play-start").style.opacity = "1";
+      document.getElementById("play-start").style.top = "60%";
+    }, 0.4000);
+  }, 0.6000);
+})
+
+// disable zoom
+document.addEventListener("keydown", function (e) {
+  if (
+    e.ctrlKey &&
+    (e.keyCode == "61" ||
+      e.keyCode == "107" ||
+      e.keyCode == "173" ||
+      e.keyCode == "109" ||
+      e.keyCode == "187" ||
+      e.keyCode == "189")
+  ) {
+    e.preventDefault();
+  }
+});
+document.addEventListener(
+  "wheel",
+  function (e) {
+    if (e.ctrlKey) {
+      e.preventDefault();
+    }
+  },
+  {
+    passive: false
+  }
+);

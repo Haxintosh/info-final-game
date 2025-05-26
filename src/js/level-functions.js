@@ -16,8 +16,8 @@ export class LevelFunctions {
     this.camera = camera;
 
     // lvls
-    this.level = 1;
-    this.sublevel = 1;
+    this.level = 3;
+    this.sublevel = 3;
 
     // html elements
     this.announcerCard = document.getElementById("announcer");
@@ -105,6 +105,43 @@ export class LevelFunctions {
     }
   }
 
+  async spawnBoss(room) {
+    audio.battle.currentTime = 0;
+    audio.battle.play();
+
+    // let x, y, tileX, tileY;
+    // x = Math.floor(room.x + Math.random() * room.mapWidth * 16);
+    // y = Math.floor(room.y + Math.random() * room.mapHeight * 16);
+    // tileX = Math.floor((x - room.x) / 16);
+    // tileY = Math.floor((y - room.y) / 16);
+    // console.log(tileX, tileY);
+    // console.log(room);
+    const enemy = new Enemy(
+      room,
+      room.x + room.mapWidth/2 * 16,
+      room.y + room.mapHeight/2 *16,
+      48,
+      56,
+      0.3,
+      this.player,
+      this,
+      this.mapGen,
+      this.level / 2 + 0.5,
+      this.level,
+      10,
+      true
+      );
+
+    // this.enemies.push(enemy);
+    room.enemies.push(enemy);
+
+    // load images
+    await enemy.loadSpritesheetIdle("./enemies/boss-idle.png");
+    await enemy.loadSpritesheetRun("./enemies/boss-walk.png");
+    await enemy.loadSpritesheetAttack("./enemies/boss-attack-1.png");
+    await enemy.loadSpritesheetDeath("./enemies/boss-death.png");
+  }
+
   updateEnemies(ctx) {
     this.mapGen.currentRoom.enemies.forEach((enemy) => {
       // Update enemy position or behavior
@@ -176,7 +213,7 @@ export class LevelFunctions {
 
     // map generation
     progressCallback(10);
-    await this.mapGen.init((mapGenProgress) => {
+    await this.mapGen.init(false, (mapGenProgress) => {
       progressCallback(10 + mapGenProgress * 0.7); // loading  70% total progress
     });
     progressCallback(80);
@@ -221,6 +258,8 @@ export class LevelFunctions {
     // );
 
     progressCallback(100); // BEGIN GAME
+
+    console.log(this.player.x, this.player.y)
   }
 
   announcer(msg, time) {
@@ -426,6 +465,15 @@ export class LevelFunctions {
             this.player.moving = false;
 
             if (this.level === 3 && this.sublevel === 3) {
+              this.announcerSub(text.endStatue3, 3000);
+
+              setTimeout(() => {
+                this.blackout.style.opacity = "1";
+              }, 4000);
+              setTimeout(() => {
+                this.boss();
+              }, 4500);
+            } else if (this.level === 4 && this.sublevel === 1) {
               // put 4-1 if we have boss
               this.announcerSub(text.endStatue2, 3000);
 
@@ -591,6 +639,68 @@ export class LevelFunctions {
     }
   }
 
+  async boss() {
+    this.sublevel++;
+    if (this.sublevel > 3) {
+      this.level++;
+      this.sublevel = 1;
+    }
+
+    setTimeout(() => {
+      this.blackout.style.opacity = "0";
+    }, 500)
+
+    setTimeout(
+      () => this.announcer(text.boss, 2000),
+      600,
+    );
+
+    // map generation
+    await this.mapGen.init(true);
+
+    try {
+      this.mapGen.drawLayout();
+    } catch (error) {
+      console.error(error);
+    }
+
+    // player and camera
+    this.player.x =
+      this.mapGen.start.x * 40 * 16 + 10 * 16 - this.player.width / 2;
+    this.player.y =
+      this.mapGen.start.y * 40 * 16 + 10 * 16 - this.player.height / 2;
+    this.camera.position.x =
+      this.player.x +
+      this.player.width / 2 -
+      this.camera.scaledCanvas.width / 2;
+    this.camera.position.y =
+      this.player.y +
+      this.player.height / 2 -
+      this.camera.scaledCanvas.height / 2;
+    this.player.movementLocked = false;
+    this.player.direction = "down";
+
+    // interaction state
+    this.interacted = false;
+    this.interactAction = null;
+
+    audio.level.currentTime = 0;
+    await audio.level.play(); // add later cuz stupid autoplay
+
+    // console.log(this.player.x, this.player.y)
+
+    setTimeout(() => {
+      this.player.movementLocked = true;
+      this.player.moving = false;
+
+      this.announcerSub(text.boss2, 2000)
+
+      setTimeout(() => {
+        this.player.movementLocked = false;
+      }, 2500)
+    }, 4000)
+  }
+
   update() {
     // this.checkBattleRoom()
     if (this.interacted && this.interactAction === "EndStage")
@@ -608,7 +718,7 @@ export class LevelFunctions {
 
   checkBattleRoom() {
     if (
-      this.mapGen.currentRoom.type === 1 &&
+      (this.mapGen.currentRoom.type === 1 || this.mapGen.currentRoom.type === 5) &&
       !this.mapGen.currentRoom.battleRoomDone
     ) {
       if (this.battling) return; // trigger once
@@ -653,17 +763,25 @@ export class LevelFunctions {
       // spawn enemy logic
       // make sure to add these after all enemies are defeated:
 
-      setTimeout(() => {
-        this.spawnEnemies(this.mapGen.currentRoom);
-      }, 500);
+      if (this.mapGen.currentRoom === 1) {
+        setTimeout(() => {
+          this.spawnEnemies(this.mapGen.currentRoom);
+        }, 500);
+        music.hunted.currentTime = 0;
+        music.hunted.play();
+      } else {
+        setTimeout(() => {
+          this.spawnBoss(this.mapGen.currentRoom);
+        }, 500);
+        music.boss.currentTime = 0;
+        music.boss.play();
+      }
 
       // this.mapGen.unlockRooms();
       // this.mapGen.currentRoom.battleRoomDone = true;
       // this.battling = false;
 
       // audio
-      music.hunted.currentTime = 0;
-      music.hunted.play();
     }
   }
 
@@ -736,6 +854,7 @@ export class LevelFunctions {
     audio.boom.play();
     music.ambience.pause();
     music.hunted.pause();
+    music.boss.pause();
 
     if (status === "Victory") {
       music.redemption.currentTime = 0;

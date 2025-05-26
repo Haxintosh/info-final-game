@@ -28,8 +28,8 @@ export class MapGenerator {
     // this.iterationCount = [];
     // this.totalIterations = 0;
   }
-  async init(progressCallback = () => {}) {
-    this.generateLevel();
+  async init(boss, progressCallback = () => {}) {
+    this.generateLevel(boss);
 
     const loadMap = async (path, x = 0, y = 0) => {
       const map = new Map(this.canvas, path, x, y);
@@ -64,6 +64,11 @@ export class MapGenerator {
 
     this.mapInstances.rooms.end = await loadMap(
       "./map-assets/room_end/spritesheet.png",
+    );
+    updateProgress();
+
+    this.mapInstances.rooms.boss = await loadMap(
+      "./map-assets/room_boss/spritesheet.png",
     );
     updateProgress();
 
@@ -105,7 +110,7 @@ export class MapGenerator {
     updateProgress();
   }
 
-  generateLevel() {
+  generateLevel(boss) {
     // Reset grid
     for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 5; x++) {
@@ -141,7 +146,7 @@ export class MapGenerator {
     this.start = { x: start.x, y: start.y };
     this.end = { x: end.x, y: end.y };
 
-    this.grid[start.y][start.x] = 2;
+    this.grid[start.y][start.x] = 3;
     this.grid[end.y][end.x] = 3;
 
     let x = start.x;
@@ -213,6 +218,18 @@ export class MapGenerator {
           }
         }
       }
+    }
+
+    if (boss) {
+      this.grid = [
+        [0, 0, 0, 0, 0,],
+        [0, 0, 3, 0, 0,],
+        [0, 0, 5, 0, 0,],
+        [0, 0, 2, 0, 0,],
+        [0, 0, 0, 0, 0,]
+      ]
+      this.start = { x: 2, y: 3 };
+      this.end = { x: 2, y: 1 };
     }
 
     console.log(this.grid);
@@ -291,6 +308,8 @@ export class MapGenerator {
       map = this.mapInstances.rooms.end.clone();
     } else if (type === 4) {
       map = this.mapInstances.rooms[`special_${subtype}`].clone();
+    } else if (type === 5) {
+      map = this.mapInstances.rooms.boss.clone();
     }
 
     if (map) {

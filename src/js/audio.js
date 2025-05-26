@@ -27,6 +27,7 @@ export const music = {
   menu: new Audio("./audio/music/Menu.mp3"),
   redemption: new Audio("./audio/music/Redemption.mp3"),
   hunted: new Audio("./audio/music/Hunted.mp3"),
+  boss: new Audio("./audio/music/Boss.mp3"),
 };
 
 export function setAudioVolume(obj, volume) {

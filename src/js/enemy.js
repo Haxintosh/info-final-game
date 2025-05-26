@@ -353,7 +353,7 @@ export class Enemy {
         this.levelFunctions.enemiesDefeated.count += 1;
 
         if (this.room.enemies.length <= 0) {
-          if (this.levelFunctions.wavesLeft > 0) {
+          if (this.levelFunctions.wavesLeft > 0 && !this.isBoss) {
             setTimeout(() => {
               this.levelFunctions.wavesLeft--;
               this.levelFunctions.spawnEnemies(this.mapGen.currentRoom);
@@ -368,6 +368,7 @@ export class Enemy {
 
             // audio
             music.hunted.pause();
+            music.boss.pause();
             audio.clear.currentTime = 0;
             audio.clear.play();
           }
@@ -802,6 +803,7 @@ export class Enemy {
         // console.log("POSTSET", this.frameX);
       } else {
         this.frameX = (this.frameX + 1) % 6; // assuming 8 frames per animation
+        // if (this.isBoss) this.frameX = (this.frameX + 1) % 7;
       }
     }
 
@@ -825,8 +827,12 @@ export class Enemy {
 
   render(ctx) {
     if (this.spritesheetRun === null) return;
-    const frameWidth = this.spritesheetRun.width / 6;
-    const frameHeight = this.spritesheetRun.height / 4;
+
+    let frameWidth = this.spritesheetRun.width / 6;
+    let frameHeight = this.spritesheetRun.height / 4;
+    // if (!this.isBoss) {
+    //   frameWidth = this.spritesheetRun.width / 7;
+    // }
 
     if (this.state === "dead") {
       ctx.drawImage(
@@ -956,14 +962,14 @@ export class Enemy {
       this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
     }
 
-    // // debug
-    // ctx.fillStyle = this.color;
-    // ctx.fillRect(
-    //   this.x - this.width / 2,
-    //   this.y - this.height / 2,
-    //   this.width,
-    //   this.height,
-    // );
+    // debug
+    ctx.fillStyle = this.color;
+    ctx.fillRect(
+      this.x - this.width / 2,
+      this.y - this.height / 2,
+      this.width,
+      this.height,
+    );
 
     // this.drawPath(ctx);
     //
