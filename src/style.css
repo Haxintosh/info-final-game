@@ -568,11 +568,11 @@ body {
   padding: 5px;
   margin: auto auto 20px;
   width: 250px;
-  background-color: rgba(2, 43, 141, 0.59);
+  background-color: rgba(65, 2, 141, 0.59);
   transition: background-color 0.3s ease;
 }
 .shard-container-cost:hover {
-  background-color: #3e63bb;
+  background-color: #593ebb;
 }
 .shard-cost {
   height: 48px;

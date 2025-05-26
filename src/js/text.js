@@ -68,7 +68,7 @@ export let text = {
   endStatue: "Les yeux rouge sang de la statue te fixent...",
   endStatue2: "Tu soutiens le regard de la statue sans la moindre peur.",
   roomClear: "Chambre Complété",
-  bought: "Acheté",
+  bought: "Vendu",
   well: "Ce puits semble suspect...",
   chestUseless: "Tu ne trouves rien d’intéressant.",
   chestUsefulHeart: "Tu trouves de quoi te soigner.",

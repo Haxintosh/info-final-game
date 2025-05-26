@@ -58,12 +58,15 @@ export class LevelFunctions {
   }
 
   async spawnEnemies(room) {
-    const enemyCount = Math.floor(Math.random() * 3) + 5; // min 5 max 8
+    audio.battle.currentTime = 0;
+    audio.battle.play();
+
+    const enemyCount = Math.floor(Math.random() * 3) + 6 + Math.floor((this.level-0.5)*this.sublevel);
     // console.log(room);
 
     for (let i = 0; i < enemyCount; i++) {
       let x, y, tileX, tileY;
-      for (let j = 0; j < 2; j++) {
+      for (let j = 0; j < 4; j++) {
         x = Math.floor(room.x + Math.random() * room.mapWidth * 16);
         y = Math.floor(room.y + Math.random() * room.mapHeight * 16);
         tileX = Math.floor((x - room.x) / 16);
@@ -76,7 +79,7 @@ export class LevelFunctions {
             x,
             y,
             16,
-            24,
+            30,
             0.3,
             this.player,
             this,
@@ -92,8 +95,8 @@ export class LevelFunctions {
           await enemy.loadSpritesheetRun("./enemies/enemy1-run.png");
           await enemy.loadSpritesheetAttack("./enemies/enemy1-attack.png");
           await enemy.loadSpritesheetDeath("./enemies/enemy1-death.png");
+          break;
         }
-        break;
       }
     }
   }
@@ -655,8 +658,6 @@ export class LevelFunctions {
       // this.battling = false;
 
       // audio
-      audio.battle.currentTime = 0;
-      audio.battle.play();
       music.hunted.currentTime = 0;
       music.hunted.play();
     }
@@ -742,35 +743,37 @@ export class LevelFunctions {
   }
 
   checkChest() {
-    this.mapGen.currentRoom.chestDone.forEach((e) => {
-      if (e === 1) {
-        this.ctx.drawImage(
-          this.img2,
-          this.mapGen.currentRoom.x + 6 * 16,
-          this.mapGen.currentRoom.y + 4 * 16,
-        );
-      }
-      if (e === 2) {
-        this.ctx.drawImage(
-          this.img2,
-          this.mapGen.currentRoom.x + 13 * 16,
-          this.mapGen.currentRoom.y + 4 * 16,
-        );
-      }
-      if (e === 3) {
-        this.ctx.drawImage(
-          this.img2,
-          this.mapGen.currentRoom.x + 6 * 16,
-          this.mapGen.currentRoom.y + 11 * 16,
-        );
-      }
-      if (e === 4) {
-        this.ctx.drawImage(
-          this.img2,
-          this.mapGen.currentRoom.x + 13 * 16,
-          this.mapGen.currentRoom.y + 11 * 16,
-        );
-      }
-    });
+    this.mapGen.renderedMap.forEach((map) => {
+      map.chestDone.forEach((e) => {
+        if (e === 1) {
+          this.ctx.drawImage(
+            this.img2,
+            map.x + 6 * 16,
+            map.y + 4 * 16,
+          );
+        }
+        if (e === 2) {
+          this.ctx.drawImage(
+            this.img2,
+            map.x + 13 * 16,
+            map.y + 4 * 16,
+          );
+        }
+        if (e === 3) {
+          this.ctx.drawImage(
+            this.img2,
+            map.x + 6 * 16,
+            map.y + 11 * 16,
+          );
+        }
+        if (e === 4) {
+          this.ctx.drawImage(
+            this.img2,
+            map.x + 13 * 16,
+            map.y + 11 * 16,
+          );
+        }
+      });
+    })
   }
 }

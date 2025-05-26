@@ -43,7 +43,7 @@ export class UpgCard {
 
       if (upg.cost > this.levelFunctions.shards.count) {
         document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
-          "rgb(255,186,186)";
+          "rgb(162,162,162)";
       } else {
         document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
           "#ffffff";
@@ -54,11 +54,15 @@ export class UpgCard {
           mapGen.currentRoom.wellUpg[i].cost > this.levelFunctions.shards.count
         ) {
           document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
-            "rgb(255,186,186)";
+            "rgb(162,162,162)";
         } else {
           document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
             "#ffffff";
         }
+      }
+      if (well && document.getElementById(`shard-txt-cost-${i + 1}`).textContent === text.bought) {
+        document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
+          "rgb(162,162,162)";
       }
     }
 
@@ -99,7 +103,7 @@ export class UpgCard {
       document.getElementById(`shard-txt-cost-${card}`).textContent =
         text.bought;
       document.getElementById(`shard-txt-cost-${card}`).style.color =
-        "rgb(255,186,186)";
+        "rgb(162,162,162)";
 
       const title = document.getElementById(`upg-title-${card}`).textContent;
       if (title === text.basic.dmg.title) {
@@ -119,7 +123,7 @@ export class UpgCard {
           ) > this.levelFunctions.shards.count
         ) {
           document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
-            "rgb(255,186,186)";
+            "rgb(162,162,162)";
         }
       }
 

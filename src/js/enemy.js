@@ -669,7 +669,7 @@ export class Enemy {
         frameWidth,
         frameHeight,
         this.x - frameWidth / 2,
-        this.y - frameHeight / 2 - 5,
+        this.y - frameHeight / 2 - 2,
         frameWidth,
         frameHeight,
       );
@@ -685,7 +685,7 @@ export class Enemy {
           frameWidth,
           frameHeight,
           this.x - frameWidth / 2,
-          this.y - frameHeight / 2 - 5,
+          this.y - frameHeight / 2 - 2,
           frameWidth,
           frameHeight,
         );
@@ -697,7 +697,7 @@ export class Enemy {
           frameWidth,
           frameHeight,
           this.x - frameWidth / 2,
-          this.y - frameHeight / 2 - 5,
+          this.y - frameHeight / 2 - 2,
           frameWidth,
           frameHeight,
         );
@@ -709,7 +709,7 @@ export class Enemy {
           frameWidth,
           frameHeight,
           this.x - frameWidth / 2,
-          this.y - frameHeight / 2 - 5,
+          this.y - frameHeight / 2 - 2,
           frameWidth,
           frameHeight,
         );
@@ -781,7 +781,7 @@ export class Enemy {
         frameWidth,
         frameHeight,
         this.x - frameWidth / 2,
-        this.y - frameHeight / 2 - 5,
+        this.y - frameHeight / 2 - 2,
         frameWidth,
         frameHeight,
       );
