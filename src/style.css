@@ -784,3 +784,16 @@ body {
   width: 0;
   height: 0;
 }
+
+#minimap {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  border: 2px solid white;
+
+  --s: 50px;
+  -webkit-mask:
+          conic-gradient(at var(--s) var(--s), #0000 75%, #000 0) 0 0 /
+      calc(100% - var(--s)) calc(100% - var(--s)),
+          linear-gradient(#000 0 0) content-box;
+}

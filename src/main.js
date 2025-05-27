@@ -10,6 +10,7 @@ import { UpgCard } from "./js/upg-card.js";
 import { audio, music, setAudioVolume } from "./js/audio.js";
 import { text, textEN } from "./js/text.js";
 import { menuAnim, menuDone } from "./js/menu.js";
+import { drawMinimap } from  './js/minimap.js'
 
 // const IS_LOADBLOACKER_ENABLED = false;
 // if (!IS_LOADBLOACKER_ENABLED) {
@@ -312,6 +313,8 @@ function animate() {
 
   mapGen.findCurrentRoom(player);
   levelFunctions.checkBattleRoom();
+
+  drawMinimap(mapGen.grid, mapGen.currentRoom)
 
   // update map sprites
   if (player.direction !== "down") levelFunctions.update();
