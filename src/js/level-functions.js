@@ -181,10 +181,10 @@ export class LevelFunctions {
     for (let enemy of this.mapGen.currentRoom.enemies) {
       for (let projectile of this.player.gun.projectiles) {
         if (
-          projectile.position.x < enemy.x + enemy.width &&
-          projectile.position.x + projectile.size > enemy.x &&
-          projectile.position.y < enemy.y + enemy.height &&
-          projectile.position.y + projectile.size > enemy.y
+          projectile.position.x < enemy.x + enemy.width/2 &&
+          projectile.position.x + projectile.size > enemy.x - enemy.width/2 &&
+          projectile.position.y < enemy.y + enemy.height/2 - 2 &&
+          projectile.position.y + projectile.size > enemy.y - enemy.height/2 - 2
         ) {
           // console.log("hit");
 
