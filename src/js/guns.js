@@ -378,7 +378,7 @@ export const starterWeapons = [
   new Weapon(
     "default",
     8, // damage
-    2, // speed
+    5, // speed
     1500, // range
     "handgun", // type
     100, // cost

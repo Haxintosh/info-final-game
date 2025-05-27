@@ -427,6 +427,12 @@ export class Enemy {
             audio.clear.currentTime = 0;
             audio.clear.play();
           }
+
+          if (this.isBoss) {
+            setTimeout(() => {
+              document.getElementById('bar-hider').width = '0px'
+            }, 1000)
+          }
         }
 
         const exp = Math.ceil(Math.random() * 2) + 1;
@@ -1114,14 +1120,14 @@ export class Enemy {
       this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
     }
 
-    // debug
-    ctx.fillStyle = this.color;
-    ctx.fillRect(
-      this.x - this.width / 2,
-      this.y - this.height / 2,
-      this.width,
-      this.height,
-    );
+    // // debug
+    // ctx.fillStyle = this.color;
+    // ctx.fillRect(
+    //   this.x - this.width / 2,
+    //   this.y - this.height / 2,
+    //   this.width,
+    //   this.height,
+    // );
 
     // this.drawPath(ctx);
     //

@@ -741,3 +741,46 @@ body {
 #play-start:hover {
   transform: translate(-50%, -50%) translateX(10px); /* Move the button 10px to the right */
 }
+
+#bar-hider {
+  position: absolute;
+  margin: 0;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0px;
+  height: 150px;
+  transition: 500ms;
+  overflow: hidden;
+}
+#bar-container {
+  position: absolute;
+  margin: 0;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  width: 700px;
+}
+#bar-txt {
+  font-size: 3em;
+  margin: 0 auto;
+  /*margin-bottom: 5px;*/
+  color: white;
+}
+#bar {
+  appearance: none;
+  height: 20px;
+  border-radius: 0;
+  background: linear-gradient(to right, #5800a9 100%, rgb(230, 215, 255) 0%);
+  outline: none;
+  cursor: url("./cursor.png"), auto;
+  border: black solid 4px;
+  transition: 100ms;
+}
+#bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 0;
+  height: 0;
+}
