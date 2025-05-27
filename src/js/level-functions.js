@@ -118,8 +118,8 @@ export class LevelFunctions {
     // console.log(room);
     const enemy = new Enemy(
       room,
-      room.x + room.mapWidth/2 * 16,
-      room.y + room.mapHeight/2 *16,
+      room.x + (room.mapWidth / 2) * 16,
+      room.y + (room.mapHeight / 2) * 16,
       48,
       56,
       0.3,
@@ -129,17 +129,22 @@ export class LevelFunctions {
       this.level / 2 + 0.5,
       this.level,
       10,
-      true
-      );
+      true,
+    );
 
     // this.enemies.push(enemy);
     room.enemies.push(enemy);
 
     // load images
-    await enemy.loadSpritesheetIdle("./enemies/boss-idle.png");
-    await enemy.loadSpritesheetRun("./enemies/boss-walk.png");
-    await enemy.loadSpritesheetAttack("./enemies/boss-attack-1.png");
-    await enemy.loadSpritesheetDeath("./enemies/boss-death.png");
+    await enemy.loadBossSpritesheetIdle("./enemies/boss-idle.png");
+    await enemy.loadBossSpritesheetRun("./enemies/boss-walk.png");
+    await enemy.loadBossSpritesheetAttack("./enemies/boss-attack-1.png");
+    await enemy.loadBossSpritesheetDeath("./enemies/boss-death.png");
+
+    await enemy.loadSpritesheetIdle("./enemies/enemy1-idle.png");
+    await enemy.loadSpritesheetRun("./enemies/enemy1-run.png");
+    await enemy.loadSpritesheetAttack("./enemies/enemy1-attack.png");
+    await enemy.loadSpritesheetDeath("./enemies/enemy1-death.png");
   }
 
   updateEnemies(ctx) {
@@ -259,7 +264,7 @@ export class LevelFunctions {
 
     progressCallback(100); // BEGIN GAME
 
-    console.log(this.player.x, this.player.y)
+    console.log(this.player.x, this.player.y);
   }
 
   announcer(msg, time) {
@@ -648,12 +653,9 @@ export class LevelFunctions {
 
     setTimeout(() => {
       this.blackout.style.opacity = "0";
-    }, 500)
+    }, 500);
 
-    setTimeout(
-      () => this.announcer(text.boss, 2000),
-      600,
-    );
+    setTimeout(() => this.announcer(text.boss, 2000), 600);
 
     // map generation
     await this.mapGen.init(true);
@@ -693,12 +695,12 @@ export class LevelFunctions {
       this.player.movementLocked = true;
       this.player.moving = false;
 
-      this.announcerSub(text.boss2, 2000)
+      this.announcerSub(text.boss2, 2000);
 
       setTimeout(() => {
         this.player.movementLocked = false;
-      }, 2500)
-    }, 4000)
+      }, 2500);
+    }, 4000);
   }
 
   update() {
@@ -718,7 +720,8 @@ export class LevelFunctions {
 
   checkBattleRoom() {
     if (
-      (this.mapGen.currentRoom.type === 1 || this.mapGen.currentRoom.type === 5) &&
+      (this.mapGen.currentRoom.type === 1 ||
+        this.mapGen.currentRoom.type === 5) &&
       !this.mapGen.currentRoom.battleRoomDone
     ) {
       if (this.battling) return; // trigger once

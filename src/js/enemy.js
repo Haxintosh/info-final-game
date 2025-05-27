@@ -35,6 +35,12 @@ export class Enemy {
     this.spritesheetRun = null;
     this.spritesheetAttack = null;
     this.spritesheetDeath = null;
+
+    this.spritesheetBossIdle = null;
+    this.spritesheetBossRun = null;
+    this.spritesheetBossAttack = null;
+    this.spritesheetBossDeath = null;
+
     this.frameX = 0;
     this.frameY = 0;
     this.animationSpeed = 10; // frames per animation change
@@ -121,6 +127,43 @@ export class Enemy {
     return new Promise((resolve, reject) => {
       this.spritesheetDeath.onload = () => resolve();
       this.spritesheetDeath.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+
+  async loadBossSpritesheetIdle(spritesheetPath) {
+    this.spritesheetBossIdle = new Image();
+    this.spritesheetBossIdle.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetBossIdle.onload = () => resolve();
+      this.spritesheetBossIdle.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+  async loadBossSpritesheetRun(spritesheetPath) {
+    this.spritesheetBossRun = new Image();
+    this.spritesheetBossRun.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetBossRun.onload = () => resolve();
+      this.spritesheetBossRun.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+  async loadBossSpritesheetAttack(spritesheetPath) {
+    this.spritesheetBossAttack = new Image();
+    this.spritesheetBossAttack.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetBossAttack.onload = () => resolve();
+      this.spritesheetBossAttack.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+  async loadBossSpritesheetDeath(spritesheetPath) {
+    this.spritesheetBossDeath = new Image();
+    this.spritesheetBossDeath.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheetBossDeath.onload = () => resolve();
+      this.spritesheetBossDeath.onerror = () =>
         reject(new Error("failed to load player spritesheet"));
     });
   }
@@ -237,9 +280,14 @@ export class Enemy {
         x: Math.floor((this.x - this.room.x) / 16),
         y: Math.floor((this.y - this.room.y) / 16),
       };
+      let congregateDistance = 2;
+
+      if (this.isBoss) {
+        congregateDistance = 4;
+      }
 
       this.wanderTarget = player;
-      this.path = aStar(room.reservedTiles, enemy, player, 2);
+      this.path = aStar(room.reservedTiles, enemy, player, congregateDistance);
       this.pathIndex = 0;
 
       // console.log(room);
@@ -335,6 +383,13 @@ export class Enemy {
       this.state = "wander";
       this.speed = 0.3; // slow down
       this.wanderDelay = 90; // reset wander delay
+    }
+
+    if (this.isBoss) {
+      this.color = "rgba(0, 255, 0, 0.2)"; // visible
+      this.state = "hunting";
+      this.speed = 0.7; // speed up
+      this.wanderDelay = 0; // reset wander delay
     }
   }
 
@@ -833,97 +888,193 @@ export class Enemy {
     // if (!this.isBoss) {
     //   frameWidth = this.spritesheetRun.width / 7;
     // }
+    if (this.isBoss) {
+      frameWidth = 80;
+      frameHeight = 80;
+      if (this.state === "dead") {
+        ctx.drawImage(
+          this.spritesheetBossDeath,
+          this.frameX * frameWidth,
+          0,
+          frameWidth,
+          frameHeight,
+          this.x - frameWidth / 2,
+          this.y - frameHeight / 2 - 2,
+          frameWidth,
+          frameHeight,
+        );
+        return;
+      }
 
-    if (this.state === "dead") {
-      ctx.drawImage(
-        this.spritesheetDeath,
-        this.frameX * frameWidth,
-        0,
-        frameWidth,
-        frameHeight,
-        this.x - frameWidth / 2,
-        this.y - frameHeight / 2 - 2,
-        frameWidth,
-        frameHeight,
-      );
-      return;
-    }
-
-    if (!this.dmged) {
-      if (this.attackLock) {
-        ctx.drawImage(
-          this.spritesheetAttack,
-          this.frameX * frameWidth,
-          this.frameY * frameHeight,
-          frameWidth,
-          frameHeight,
-          this.x - frameWidth / 2,
-          this.y - frameHeight / 2 - 2,
-          frameWidth,
-          frameHeight,
-        );
-      } else if (!this.moving) {
-        ctx.drawImage(
-          this.spritesheetIdle,
-          this.frameX * frameWidth,
-          this.frameY * frameHeight,
-          frameWidth,
-          frameHeight,
-          this.x - frameWidth / 2,
-          this.y - frameHeight / 2 - 2,
-          frameWidth,
-          frameHeight,
-        );
-      } else if (this.moving) {
-        ctx.drawImage(
-          this.spritesheetRun,
-          this.frameX * frameWidth,
-          this.frameY * frameHeight,
-          frameWidth,
-          frameHeight,
-          this.x - frameWidth / 2,
-          this.y - frameHeight / 2 - 2,
-          frameWidth,
-          frameHeight,
-        );
+      if (!this.dmged) {
+        if (this.attackLock) {
+          ctx.drawImage(
+            this.spritesheetBossAttack,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x - frameWidth / 2,
+            this.y - frameHeight / 2 - 2,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (!this.moving) {
+          ctx.drawImage(
+            this.spritesheetBossIdle,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x - frameWidth / 2,
+            this.y - frameHeight / 2 - 2,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (this.moving) {
+          ctx.drawImage(
+            this.spritesheetBossRun,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x - frameWidth / 2,
+            this.y - frameHeight / 2 - 2,
+            frameWidth,
+            frameHeight,
+          );
+        }
+      } else {
+        if (this.attackLock) {
+          this.offCtx.drawImage(
+            this.spritesheetBossAttack,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            0,
+            0,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (!this.moving) {
+          this.offCtx.drawImage(
+            this.spritesheetBossIdle,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            0,
+            0,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (this.moving) {
+          this.offCtx.drawImage(
+            this.spritesheetBossRun,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            0,
+            0,
+            frameWidth,
+            frameHeight,
+          );
+        }
       }
     } else {
-      if (this.attackLock) {
-        this.offCtx.drawImage(
-          this.spritesheetAttack,
+      if (this.state === "dead") {
+        ctx.drawImage(
+          this.spritesheetDeath,
           this.frameX * frameWidth,
-          this.frameY * frameHeight,
+          0,
           frameWidth,
           frameHeight,
-          0,
-          0,
+          this.x - frameWidth / 2,
+          this.y - frameHeight / 2 - 2,
           frameWidth,
           frameHeight,
         );
-      } else if (!this.moving) {
-        this.offCtx.drawImage(
-          this.spritesheetIdle,
-          this.frameX * frameWidth,
-          this.frameY * frameHeight,
-          frameWidth,
-          frameHeight,
-          0,
-          0,
-          frameWidth,
-          frameHeight,
-        );
-      } else if (this.moving) {
-        this.offCtx.drawImage(
-          this.spritesheetRun,
-          this.frameX * frameWidth,
-          this.frameY * frameHeight,
-          frameWidth,
-          frameHeight,
-          0,
-          0,
-          frameWidth,
-          frameHeight,
-        );
+        return;
+      }
+
+      if (!this.dmged) {
+        if (this.attackLock) {
+          ctx.drawImage(
+            this.spritesheetAttack,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x - frameWidth / 2,
+            this.y - frameHeight / 2 - 2,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (!this.moving) {
+          ctx.drawImage(
+            this.spritesheetIdle,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x - frameWidth / 2,
+            this.y - frameHeight / 2 - 2,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (this.moving) {
+          ctx.drawImage(
+            this.spritesheetRun,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x - frameWidth / 2,
+            this.y - frameHeight / 2 - 2,
+            frameWidth,
+            frameHeight,
+          );
+        }
+      } else {
+        if (this.attackLock) {
+          this.offCtx.drawImage(
+            this.spritesheetAttack,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            0,
+            0,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (!this.moving) {
+          this.offCtx.drawImage(
+            this.spritesheetIdle,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            0,
+            0,
+            frameWidth,
+            frameHeight,
+          );
+        } else if (this.moving) {
+          this.offCtx.drawImage(
+            this.spritesheetRun,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            0,
+            0,
+            frameWidth,
+            frameHeight,
+          );
+        }
       }
 
       // const imageData = this.offCtx.getImageData(0, 0, frameWidth, frameHeight);
