@@ -61,6 +61,14 @@ export let textEN = {
       src: "./icons/7/Skillicon7_11.png",
       value: 1,
     },
+    dash: {
+      title: "Dodge Cooldown",
+      subtitle: "Basic Upgrade",
+      description: "- 0.05s to dash cooldown",
+      cost: "10",
+      src: "./icons/7/Skillicon7_29.png",
+      value: 3,
+    },
   },
 };
 
@@ -125,6 +133,14 @@ export let text = {
       cost: "20",
       src: "./icons/7/Skillicon7_11.png",
       value: 1,
+    },
+    dash: {
+      title: "Vitesse d'Esquive",
+      subtitle: "Amélioration de Base",
+      description: "- 0.05s au temps de rechargement de l'esquive",
+      cost: "10",
+      src: "./icons/7/Skillicon7_29.png",
+      value: 3,
     },
   },
 };

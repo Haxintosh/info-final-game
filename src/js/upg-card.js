@@ -9,7 +9,7 @@ export class UpgCard {
     this.player = player;
 
     this.choosing = false;
-    this.upgradesArray = [text.basic.dmg, text.basic.speed, text.basic.heal]; // push new upgrades here
+    this.upgradesArray = [text.basic.dmg, text.basic.speed, text.basic.heal, text.basic.dash]; // push new upgrades here
 
     this.upgrades = document.getElementById("upgrade-container");
   }
@@ -115,6 +115,9 @@ export class UpgCard {
       if (title === text.basic.heal.title) {
         this.healUpg(text.basic.heal.value);
       }
+      if (title === text.basic.dash.title) {
+        this.dashUpg(text.basic.dash.value);
+      }
 
       for (let i = 0; i < 3; i++) {
         if (
@@ -140,6 +143,10 @@ export class UpgCard {
 
   speedUpg(value) {
     this.levelFunctions.upgrades.speedMulti += value;
+  }
+
+  dashUpg(value) {
+    this.player.dashCooldown -= value;
   }
 
   healUpg(value) {
