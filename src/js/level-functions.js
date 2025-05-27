@@ -766,7 +766,7 @@ export class LevelFunctions {
       // spawn enemy logic
       // make sure to add these after all enemies are defeated:
 
-      if (this.mapGen.currentRoom === 1) {
+      if (this.mapGen.currentRoom.type === 1) {
         setTimeout(() => {
           this.spawnEnemies(this.mapGen.currentRoom);
         }, 500);

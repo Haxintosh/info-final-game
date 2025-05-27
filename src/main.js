@@ -143,6 +143,7 @@ const player = new Player(
 );
 await player.loadSpritesheet("./character/idle2.png");
 await player.loadSpritesheet2("./character/walk2.png");
+await player.loadSpritesheet3("./character/dash.png");
 player.movementLocked = true;
 
 // player movement
@@ -153,6 +154,7 @@ window.addEventListener("keydown", (e) => {
     if (isPaused) return;
     player.handleKeyDown(e);
   }
+  e.preventDefault()
 });
 window.addEventListener("keyup", (e) => player.handleKeyUp(e));
 

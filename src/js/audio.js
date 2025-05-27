@@ -8,6 +8,7 @@ export const audio = {
   battle: new Audio("./audio/battle.mp3"),
   clear: new Audio("./audio/clear.mp3"),
   hurt: new Audio("./audio/hurt.mp3"),
+  dash: new Audio("./audio/dash.mp3"),
 
   enemy: 0.7,
   impact: 0.1,

@@ -21,6 +21,7 @@ export class Player {
     // anims
     this.spritesheet = null;
     this.spritesheet2 = null;
+    this.spritesheet3 = null;
     this.frameX = 0;
     this.frameY = 0;
     this.animationSpeed = 3; // frames per animation change
@@ -69,6 +70,15 @@ export class Player {
 
     // audio
     this.stepped = false;
+
+    // dash
+    this.dashing = false;
+    this.dashSpeed = 10 * this.speed;
+    this.dashDuration = 3; // frames
+    this.dashDurationLeft = 0;
+    this.dashCooldown = 60; // frames
+    this.dashCooldownLeft = 0;
+    this.dashDirection = { x: 0, y: 0 };
   }
 
   async loadSpritesheet(spritesheetPath) {
@@ -91,6 +101,16 @@ export class Player {
     });
   }
 
+  async loadSpritesheet3(spritesheetPath) {
+    this.spritesheet3 = new Image();
+    this.spritesheet3.src = spritesheetPath;
+    return new Promise((resolve, reject) => {
+      this.spritesheet3.onload = () => resolve();
+      this.spritesheet3.onerror = () =>
+        reject(new Error("failed to load player spritesheet"));
+    });
+  }
+
   handleKeyDown(e) {
     switch (e.code) {
       case "ArrowUp":
@@ -109,6 +129,36 @@ export class Player {
       case "KeyD":
         this.keys.right = true;
         break;
+      case "ShiftLeft":
+        this.triggerDash()
+        break;
+    }
+  }
+
+  triggerDash() {
+    if (!this.dashing && this.dashCooldownLeft <= 0 && this.moving) {
+      this.dashing = true;
+      this.dashDurationLeft = this.dashDuration;
+      this.dashCooldownLeft = this.dashCooldown;
+
+      // set dash direction based on last movement direction
+      const normalizer = 1 / Math.sqrt(2);
+      let dx = 0, dy = 0;
+      if (this.keys.up) dy -= 1;
+      if (this.keys.down) dy += 1;
+      if (this.keys.left) dx -= 1;
+      if (this.keys.right) dx += 1;
+      if (dx !== 0 && dy !== 0) {
+        dx *= normalizer;
+        dy *= normalizer;
+      }
+      this.dashDirection = {
+        x: dx * this.dashSpeed,
+        y: dy * this.dashSpeed
+      };
+
+      audio.dash.currentTime = 0
+      audio.dash.play()
     }
   }
 
@@ -157,28 +207,42 @@ export class Player {
     let dx = 0;
     let dy = 0;
 
-    if (this.keys.up) {
-      dy -= this.speed;
-      this.direction = "up";
-    }
-    if (this.keys.down) {
-      dy += this.speed;
-      this.direction = "down";
-    }
-    if (this.keys.left) {
-      dx -= this.speed;
-      this.direction = "left";
-    }
-    if (this.keys.right) {
-      dx += this.speed;
-      this.direction = "right";
+    if (this.dashing) {
+      dx = this.dashDirection.x;
+      dy = this.dashDirection.y;
+
+      this.dashDurationLeft--;
+      if (this.dashDurationLeft <= 0) {
+        this.dashing = false;
+      }
+    } else {
+      if (this.keys.up) {
+        dy -= this.speed;
+        this.direction = "up";
+      }
+      if (this.keys.down) {
+        dy += this.speed;
+        this.direction = "down";
+      }
+      if (this.keys.left) {
+        dx -= this.speed;
+        this.direction = "left";
+      }
+      if (this.keys.right) {
+        dx += this.speed;
+        this.direction = "right";
+      }
+
+      // normalize
+      if (dx !== 0 && dy !== 0) {
+        const normalizer = 1 / Math.sqrt(2);
+        dx *= normalizer;
+        dy *= normalizer;
+      }
     }
 
-    // normalize diagonal movement
-    if (dx !== 0 && dy !== 0) {
-      const normalizer = 1 / Math.sqrt(2);
-      dx *= normalizer;
-      dy *= normalizer;
+    if (this.dashCooldownLeft > 0) {
+      this.dashCooldownLeft--;
     }
 
     if (dx !== 0) {
@@ -261,11 +325,16 @@ export class Player {
 
   animate() {
     // animation
-    this.frameCounter++;
-    if (this.frameCounter >= this.animationSpeed) {
-      this.frameCounter = 0;
-      this.frameX = (this.frameX + 1) % 8; // assuming 8 frames per animation
+    if (!this.dashing) {
+      this.frameCounter++;
+      if (this.frameCounter >= this.animationSpeed) {
+        this.frameCounter = 0;
+        this.frameX = (this.frameX + 1) % 8; // assuming 8 frames per animation
+      }
+    } else {
+      this.frameX = 0
     }
+
 
     // set frameY based on direction
     switch (this.direction) {
@@ -294,9 +363,9 @@ export class Player {
     const frameHeight = this.spritesheet.height / 4; // 4 rows of frames (up, down, left, right)
 
     if (!this.dmged) {
-      if (!this.moving)
+      if (this.dashing) {
         this.ctx.drawImage(
-          this.spritesheet,
+        this.spritesheet3,
           this.frameX * frameWidth,
           this.frameY * frameHeight,
           frameWidth,
@@ -306,18 +375,32 @@ export class Player {
           this.width,
           this.height,
         );
-      else
-        this.ctx.drawImage(
-          this.spritesheet2,
-          this.frameX * frameWidth,
-          this.frameY * frameHeight,
-          frameWidth,
-          frameHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height,
-        );
+      } else {
+        if (!this.moving)
+          this.ctx.drawImage(
+            this.spritesheet,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+          );
+        else
+          this.ctx.drawImage(
+            this.spritesheet2,
+            this.frameX * frameWidth,
+            this.frameY * frameHeight,
+            frameWidth,
+            frameHeight,
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+          );
+      }
     } else {
       if (!this.moving) {
         this.offCtx.drawImage(

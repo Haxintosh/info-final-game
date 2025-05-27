@@ -563,6 +563,7 @@ export class Enemy {
         bulletHitbox.y < playerHitbox.y + playerHitbox.height &&
         bulletHitbox.y + bulletHitbox.height > playerHitbox.y
       ) {
+        if (this.player.dashing) return
         console.log(projectile.color);
         const explosion = new Explosion(
           projectile.position.copy(),
