@@ -5,7 +5,13 @@ export class Camera {
 
     this.player = player;
 
-    this.zoomFactor = 5;
+    const baseWidth = window.innerWidth;
+    const baseHeight = window.innerHeight;
+
+    const scaleX = baseWidth / canvas.width;
+    const scaleY = baseHeight / canvas.height;
+    this.zoomFactor = (scaleX + scaleY) / 0.2;
+
     this.scaledCanvas = {
       width: canvas.width / this.zoomFactor,
       height: canvas.height / this.zoomFactor,
