@@ -73,8 +73,9 @@ export class Player {
 
     // dash
     this.dashing = false;
-    this.dashSpeed = 10 * this.speed;
-    this.dashDuration = 3; // frames
+    this.postDash = 0;
+    this.dashSpeed = 5 * this.speed;
+    this.dashDuration = 6; // frames
     this.dashDurationLeft = 0;
     this.dashCooldown = 60; // frames
     this.dashCooldownLeft = 0;
@@ -141,6 +142,8 @@ export class Player {
       this.dashDurationLeft = this.dashDuration;
       this.dashCooldownLeft = this.dashCooldown;
 
+      this.postDash = 20;
+
       // set dash direction based on last movement direction
       const normalizer = 1 / Math.sqrt(2);
       let dx = 0, dy = 0;
@@ -206,6 +209,9 @@ export class Player {
     // movement
     let dx = 0;
     let dy = 0;
+
+    if (this.postDash > 0)
+      this.postDash--
 
     if (this.dashing) {
       dx = this.dashDirection.x;
@@ -365,7 +371,7 @@ export class Player {
     if (!this.dmged) {
       if (this.dashing) {
         this.ctx.drawImage(
-        this.spritesheet3,
+          this.spritesheet3,
           this.frameX * frameWidth,
           this.frameY * frameHeight,
           frameWidth,

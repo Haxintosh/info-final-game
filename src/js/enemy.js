@@ -443,6 +443,7 @@ export class Enemy {
             this.player,
             this.levelFunctions.shardsArray,
             this.levelFunctions.shards,
+            this.mapGen
           );
         }
       }, 1000);
@@ -569,7 +570,7 @@ export class Enemy {
         bulletHitbox.y < playerHitbox.y + playerHitbox.height &&
         bulletHitbox.y + bulletHitbox.height > playerHitbox.y
       ) {
-        if (this.player.dashing) return
+        if (this.player.dashing || this.player.postDash > 0) return
         console.log(projectile.color);
         const explosion = new Explosion(
           projectile.position.copy(),

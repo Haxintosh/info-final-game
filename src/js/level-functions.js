@@ -596,6 +596,7 @@ export class LevelFunctions {
                     this.player,
                     this.shardsArray,
                     this.shards,
+                    this.mapGen,
                   );
                 }
               }
@@ -631,6 +632,7 @@ export class LevelFunctions {
                 this.player,
                 this.shardsArray,
                 this.shards,
+                this.mapGen
               );
             }
 
