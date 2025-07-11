@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/info-final-game/",
+  base: "/whispers-below/",
   build: {
     target: "esnext",
     rollupOptions: {
