@@ -9,7 +9,12 @@ export class UpgCard {
     this.player = player;
 
     this.choosing = false;
-    this.upgradesArray = [text.basic.dmg, text.basic.speed, text.basic.heal, text.basic.dash]; // push new upgrades here
+    this.upgradesArray = [
+      text.basic.dmg,
+      text.basic.speed,
+      text.basic.heal,
+      text.basic.dash,
+    ]; // push new upgrades here
 
     this.upgrades = document.getElementById("upgrade-container");
   }
@@ -60,7 +65,11 @@ export class UpgCard {
             "#ffffff";
         }
       }
-      if (well && document.getElementById(`shard-txt-cost-${i + 1}`).textContent === text.bought) {
+      if (
+        well &&
+        document.getElementById(`shard-txt-cost-${i + 1}`).textContent ===
+          text.bought
+      ) {
         document.getElementById(`shard-txt-cost-${i + 1}`).style.color =
           "rgb(162,162,162)";
       }

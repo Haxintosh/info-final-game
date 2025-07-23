@@ -233,7 +233,7 @@ export class Map {
         this.ctx.drawImage(
           this.spritesheet,
           spritesheetX,
-          spritesheetY+0.07,
+          spritesheetY + 0.07,
           this.tileSize,
           this.tileSize,
           this.x + x,

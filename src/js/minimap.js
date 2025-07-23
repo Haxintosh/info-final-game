@@ -1,8 +1,8 @@
-const canvas = document.getElementById('minimap')
-const ctx = canvas.getContext('2d')
+const canvas = document.getElementById("minimap");
+const ctx = canvas.getContext("2d");
 
 export function drawMinimap(grid, room) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let y = 0; y < 5; y++) {
     for (let x = 0; x < 5; x++) {
@@ -29,22 +29,22 @@ export function drawMinimap(grid, room) {
 }
 
 function drawRoom(x, y, room) {
-  if (!room) return
+  if (!room) return;
 
-  if (room.x/(40*16) === x && room.y/(40*16) === y) {
-    ctx.fillStyle = 'rgba(122,122,122,0.6)'
+  if (room.x / (40 * 16) === x && room.y / (40 * 16) === y) {
+    ctx.fillStyle = "rgba(122,122,122,0.6)";
   } else {
-    ctx.fillStyle = 'rgba(255,255,255,0.6)'
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
   }
-  ctx.fillRect(x*40 + 10, y*40 + 10, 20, 20)
+  ctx.fillRect(x * 40 + 10, y * 40 + 10, 20, 20);
 }
 
 function drawHall(type, x, y) {
-  ctx.fillStyle = 'rgba(255,255,255,0.3)'
-  if (type === 'h') {
-    ctx.fillRect(x*40+20 + 10, y*40+5 + 10, 20, 10)
+  ctx.fillStyle = "rgba(255,255,255,0.3)";
+  if (type === "h") {
+    ctx.fillRect(x * 40 + 20 + 10, y * 40 + 5 + 10, 20, 10);
   }
-  if (type === 'v') {
-    ctx.fillRect(x*40+5 + 10, y*40+20 + 10, 10, 20)
+  if (type === "v") {
+    ctx.fillRect(x * 40 + 5 + 10, y * 40 + 20 + 10, 10, 20);
   }
 }

@@ -57,7 +57,7 @@ export class LevelFunctions {
     this.enemiesDefeated = { count: 0 };
 
     // boss
-    this.bossHP = 300
+    this.bossHP = 300;
   }
 
   async spawnEnemies(room) {
@@ -149,7 +149,7 @@ export class LevelFunctions {
     await enemy.loadSpritesheetAttack("./enemies/enemy1-attack.png");
     await enemy.loadSpritesheetDeath("./enemies/enemy1-death.png");
 
-    document.getElementById('bar-hider').style.width = '700px'
+    document.getElementById("bar-hider").style.width = "700px";
   }
 
   updateEnemies(ctx) {
@@ -181,10 +181,11 @@ export class LevelFunctions {
     for (let enemy of this.mapGen.currentRoom.enemies) {
       for (let projectile of this.player.gun.projectiles) {
         if (
-          projectile.position.x < enemy.x + enemy.width/2 &&
-          projectile.position.x + projectile.size > enemy.x - enemy.width/2 &&
-          projectile.position.y < enemy.y + enemy.height/2 - 2 &&
-          projectile.position.y + projectile.size > enemy.y - enemy.height/2 - 2
+          projectile.position.x < enemy.x + enemy.width / 2 &&
+          projectile.position.x + projectile.size > enemy.x - enemy.width / 2 &&
+          projectile.position.y < enemy.y + enemy.height / 2 - 2 &&
+          projectile.position.y + projectile.size >
+            enemy.y - enemy.height / 2 - 2
         ) {
           // console.log("hit");
 
@@ -206,7 +207,8 @@ export class LevelFunctions {
           }, 100);
 
           if (enemy.isBoss) {
-            document.getElementById('bar').style.background = `linear-gradient(to right, #5800a9 ${(enemy.hp/this.bossHP)*100}%, rgb(230, 215, 255) 0%)`
+            document.getElementById("bar").style.background =
+              `linear-gradient(to right, #5800a9 ${(enemy.hp / this.bossHP) * 100}%, rgb(230, 215, 255) 0%)`;
           }
         } else {
           // console.log("miss");
@@ -632,7 +634,7 @@ export class LevelFunctions {
                 this.player,
                 this.shardsArray,
                 this.shards,
-                this.mapGen
+                this.mapGen,
               );
             }
 
@@ -849,8 +851,7 @@ export class LevelFunctions {
       document.getElementById("end-rooms").textContent =
         text.rooms + text.fullClear;
     else if (this.level === 4 && this.sublevel === 1)
-      document.getElementById("end-rooms").textContent =
-        text.rooms + text.boss;
+      document.getElementById("end-rooms").textContent = text.rooms + text.boss;
     else
       document.getElementById("end-rooms").textContent =
         text.rooms + this.level + "-" + this.sublevel;

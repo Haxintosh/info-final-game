@@ -10,7 +10,7 @@ import { UpgCard } from "./js/upg-card.js";
 import { audio, music, setAudioVolume } from "./js/audio.js";
 import { text, textEN } from "./js/text.js";
 import { menuAnim, menuDone } from "./js/menu.js";
-import { drawMinimap } from  './js/minimap.js'
+import { drawMinimap } from "./js/minimap.js";
 
 // const IS_LOADBLOACKER_ENABLED = false;
 // if (!IS_LOADBLOACKER_ENABLED) {
@@ -155,7 +155,7 @@ window.addEventListener("keydown", (e) => {
     if (isPaused) return;
     player.handleKeyDown(e);
   }
-  e.preventDefault()
+  e.preventDefault();
 });
 window.addEventListener("keyup", (e) => player.handleKeyUp(e));
 
@@ -314,7 +314,7 @@ function animate() {
   mapGen.findCurrentRoom(player);
   levelFunctions.checkBattleRoom();
 
-  drawMinimap(mapGen.grid, mapGen.currentRoom)
+  drawMinimap(mapGen.grid, mapGen.currentRoom);
 
   // update map sprites
   if (player.direction !== "down") levelFunctions.update();
@@ -405,7 +405,7 @@ function togglePauseMenu() {
   }
 }
 
-document.getElementById('loreDumpContainer').addEventListener('click', () => {
+document.getElementById("loreDumpContainer").addEventListener("click", () => {
   document.getElementById("lore-txt").style.opacity = "1";
   document.getElementById("lore-txt").style.top = "30%";
 
@@ -418,9 +418,9 @@ document.getElementById('loreDumpContainer').addEventListener('click', () => {
     setTimeout(() => {
       document.getElementById("play-start").style.opacity = "1";
       document.getElementById("play-start").style.top = "60%";
-    }, 0.4000);
-  }, 0.6000);
-})
+    }, 0.4);
+  }, 0.6);
+});
 
 // disable zoom
 document.addEventListener("keydown", function (e) {
@@ -444,6 +444,6 @@ document.addEventListener(
     }
   },
   {
-    passive: false
-  }
+    passive: false,
+  },
 );

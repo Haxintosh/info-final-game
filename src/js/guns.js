@@ -168,7 +168,7 @@ export class Projectile {
     this.bulletType = bulletType;
 
     this.originalDirection = direction.copy(); // for sin
-    this.homingFactor = 0.8; // how much homing
+    this.homingFactor = 0.5; // how much homing
 
     this.lifeTime = 0;
     this.lastT = performance.now();

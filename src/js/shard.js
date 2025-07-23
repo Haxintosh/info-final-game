@@ -20,7 +20,7 @@ export class Shard {
 
     this.shards = shards;
 
-    this.mapGen = mapGen
+    this.mapGen = mapGen;
 
     this.display = document.getElementById("shard-txt");
     // this.display2 = document.getElementById('shard-txt-alt')
@@ -33,15 +33,25 @@ export class Shard {
     this.targetX = this.x + Math.random() * 64 - 32;
     this.targetY = this.y + Math.random() * 64 - 32;
 
-    if (this.targetX > this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth*16)
-      this.targetX -= this.targetX - (this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth*16)
+    if (
+      this.targetX >
+      this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth * 16
+    )
+      this.targetX -=
+        this.targetX -
+        (this.mapGen.currentRoom.x + this.mapGen.currentRoom.mapWidth * 16);
     if (this.targetX < this.mapGen.currentRoom.x)
-      this.targetX += this.mapGen.currentRoom.x - this.targetX
+      this.targetX += this.mapGen.currentRoom.x - this.targetX;
 
-    if (this.targetY > this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight*16)
-      this.targetY -= this.targetY - (this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight*16)
+    if (
+      this.targetY >
+      this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight * 16
+    )
+      this.targetY -=
+        this.targetY -
+        (this.mapGen.currentRoom.y + this.mapGen.currentRoom.mapHeight * 16);
     if (this.targetY < this.mapGen.currentRoom.y)
-      this.targetY += this.mapGen.currentRoom.y - this.targetY
+      this.targetY += this.mapGen.currentRoom.y - this.targetY;
 
     setTimeout(() => {
       this.spawnBuffer = false;

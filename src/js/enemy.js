@@ -430,8 +430,8 @@ export class Enemy {
 
           if (this.isBoss) {
             setTimeout(() => {
-              document.getElementById('bar-hider').width = '0px'
-            }, 1000)
+              document.getElementById("bar-hider").width = "0px";
+            }, 1000);
           }
         }
 
@@ -443,7 +443,7 @@ export class Enemy {
             this.player,
             this.levelFunctions.shardsArray,
             this.levelFunctions.shards,
-            this.mapGen
+            this.mapGen,
           );
         }
       }, 1000);
@@ -570,7 +570,7 @@ export class Enemy {
         bulletHitbox.y < playerHitbox.y + playerHitbox.height &&
         bulletHitbox.y + bulletHitbox.height > playerHitbox.y
       ) {
-        if (this.player.dashing || this.player.postDash > 0) return
+        if (this.player.dashing || this.player.postDash > 0) return;
         console.log(projectile.color);
         const explosion = new Explosion(
           projectile.position.copy(),
@@ -709,7 +709,7 @@ export class Enemy {
         const selectedType =
           bossAttackPatterns[this.currentAttackPattern][
             this.currentAttackIndex
-            ];
+          ];
         let dir = new Vec2(Math.cos(angle), Math.sin(angle)).normalize();
         let dirs = [];
         let angles = [];
@@ -1026,7 +1026,12 @@ export class Enemy {
           frameHeight,
         );
 
-        this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
+        this.offCtx.clearRect(
+          0,
+          0,
+          this.offCanvas.width,
+          this.offCanvas.height,
+        );
       }
     } else {
       this.offCanvas.width = 48;

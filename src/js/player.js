@@ -131,7 +131,7 @@ export class Player {
         this.keys.right = true;
         break;
       case "ShiftLeft":
-        this.triggerDash()
+        this.triggerDash();
         break;
     }
   }
@@ -146,7 +146,8 @@ export class Player {
 
       // set dash direction based on last movement direction
       const normalizer = 1 / Math.sqrt(2);
-      let dx = 0, dy = 0;
+      let dx = 0,
+        dy = 0;
       if (this.keys.up) dy -= 1;
       if (this.keys.down) dy += 1;
       if (this.keys.left) dx -= 1;
@@ -157,11 +158,11 @@ export class Player {
       }
       this.dashDirection = {
         x: dx * this.dashSpeed,
-        y: dy * this.dashSpeed
+        y: dy * this.dashSpeed,
       };
 
-      audio.dash.currentTime = 0
-      audio.dash.play()
+      audio.dash.currentTime = 0;
+      audio.dash.play();
     }
   }
 
@@ -210,8 +211,7 @@ export class Player {
     let dx = 0;
     let dy = 0;
 
-    if (this.postDash > 0)
-      this.postDash--
+    if (this.postDash > 0) this.postDash--;
 
     if (this.dashing) {
       dx = this.dashDirection.x;
@@ -338,9 +338,8 @@ export class Player {
         this.frameX = (this.frameX + 1) % 8; // assuming 8 frames per animation
       }
     } else {
-      this.frameX = 0
+      this.frameX = 0;
     }
-
 
     // set frameY based on direction
     switch (this.direction) {
