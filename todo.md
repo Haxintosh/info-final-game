@@ -1,0 +1,12 @@
+- [ ] balance game
+  - [ ] Homing missle balance and level scaling
+  - [ ] encounters balance (too boring perhaps more rooms?)
+- [ ] diversity enhancements
+  - [ ] more enemy types (sprites/holding different weapons)
+  - [ ] more reaction to bullet collisions
+  - [ ] more room types
+  - [ ] more weapons
+  - [ ] Powerups?
+  - [ ] better sprites/add animations for different elements of the game
+- [ ] multiplayer?
+  - [ ] peerjs?
