@@ -184,7 +184,7 @@ export class Projectile {
     try {
       if (room.enemyMap[tilePos.y][tilePos.x] === 1) {
         this.alive = false;
-        console.log("hit WALL");
+        // console.log("hit WALL");
 
         const impact = new Audio("./audio/impact.mp3");
         impact.volume = audio.impact;
@@ -219,7 +219,6 @@ export class Projectile {
 
     // new pos based on type of projectile
     if (this.bulletType === "straight") {
-      console.log("Straight bullet");
       this.position = this.position.add(
         this.direction.scale((this.speed * 10) / (tileWidth * scale)),
       );
@@ -366,7 +365,6 @@ export class Explosion {
     this.ctx.stroke();
     this.ctx.restore();
 
-    // if not alive, remove from tween group
     if (!this.alive) {
       this.tweenGroup.remove(this.tween1);
       this.tweenGroup.remove(this.tween2);
@@ -374,6 +372,7 @@ export class Explosion {
   }
 }
 
+// TODO: add more "spells"
 export const starterWeapons = [
   new Weapon(
     "default",
@@ -395,9 +394,9 @@ export const starterWeapons = [
   ),
   new Weapon(
     "Shotgun",
-    8, // damage per pellet
-    5, // speed
-    1000, // range
+    3, // damage per pellet
+    4, // speed
+    800, // range
     "shotgun", // type
     300, // cost
     "1_32", // image

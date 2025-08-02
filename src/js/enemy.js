@@ -1,4 +1,5 @@
 import { aStar } from "./pathfinder.js";
+import { a_star_rs } from "../../pkg/whispers_below";
 import { ddaRaycast } from "./dda.js";
 import { text } from "./text.js";
 import { Projectile, Explosion } from "./guns.js";
@@ -331,6 +332,91 @@ export class Enemy {
 
         const goal = this.wanderTarget;
         this.path = aStar(room.reservedTiles, start, goal, 2);
+        this.pathIndex = 0;
+
+        for (const tile of this.path) {
+          room.reservedTiles[tile.y][tile.x] = 1;
+        }
+        break;
+      }
+    }
+  }
+
+  randomWanderRs(room) {
+    if (this.state === "dead" || this.attackLock) return;
+
+    if (this.wanderTarget) return;
+
+    if (this.state === "hunting") {
+      const player = {
+        x: Math.floor(
+          (this.player.x + this.player.width / 2 - this.room.x) / 16,
+        ),
+        y: Math.floor(
+          (this.player.y + this.player.height / 2 - this.room.y) / 16,
+        ),
+      };
+
+      const enemy = {
+        x: Math.floor((this.x - this.room.x) / 16),
+        y: Math.floor((this.y - this.room.y) / 16),
+      };
+      let congregateDistance = 2;
+
+      if (this.isBoss) {
+        congregateDistance = 4;
+      }
+
+      this.wanderTarget = player;
+      this.path = a_star_rs(
+        room.reservedTiles,
+        enemy,
+        player,
+        congregateDistance,
+      );
+      this.pathIndex = 0;
+
+      // console.log(room);
+      for (const tile of this.path) {
+        room.reservedTiles[tile.y][tile.x] = 1;
+      }
+
+      return;
+    }
+
+    const maxDistance = 8; // max dist from current position
+    const tileSize = 16;
+
+    for (let attempt = 0; attempt < 10; attempt++) {
+      // limit attempts to find a valid target
+      const offsetX =
+        Math.floor(Math.random() * (maxDistance * 2 + 1)) - maxDistance;
+      const offsetY =
+        Math.floor(Math.random() * (maxDistance * 2 + 1)) - maxDistance;
+
+      const targetTileX = Math.floor((this.x - room.x) / tileSize) + offsetX;
+      const targetTileY = Math.floor((this.y - room.y) / tileSize) + offsetY;
+
+      if (
+        targetTileX >= 0 &&
+        targetTileX < room.mapWidth &&
+        targetTileY >= 0 &&
+        targetTileY < room.mapHeight &&
+        room.enemyMap[targetTileY][targetTileX] === 0
+      ) {
+        this.wanderTarget = {
+          x: targetTileX,
+          y: targetTileY,
+        };
+
+        // pathing
+        const start = {
+          x: Math.floor((this.x - room.x) / tileSize),
+          y: Math.floor((this.y - room.y) / tileSize),
+        };
+
+        const goal = this.wanderTarget;
+        this.path = a_star_rs(room.reservedTiles, start, goal, 2);
         this.pathIndex = 0;
 
         for (const tile of this.path) {
@@ -843,6 +929,25 @@ export class Enemy {
       // DO the DDA raycasting here to check if the target is visible
       this.checkPlayerVisibility();
       this.randomWander(this.room);
+    }
+    this.followPath(this.room.enemyMap);
+    this.animate();
+    this.render(ctx);
+    this.attackPlayer();
+    for (const projectile of this.projectiles) {
+      projectile.update(16, 1, this.mapGen.currentRoom, this.player);
+    }
+    this.hpCheck();
+    this.checkBulletCollision(canvas);
+  }
+
+  updateRs(ctx, canvas) {
+    if (this.wanderDelay > 0) {
+      this.wanderDelay--;
+    } else {
+      // DO the DDA raycasting here to check if the target is visible
+      this.checkPlayerVisibility();
+      this.randomWanderRs(this.room);
     }
     this.followPath(this.room.enemyMap);
     this.animate();

@@ -14,6 +14,7 @@ export class UpgCard {
       text.basic.speed,
       text.basic.heal,
       text.basic.dash,
+      text.basic.bullet, // add more upgrades here
     ]; // push new upgrades here
 
     this.upgrades = document.getElementById("upgrade-container");
@@ -171,5 +172,9 @@ export class UpgCard {
         break; // stops after healing one heart
       }
     }
+  }
+
+  bulletUpg(value) {
+    console.log(this.player);
   }
 }

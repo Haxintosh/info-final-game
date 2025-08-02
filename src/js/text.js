@@ -69,6 +69,14 @@ export let textEN = {
       src: "./icons/7/Skillicon7_29.png",
       value: 3,
     },
+    bullet: {
+      title: "Increase Spell Count",
+      subtitle: "Basic Upgrade",
+      description: "+1 projectile",
+      cost: "20",
+      src: "./icons/7/Skillicon7_29.png",
+      value: 3,
+    },
   },
 };
 

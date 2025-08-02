@@ -11,7 +11,7 @@ import { audio, music, setAudioVolume } from "./js/audio.js";
 import { text, textEN } from "./js/text.js";
 import { menuAnim, menuDone } from "./js/menu.js";
 import { drawMinimap } from "./js/minimap.js";
-
+// import { a_star_rs } from "../pkg/info_final_game";
 // const IS_LOADBLOACKER_ENABLED = false;
 // if (!IS_LOADBLOACKER_ENABLED) {
 //   // remove itself
@@ -24,6 +24,21 @@ import { drawMinimap } from "./js/minimap.js";
 //   menuContainer.style.opacity = "0";
 //   menuContainer.remove();
 // }
+
+// test the a* algorithm
+// const grid = [
+//   [0, 0, 0, 0, 0],
+//   [0, 1, 1, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 1, 0, 0],
+//   [0, 0, 0, 0, 0],
+// ];
+
+// const start = { x: 0, y: 0 };
+// const end = { x: 4, y: 4 };
+
+// const path = a_star(grid, start, end, 0);
+// console.log("A* Path:", path);
 const loadBlocker = document.querySelector(".loadBlocker");
 loadBlocker.style.display = "none";
 loadBlocker.style.opacity = "0";
@@ -91,9 +106,9 @@ document.getElementById("languageToggle").addEventListener("click", () => {
   if (
     document.getElementById("languageToggle").textContent.includes("French")
   ) {
-    window.open("/info-final-game/", "_self");
+    window.open("/whispers-below/", "_self");
   } else {
-    window.open("/info-final-game/index-en.html", "_self");
+    window.open("/whispers-below/index-en.html", "_self");
   }
 });
 

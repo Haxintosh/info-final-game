@@ -1,6 +1,12 @@
+- [ ] misc
+  - [ ] room types on minimap
+  - [ ] interactable maps (ie explosions, etc)
 - [ ] balance game
   - [ ] Homing missle balance and level scaling
   - [ ] encounters balance (too boring perhaps more rooms?)
+    - [ ] use different sets of tilesets for different levels, ie pruple for l1, green for l2, etc.
+    - [ ] more enemy types, ie multiple sprites of enemies, and different weapons as indicated by their types for m*n enemy possibilities
+    - [ ] room types? currently not much diversity
 - [ ] diversity enhancements
   - [ ] more enemy types (sprites/holding different weapons)
   - [ ] more reaction to bullet collisions
@@ -8,5 +14,11 @@
   - [ ] more weapons
   - [ ] Powerups?
   - [ ] better sprites/add animations for different elements of the game
-- [ ] multiplayer?
-  - [ ] peerjs?
+  - [ ] skills
+- [ ] above & beyond
+  - [ ] a town... maybe? why not
+  - [ ] progress save/load
+  - [ ] farming... maybe?
+- [ ] art
+  - [ ] credit the used assets
+  - [ ] better sprites/tilemaps for different setions

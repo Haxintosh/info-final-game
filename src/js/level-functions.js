@@ -153,11 +153,10 @@ export class LevelFunctions {
   }
 
   updateEnemies(ctx) {
+    // WASM version is a bit faster, tho not by much
     this.mapGen.currentRoom.enemies.forEach((enemy) => {
-      // Update enemy position or behavior
-      // console.log();
       this.projectilesEnemyCollision();
-      enemy.update(ctx, this.canvas);
+      enemy.updateRs(ctx, this.canvas);
     });
   }
 
@@ -660,6 +659,7 @@ export class LevelFunctions {
   async boss() {
     this.sublevel++;
     if (this.sublevel > 3) {
+      // if boss is in 4-1
       this.level++;
       this.sublevel = 1;
     }
